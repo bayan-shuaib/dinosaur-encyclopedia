@@ -1,11 +1,13 @@
 import { useState, useMemo } from 'react';
 import { Dinosaur } from '@/data/types';
 
-const COLORS = [
-  'hsl(0, 70%, 55%)',
-  'hsl(210, 70%, 55%)',
-  'hsl(142, 50%, 45%)',
-  'hsl(45, 80%, 55%)',
+const DINO_COLORS = [
+  'hsl(0, 65%, 62%)',
+  'hsl(213, 60%, 62%)',
+  'hsl(160, 45%, 52%)',
+  'hsl(38, 70%, 58%)',
+  'hsl(280, 50%, 62%)',
+  'hsl(185, 55%, 55%)',
 ];
 
 function robinsonProject(lat: number, lon: number, width: number, height: number) {
@@ -132,13 +134,19 @@ function getLatLon(d: Dinosaur): { lat: number; lon: number } {
   return { lat: 20, lon: 0 };
 }
 
+function getFormation(d: Dinosaur): string {
+  const loc = d.discovery.location;
+  const match = loc.match(/([A-Z][a-z]+(?:\s[A-Z][a-z]+)*\s+Formation)/);
+  if (match) return match[1];
+  return d.continent;
+}
+
 interface Props {
   dinosaurs: Dinosaur[];
 }
 
 const W = 600;
-const H = 340;
-const CONTINENT_FILL = 'hsl(35, 25%, 82%)';
+const H = 320;
 
 export default function LocationMap({ dinosaurs }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -150,87 +158,138 @@ export default function LocationMap({ dinosaurs }: Props) {
     const offsetLon = (i % 3 - 1) * 4;
     const offsetLat = (Math.floor(i / 3) % 2) * 3;
     const pos = robinsonProject(ll.lat + offsetLat, ll.lon + offsetLon, W, H);
-    return { dino: d, pos, color: COLORS[i], index: i };
+    const color = DINO_COLORS[i % DINO_COLORS.length];
+    return { dino: d, pos, color, index: i };
   });
 
   return (
-    <div className="flex flex-col overflow-hidden" style={{ maxHeight: '100%' }}>
-      <div className="relative overflow-hidden">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" style={{ maxHeight: 260, background: 'hsl(0, 0%, 3%)' }}>
-          <defs>
-            <clipPath id="robinson-clip-compare">
-              <polygon points={outline} />
-            </clipPath>
-          </defs>
+    <div className="relative overflow-hidden rounded-lg" style={{ background: 'hsl(0,0%,4%)' }}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full h-auto block"
+        style={{ display: 'block' }}
+      >
+        <defs>
+          <clipPath id="robinson-clip-compare">
+            <polygon points={outline} />
+          </clipPath>
+          {markers.map(({ dino, color }) => (
+            <filter key={`glow-${dino.id}`} id={`glow-${dino.id}`} x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          ))}
+        </defs>
 
-          {/* Grid lines */}
-          <g clipPath="url(#robinson-clip-compare)" opacity="0.18">
-            {grid.lats.map((pts, i) => (
-              <polyline key={`lat-${i}`} points={pts} fill="none" stroke="hsl(0, 0%, 100%)" strokeWidth="0.7" />
-            ))}
-            {grid.lons.map((pts, i) => (
-              <polyline key={`lon-${i}`} points={pts} fill="none" stroke="hsl(0, 0%, 100%)" strokeWidth="0.7" />
-            ))}
-          </g>
+        {/* Ocean background */}
+        <polygon points={outline} fill="hsl(220,20%,8%)" />
 
-          {/* Continents — cream/beige fill */}
-          <g clipPath="url(#robinson-clip-compare)">
-            {CONTINENTS.map(c => (
-              <path
-                key={c.name}
-                d={continentPath(c.coords, W, H)}
-                fill={CONTINENT_FILL}
-                stroke="none"
+        {/* Grid lines */}
+        <g clipPath="url(#robinson-clip-compare)" opacity="0.1">
+          {grid.lats.map((pts, i) => (
+            <polyline key={`lat-${i}`} points={pts} fill="none" stroke="hsl(0,0%,100%)" strokeWidth="0.5" />
+          ))}
+          {grid.lons.map((pts, i) => (
+            <polyline key={`lon-${i}`} points={pts} fill="none" stroke="hsl(0,0%,100%)" strokeWidth="0.5" />
+          ))}
+        </g>
+
+        {/* Continents */}
+        <g clipPath="url(#robinson-clip-compare)">
+          {CONTINENTS.map(c => (
+            <path
+              key={c.name}
+              d={continentPath(c.coords, W, H)}
+              fill="hsl(0,0%,18%)"
+              stroke="hsl(0,0%,22%)"
+              strokeWidth="0.4"
+            />
+          ))}
+        </g>
+
+        {/* Markers */}
+        {markers.map(({ dino, pos, color }) => {
+          const isHovered = hoveredId === dino.id;
+          const pinY = pos.y - 14;
+
+          return (
+            <g key={dino.id}
+              onMouseEnter={() => setHoveredId(dino.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Glow pulse */}
+              <circle cx={pos.x} cy={pos.y} r={isHovered ? 18 : 10} fill={color} opacity={isHovered ? 0.18 : 0.08}
+                style={{ transition: 'all 0.25s ease' }} />
+
+              {/* Pin shadow */}
+              <ellipse cx={pos.x} cy={pos.y + 2} rx={4} ry={2} fill="hsl(0,0%,0%)" opacity={0.3} />
+
+              {/* Pin stem */}
+              <line
+                x1={pos.x} y1={pos.y}
+                x2={pos.x} y2={pinY + 9}
+                stroke={color}
+                strokeWidth={isHovered ? 1.8 : 1.4}
+                opacity={isHovered ? 1 : 0.85}
+                style={{ transition: 'all 0.2s ease' }}
               />
-            ))}
-          </g>
 
-          {/* Dinosaur markers */}
-          {markers.map(({ dino, pos, color }) => {
-            const isHovered = hoveredId === dino.id;
-            return (
-              <g key={dino.id}>
-                <circle cx={pos.x} cy={pos.y} r={isHovered ? 14 : 9} fill={color} opacity={0.12}>
-                  <animate attributeName="r" values={isHovered ? '11;16;11' : '7;11;7'} dur="2s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.18;0.04;0.18" dur="2s" repeatCount="indefinite" />
-                </circle>
-                <circle
-                  cx={pos.x} cy={pos.y}
-                  r={isHovered ? 5 : 3.5}
-                  fill={color}
-                  className="cursor-pointer transition-all duration-150"
-                  onMouseEnter={() => setHoveredId(dino.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                />
-                {isHovered && (
-                  <foreignObject
-                    x={Math.min(pos.x + 10, W - 170)}
-                    y={Math.max(pos.y - 55, 5)}
-                    width="160" height="58"
-                    className="pointer-events-none"
-                  >
-                    <div className="bg-card border border-border rounded-lg px-2.5 py-1.5 shadow-lg">
-                      <p className="text-[10px] font-bold text-foreground">{dino.name}</p>
-                      <p className="text-[9px] text-muted-foreground">{dino.discovery.location}</p>
-                      <p className="text-[9px] text-muted-foreground/60">{dino.continent}</p>
-                    </div>
-                  </foreignObject>
-                )}
-              </g>
-            );
-          })}
-        </svg>
-      </div>
+              {/* Pin head circle */}
+              <circle
+                cx={pos.x} cy={pinY}
+                r={isHovered ? 5.5 : 4}
+                fill={color}
+                opacity={isHovered ? 1 : 0.9}
+                filter={isHovered ? `url(#glow-${dino.id})` : undefined}
+                style={{ transition: 'all 0.2s ease' }}
+              />
+              <circle cx={pos.x} cy={pinY} r={isHovered ? 2 : 1.5} fill="hsl(0,0%,100%)" opacity={0.6} />
+            </g>
+          );
+        })}
 
-      {/* Legend — wrapped */}
-      <div className="flex items-center gap-3 mt-2 flex-wrap">
-        {dinosaurs.map((d, i) => (
-          <div key={d.id} className="flex items-center gap-1.5 min-w-0 shrink-0">
-            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[i] }} />
-            <span className="text-[10px] text-muted-foreground whitespace-nowrap">{d.name}</span>
-          </div>
-        ))}
-      </div>
+        {/* Tooltips rendered last so they appear on top */}
+        {markers.map(({ dino, pos, color }) => {
+          if (hoveredId !== dino.id) return null;
+          const tw = 170;
+          const th = 68;
+          const tx = Math.min(Math.max(pos.x - tw / 2, 4), W - tw - 4);
+          const ty = Math.max(pos.y - 14 - th - 12, 4);
+          const formation = getFormation(dino);
+
+          return (
+            <foreignObject key={`tt-${dino.id}`} x={tx} y={ty} width={tw} height={th} style={{ pointerEvents: 'none', overflow: 'visible' }}>
+              <div
+                style={{
+                  background: 'rgba(12,12,14,0.88)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: `1px solid ${color}44`,
+                  borderRadius: '10px',
+                  padding: '8px 10px',
+                  boxShadow: `0 4px 20px rgba(0,0,0,0.5), 0 0 12px ${color}22`,
+                  animation: 'fadeScaleIn 0.18s ease-out forwards',
+                }}
+              >
+                <p style={{ fontSize: '10px', fontWeight: 700, color: '#fff', marginBottom: '3px', letterSpacing: '0.02em' }}>{dino.name}</p>
+                <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.55)', marginBottom: '2px', lineHeight: 1.3 }}>{dino.discovery.location}</p>
+                <p style={{ fontSize: '9px', color: color, opacity: 0.9, lineHeight: 1.3 }}>{formation}</p>
+              </div>
+            </foreignObject>
+          );
+        })}
+      </svg>
+
+      <style>{`
+        @keyframes fadeScaleIn {
+          from { opacity: 0; transform: scale(0.94) translateY(4px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

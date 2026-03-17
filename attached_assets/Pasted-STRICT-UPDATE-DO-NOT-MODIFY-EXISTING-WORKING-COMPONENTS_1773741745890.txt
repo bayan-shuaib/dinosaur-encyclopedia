@@ -1,0 +1,148 @@
+STRICT UPDATE — DO NOT MODIFY EXISTING WORKING COMPONENTS. ONLY APPLY THE FOLLOWING CHANGES.
+
+GENERAL RULES:
+
+* Preserve all existing layouts, navigation, and data logic.
+* Do NOT redesign unrelated components.
+* Maintain dark, minimalist, monochrome aesthetic.
+* Smooth, high-quality UI — no jagged shapes, no rough edges.
+
+────────────────────────────
+
+1. DISCOVERY LOCATION MAP (CRITICAL FIX)
+
+Replace the current map entirely.
+
+* Make the map EXACTLY match the style and behavior of:
+  https://www.facts.app/encyclopedia
+* Clean, smooth, accurate world map (no jagged or distorted continents).
+* Use a modern, vector-based world map (high precision coastlines).
+
+MARKERS:
+
+* Replace all markers with minimalist thumb-pin icons.
+* Style:
+
+  * small
+  * monochrome base (white/grey)
+  * glow effect on hover
+  * soft shadow
+* Each dinosaur must have a UNIQUE COLOR marker (subtle, not neon).
+
+INTERACTION:
+
+* DO NOT show a legend mapping colors to dinosaurs.
+* User must discover mapping via interaction.
+
+ON HOVER (marker tooltip):
+Display a clean floating tooltip with:
+
+1. Dinosaur Name
+2. Current World Location
+3. Geological Formation
+
+Tooltip style:
+
+* dark glassmorphism panel
+* rounded corners
+* smooth fade-in animation
+* slight scale-up on hover
+
+IMPORTANT FIX:
+
+* Constrain map strictly inside its container.
+* Prevent overflow into other sections (especially skeleton panel).
+
+────────────────────────────
+
+2. SIZE VISUALIZATION (MAJOR QUALITY UPGRADE)
+
+Replace current silhouettes completely.
+
+REQUIREMENTS:
+
+* Scientifically accurate proportions (NOT cartoon shapes).
+* Smooth vector silhouettes (no rough or wavy outlines).
+* Correct posture based on paleontological consensus:
+
+  * horizontal spine for theropods
+  * correct limb proportions
+  * accurate tail balance
+
+INCLUDE:
+
+* Human silhouette (1.7m) for scale comparison
+* Proper ground alignment for all species
+* Accurate length scaling between species
+
+VISUAL STYLE:
+
+* clean filled silhouettes
+* no outline strokes
+* slightly desaturated colors
+* soft ambient glow
+* anti-aliased smooth edges
+
+LABELS:
+
+* Minimal text under each dinosaur:
+
+  * name
+  * height
+  * length
+
+NO overlapping text.
+
+────────────────────────────
+
+3. GEOLOGICAL TIMELINE (FULL REDESIGN)
+
+Replace entire timeline component.
+
+STYLE:
+
+* EXACTLY match:
+  https://www.facts.app/encyclopedia
+* Horizontal, scrollable timeline
+* Smooth inertial scrolling
+* Clean segmented geological periods
+
+VISUAL DESIGN:
+
+* Minimal, flat segments
+* Subtle separators between periods
+* Dark theme consistent with app
+
+DINOSAUR INDICATORS:
+
+* Represent dinosaurs as markers/points on timeline
+* Each dinosaur uses its assigned comparison color
+
+INTERACTION:
+
+* NO permanent labels on screen
+* On hover over marker:
+  show tooltip with:
+
+  * Dinosaur Name
+  * Period (e.g., Late Cretaceous)
+  * Time range (e.g., 68–66 MYA)
+
+ANIMATIONS:
+
+* smooth hover expansion
+* subtle glow
+* fade-in tooltip
+
+────────────────────────────
+
+FINAL POLISH:
+
+* Ensure all components are pixel-perfect aligned
+* No overlapping UI elements
+* No sharp edges anywhere
+* All animations must be smooth (ease-in-out, 200–300ms)
+* Maintain consistent spacing and typography across all sections
+
+OUTPUT:
+Apply all changes cleanly without breaking existing functionality.
