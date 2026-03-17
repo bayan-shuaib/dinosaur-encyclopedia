@@ -1,0 +1,139 @@
+HARD RESET FOR SPECIFIC COMPONENTS — DO NOT PATCH. DELETE AND REBUILD THE FOLLOWING COMPONENTS FROM SCRATCH.
+
+If you attempt to modify existing components instead of replacing them, the result is INVALID.
+
+────────────────────────────
+
+1. WORLD MAP (MANDATORY LIBRARY)
+
+DELETE the current map implementation completely.
+
+REBUILD using:
+
+* D3.js OR a high-quality GeoJSON-based SVG world map
+* Use Robinson Projection (d3.geoRobinson)
+
+REQUIREMENTS:
+
+* Accurate continent shapes (no distortion, no simplified polygons)
+* Full map must be visible inside container (NO cropping)
+* Responsive scaling — always fit container height/width
+* Add padding so bottom is NEVER cut off
+
+STYLE:
+
+* Match EXACT visual style of:
+  https://www.facts.app/encyclopedia
+* Smooth coastlines
+* Subtle grid lines
+* Dark theme
+
+MARKERS:
+
+* Use SVG circle or pin elements (NOT div overlays)
+* Each dinosaur = unique color
+
+HOVER TOOLTIP (STRICT):
+
+* Must stay FULLY inside viewport
+* Auto-adjust position if near edges
+* Text MUST wrap properly inside box
+* Content:
+
+  * Dinosaur Name
+  * Location
+  * Formation
+
+REJECTION CONDITIONS:
+
+* If map is cropped → INVALID
+* If continents look jagged → INVALID
+* If not Robinson projection → INVALID
+
+────────────────────────────
+
+2. GEOLOGICAL TIMELINE (FULL REBUILD)
+
+DELETE existing timeline component.
+
+REBUILD as a horizontal scrollable bar using flexbox or canvas.
+
+STRUCTURE:
+
+* Segments:
+  Permian | Triassic | Jurassic | Cretaceous
+* Proportional widths based on real time duration
+
+STYLE:
+
+* EXACTLY match layout behavior of:
+  https://www.facts.app/encyclopedia
+* Clean segmented bar
+* No text overflow
+
+MARKERS:
+
+* Place dinosaur markers precisely on correct MYA positions
+
+TOOLTIP FIX (CRITICAL):
+
+* Tooltip must:
+
+  * Stay inside container
+  * Have max-width with text wrapping
+  * Never overflow outside screen
+
+TEXT RULE:
+
+* ALL text must wrap (no overflow, no clipping)
+* Use word-break or line-wrap
+
+REJECTION CONDITIONS:
+
+* If text goes outside box → INVALID
+* If not scrollable → INVALID
+
+────────────────────────────
+
+3. SIZE SILHOUETTES (NO AI DRAWING)
+
+DELETE all current silhouettes.
+
+DO NOT generate shapes.
+
+INSTEAD:
+
+* Use REAL paleo-accurate SVG silhouettes
+* Source from reliable datasets OR structured SVG paths
+
+REQUIREMENTS:
+
+* Correct anatomical posture
+* Smooth bezier curves (NO jagged edges)
+* Proper scaling between species
+* Ground alignment consistent
+
+IF accurate SVG not available:
+
+* Create simplified but anatomically correct traced silhouettes
+* NO abstract blobs
+
+HUMAN SCALE:
+
+* Add 1.7m human silhouette for comparison
+
+REJECTION CONDITIONS:
+
+* If silhouette looks cartoonish → INVALID
+* If proportions incorrect → INVALID
+
+────────────────────────────
+
+FINAL GLOBAL RULES:
+
+* DO NOT reuse previous components
+* DO NOT approximate styles
+* DO NOT skip projection or scaling logic
+* EVERYTHING must be rebuilt cleanly
+
+OUTPUT MUST MATCH PROFESSIONAL DATA VISUALIZATION QUALITY.

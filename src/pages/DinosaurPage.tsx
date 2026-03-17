@@ -198,7 +198,7 @@ export default function DinosaurPage() {
         </section>
 
         {/* Size Comparison */}
-        <SizeComparison dinoName={dino.name} dinoHeight={dino.height} dinoLength={dino.length} />
+        <SizeComparison dinoName={dino.name} dinoHeight={dino.height} dinoLength={dino.length} dinoGroup={dino.group} dinoId={dino.id} />
       </div>
     </div>
   );
