@@ -4,7 +4,6 @@ import { COLORS } from '@/pages/ComparePage';
 import InteractiveTimeline from '@/components/InteractiveTimeline';
 import LocationMap from '@/components/LocationMap';
 import SkeletonVisualizer from '@/components/SkeletonVisualizer';
-import { SpecimenOverlay } from '@/components/SpecimenOverlay';
 import { Trophy } from 'lucide-react';
 
 interface Props {
@@ -235,9 +234,7 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
             </div>
           ))}
         </div>
-        <SpecimenOverlay label="Skeleton Comparison">
-          <SkeletonVisualizer dinosaurs={dinosaurs} skeletonMode={skeletonMode} />
-        </SpecimenOverlay>
+        <SkeletonVisualizer dinosaurs={dinosaurs} skeletonMode={skeletonMode} />
       </section>
     </div>
   );

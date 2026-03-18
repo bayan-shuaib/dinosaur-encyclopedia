@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Dinosaur } from '@/data/types';
+import { SpecimenOverlay } from '@/components/SpecimenOverlay';
 
 const COLORS = [
   'hsl(0, 70%, 55%)',
@@ -64,6 +65,7 @@ export default function SkeletonVisualizer({ dinosaurs, skeletonMode }: Props) {
   if (!skeletonMode) return null;
 
   return (
+    <SpecimenOverlay label="Skeleton Comparison">
     <div className="mt-6 grid gap-6" style={{ gridTemplateColumns: `repeat(${Math.min(dinosaurs.length, 4)}, 1fr)` }}>
       {dinosaurs.map((d, i) => {
         const bones = getSkeletonBones(d);
@@ -144,6 +146,7 @@ export default function SkeletonVisualizer({ dinosaurs, skeletonMode }: Props) {
         );
       })}
     </div>
+    </SpecimenOverlay>
   );
 }
 
