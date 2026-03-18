@@ -120,13 +120,14 @@ export default function LocationMap({ dinosaurs }: Props) {
 
   return (
     <div
-      className="w-full rounded-xl overflow-hidden"
-      style={{ background: 'hsl(220,22%,5%)', position: 'relative' }}
+      className="w-full rounded-xl"
+      style={{ background: 'hsl(220,22%,5%)', position: 'relative', overflow: 'visible', paddingBottom: 4 }}
     >
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="w-full h-auto block"
-        style={{ display: 'block' }}
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full block"
+        style={{ display: 'block', height: 'auto' }}
       >
         <defs>
           <filter id="map-glow" x="-50%" y="-50%" width="200%" height="200%">

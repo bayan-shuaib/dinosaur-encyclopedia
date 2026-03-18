@@ -186,11 +186,9 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
           </section>
 
           {/* Block C — Location Map */}
-          <section className="info-panel flex-1 overflow-hidden" style={{ minHeight: 200, maxHeight: 340 }}>
+          <section className="info-panel flex-1" style={{ minHeight: 200 }}>
             <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-3 font-medium">Discovery Locations</p>
-            <div className="overflow-hidden" style={{ maxHeight: 280 }}>
-              <LocationMap dinosaurs={dinosaurs} />
-            </div>
+            <LocationMap dinosaurs={dinosaurs} />
           </section>
         </div>
       </div>

@@ -78,8 +78,8 @@ export function LocationMapSingle({ location, continent }: Props) {
   const pinHeadY = markerY - 15;
 
   return (
-    <div className="mt-2 rounded-lg overflow-hidden" style={{ background: 'hsl(220,22%,5%)' }}>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto block">
+    <div className="mt-2 rounded-lg" style={{ background: 'hsl(220,22%,5%)', overflow: 'visible', paddingBottom: 4 }}>
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" className="w-full block" style={{ height: 'auto' }}>
         <defs>
           <filter id="single-pin-glow" x="-120%" y="-120%" width="340%" height="340%">
             <feGaussianBlur stdDeviation="4" result="blur" />
