@@ -110,7 +110,7 @@ export default function ComparePage() {
   const showResults = hasEnough && comparisonStarted && !loading;
 
   return (
-    <div className="compare-page min-h-screen pt-14 font-body">
+    <div className="compare-page min-h-screen pt-[90px] font-body">
       <AnimatePresence>
         {loading && <CompareLoading onComplete={handleLoadComplete} />}
       </AnimatePresence>

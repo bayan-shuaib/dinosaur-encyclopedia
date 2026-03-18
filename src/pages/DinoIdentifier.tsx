@@ -97,7 +97,7 @@ export default function DinoIdentifier() {
   };
 
   return (
-    <div className="min-h-screen pt-14 font-body" onPaste={handlePaste}>
+    <div className="min-h-screen pt-[90px] font-body" onPaste={handlePaste}>
       <div className="max-w-[900px] mx-auto px-6 py-12">
         <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2 tracking-tight uppercase">
           Dino Identifier

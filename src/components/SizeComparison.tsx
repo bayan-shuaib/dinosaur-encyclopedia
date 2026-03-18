@@ -1,5 +1,6 @@
 // Anatomically accurate SVG silhouettes — rebuilt from scratch
 // All shapes use smooth bezier curves, correct postures, accurate proportions
+import { SpecimenOverlay } from '@/components/SpecimenOverlay';
 
 interface SilhouetteData {
   viewBox: string;
@@ -226,6 +227,7 @@ export function SizeComparison({ dinoName, dinoHeight, dinoLength, dinoGroup = '
   const dinoAspect = sil.vw / sil.vh;
 
   return (
+    <SpecimenOverlay label="Size Visualization">
     <div className="info-panel">
       <p className="section-label">Size Comparison</p>
 
@@ -281,5 +283,6 @@ export function SizeComparison({ dinoName, dinoHeight, dinoLength, dinoGroup = '
         }}
       />
     </div>
+    </SpecimenOverlay>
   );
 }

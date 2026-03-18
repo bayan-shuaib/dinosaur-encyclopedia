@@ -4,6 +4,7 @@ import { Dinosaur } from '@/data/types';
 import { COLORS } from '@/pages/ComparePage';
 import TrueScaleComparison from '@/components/TrueScaleComparison';
 import SkeletonVisualizer from '@/components/SkeletonVisualizer';
+import { SpecimenOverlay } from '@/components/SpecimenOverlay';
 
 type ViewMode = 'true-scale' | 'skeleton';
 type ViewAngle = 'side' | 'dorsal' | 'face';
@@ -53,6 +54,8 @@ export default function VisualExhibit({ dinosaurs }: Props) {
             </section>
 
             {/* View angle options */}
+            <SpecimenOverlay label="Multi-Angle Comparison View">
+            <div>
             <div className="flex items-center gap-3 mb-6">
               {(['side', 'dorsal', 'face'] as ViewAngle[]).map(v => (
                 <button
@@ -162,6 +165,8 @@ export default function VisualExhibit({ dinosaurs }: Props) {
                 )}
               </motion.section>
             </AnimatePresence>
+            </div>
+            </SpecimenOverlay>
           </motion.div>
         )}
 
@@ -173,10 +178,12 @@ export default function VisualExhibit({ dinosaurs }: Props) {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.3 }}
           >
+            <SpecimenOverlay label="Skeleton Comparison">
             <section className="info-panel">
               <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-4 font-medium">Skeleton Side View</p>
               <SkeletonVisualizer dinosaurs={dinosaurs} skeletonMode={true} />
             </section>
+            </SpecimenOverlay>
           </motion.div>
         )}
       </AnimatePresence>

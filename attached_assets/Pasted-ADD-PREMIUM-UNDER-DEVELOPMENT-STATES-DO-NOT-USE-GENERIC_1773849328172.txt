@@ -1,0 +1,108 @@
+ADD PREMIUM “UNDER DEVELOPMENT” STATES — DO NOT USE GENERIC TEXT LIKE “WORK IN PROGRESS”
+
+THEME:
+Use a paleontology / lab-inspired concept:
+“Specimen Under Reconstruction”
+
+This must feel intentional, aesthetic, and immersive.
+
+────────────────────────────
+
+1. GLOBAL INDICATOR (SUBTLE TOP BAR)
+
+Add a thin top bar across the site:
+
+TEXT:
+“Early Access Build — Some systems still under reconstruction”
+
+STYLE:
+
+* very thin (30–40px height)
+* dark translucent background
+* soft blur (glassmorphism)
+* small pulsing dot indicator (left side)
+* minimal typography
+
+ANIMATION:
+
+* slow pulse glow on dot
+* no distracting motion
+
+────────────────────────────
+
+2. FEATURE LOCK OVERLAY (FOR SPECIFIC SECTIONS ONLY)
+
+Apply ONLY to these components:
+
+* 360° Skin View
+* 360° Skeleton View
+* Size Visualization
+* Skeleton Comparison
+* Multi-angle comparison views
+
+OVERLAY DESIGN:
+
+* Semi-transparent dark overlay (not fully blocking visibility)
+* Slight blur effect on background content
+* Centered content block
+
+CONTENT:
+
+TITLE:
+“Specimen Under Reconstruction”
+
+SUBTEXT:
+“This module is currently being refined for scientific accuracy and precision.”
+
+OPTIONAL SMALL TEXT:
+“Available in a future update”
+
+ICON:
+
+* Use a minimal rotating wireframe cube OR fossil icon
+
+────────────────────────────
+
+3. VISUAL STYLE
+
+* Maintain dark, minimalist theme
+* No bright colors
+* Use soft glow accents
+* Rounded edges
+* Smooth transitions
+
+OVERLAY ANIMATION:
+
+* Fade in (200ms ease-in-out)
+* Slight scale (0.95 → 1)
+
+ICON ANIMATION:
+
+* slow rotation (very subtle)
+
+────────────────────────────
+
+4. INTERACTION
+
+* Overlay should NOT feel broken
+* Users should understand it's intentional
+
+OPTIONAL:
+Add a small “Preview Mode” button:
+
+* allows limited interaction (blur remains slightly)
+
+────────────────────────────
+
+5. IMPORTANT RULES
+
+* DO NOT block entire page — only specific components
+
+* DO NOT use generic wording like:
+  “Coming Soon”
+  “Work in Progress”
+
+* Keep everything premium and immersive
+
+OUTPUT:
+Make it feel like a high-end scientific platform still being developed — not an incomplete app.

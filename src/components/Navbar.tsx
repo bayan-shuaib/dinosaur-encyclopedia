@@ -3,7 +3,7 @@ import { Bone } from 'lucide-react';
 
 export function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
+    <nav className="fixed top-[34px] left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
       <div className="max-w-[1400px] mx-auto flex items-center justify-between h-14 px-6">
         <Link to="/" className="flex items-center gap-2">
           <Bone className="h-5 w-5 text-foreground" />

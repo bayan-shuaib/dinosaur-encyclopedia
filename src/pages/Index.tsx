@@ -83,7 +83,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen pt-14">
+    <div className="min-h-screen pt-[90px]">
       {/* Hero */}
       <section className="text-center py-16 px-4">
         <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground mb-4 tracking-tight">

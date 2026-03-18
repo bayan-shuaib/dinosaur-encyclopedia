@@ -18,7 +18,7 @@ export default function DinosaurPage() {
 
   if (!dino) {
     return (
-      <div className="min-h-screen pt-14 flex items-center justify-center">
+      <div className="min-h-screen pt-[90px] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-display text-foreground mb-2">Dinosaur not found</h1>
           <Link to="/" className="text-primary hover:underline font-body">← Back to encyclopedia</Link>
@@ -28,7 +28,7 @@ export default function DinosaurPage() {
   }
 
   return (
-    <div className="min-h-screen pt-14">
+    <div className="min-h-screen pt-[90px]">
       {/* Back link + Compare button */}
       <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-body text-sm">

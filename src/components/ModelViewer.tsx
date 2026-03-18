@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
+import { SpecimenOverlay } from '@/components/SpecimenOverlay';
 
 interface ModelViewerProps {
   image: string;
@@ -77,36 +78,38 @@ export function ModelViewer({ image, dinoName, sketchfabUrl }: ModelViewerProps)
         )}
       </div>
       {/* Viewer */}
-      {hasSketchfab ? (
-        <div className="relative aspect-[16/10] overflow-hidden bg-background">
-          <iframe
-            title={dinoName}
-            className="absolute inset-0 w-full h-full"
-            src={sketchfabUrl}
-            frameBorder="0"
-            allow="autoplay; fullscreen; xr-spatial-tracking"
-            allowFullScreen
-          />
-        </div>
-      ) : (
-        <div
-          className="relative aspect-[16/10] flex items-center justify-center cursor-grab active:cursor-grabbing overflow-hidden select-none bg-background"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleMouseUp}
-        >
-          <div className="text-6xl font-display font-bold text-muted-foreground/10 uppercase tracking-wider">
-            360° VIEW
+      <SpecimenOverlay label={mode === 'skin' ? '360° Skin View' : '360° Skeleton View'}>
+        {hasSketchfab ? (
+          <div className="relative aspect-[16/10] overflow-hidden bg-background">
+            <iframe
+              title={dinoName}
+              className="absolute inset-0 w-full h-full"
+              src={sketchfabUrl}
+              frameBorder="0"
+              allow="autoplay; fullscreen; xr-spatial-tracking"
+              allowFullScreen
+            />
           </div>
-          <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground/50 font-body">
-            Drag to rotate · Buttons to zoom
-          </p>
-        </div>
-      )}
+        ) : (
+          <div
+            className="relative aspect-[16/10] flex items-center justify-center cursor-grab active:cursor-grabbing overflow-hidden select-none bg-background"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleMouseUp}
+          >
+            <div className="text-6xl font-display font-bold text-muted-foreground/10 uppercase tracking-wider">
+              360° VIEW
+            </div>
+            <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground/50 font-body">
+              Drag to rotate · Buttons to zoom
+            </p>
+          </div>
+        )}
+      </SpecimenOverlay>
     </div>
   );
 }
