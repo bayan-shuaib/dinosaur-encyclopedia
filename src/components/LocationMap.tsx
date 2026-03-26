@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import * as topojson from 'topojson-client';
-import { geoNaturalEarth1, geoPath, geoGraticule } from 'd3-geo';
+import { geoPath, geoGraticule } from 'd3-geo';
+import { geoRobinson } from 'd3-geo-projection';
 // @ts-ignore
 import worldData from 'world-atlas/countries-110m.json';
 import { Dinosaur } from '@/data/types';
@@ -14,9 +15,9 @@ const DINO_COLORS = [
   'hsl(188, 58%, 56%)',
 ];
 
-const W = 800;
-const H = 440;
-const PAD = 20;
+// Robinson projection aspect ratio: 2.05:1 (width:height)
+const W = 820;
+const H = 400;
 
 function getLatLon(d: Dinosaur): [number, number] {
   const loc = d.discovery.location.toLowerCase();
@@ -74,17 +75,21 @@ interface Props {
 
 export default function LocationMap({ dinosaurs }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
 
-  const { countriesPath, landPath, graticulePath, projection } = useMemo(() => {
+  const { landPath, graticulePath, projection } = useMemo(() => {
     const land = topojson.feature(worldData as any, (worldData as any).objects.land);
-    const countries = topojson.feature(worldData as any, (worldData as any).objects.countries);
-    const proj = geoNaturalEarth1().fitExtent([[PAD, PAD], [W - PAD, H - PAD]], land as any);
+
+    // Use Robinson projection with proper scaling to show entire world including Antarctica
+    const proj = geoRobinson()
+      .scale(130)
+      .translate([W / 2, H / 2])
+      .precision(0.1);
+
     const pathGen = geoPath().projection(proj);
     const graticule = geoGraticule()();
+
     return {
       landPath: pathGen(land as any) || '',
-      countriesPath: (countries as any).features.map((f: any) => pathGen(f) || ''),
       graticulePath: pathGen(graticule) || '',
       projection: proj,
     };
@@ -96,135 +101,229 @@ export default function LocationMap({ dinosaurs }: Props) {
       const pt = projection(lonLat);
       return {
         dino: d,
-        x: pt ? pt[0] : 0,
-        y: pt ? pt[1] : 0,
+        x: pt ? pt[0] : -9999,
+        y: pt ? pt[1] : -9999,
         color: DINO_COLORS[i % DINO_COLORS.length],
         formation: getFormation(d),
       };
-    }).filter(m => m.x > 0 && m.y > 0);
+    }).filter(m => m.x > 0 && m.y > 0 && m.x < W && m.y < H);
   }, [dinosaurs, projection]);
 
   const hoveredMarker = markers.find(m => m.dino.id === hoveredId);
 
-  const getTooltipPos = (mx: number, my: number) => {
-    const TW = 180;
-    const TH = 76;
-    let tx = mx + 14;
-    let ty = my - TH - 14;
-    if (tx + TW > W - 4) tx = mx - TW - 14;
-    if (ty < 4) ty = my + 14;
-    if (ty + TH > H - 4) ty = H - TH - 4;
-    if (tx < 4) tx = 4;
-    return { tx, ty };
-  };
-
   return (
     <div
       className="w-full rounded-xl"
-      style={{ background: 'hsl(220,22%,5%)', position: 'relative', overflow: 'visible', paddingBottom: 4 }}
+      style={{
+        background: 'hsl(220, 22%, 5%)',
+        position: 'relative',
+        overflow: 'hidden',
+        isolation: 'isolate',
+      }}
     >
       <svg
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
         className="w-full block"
-        style={{ display: 'block', height: 'auto' }}
+        style={{
+          display: 'block',
+          height: 'auto',
+          maxHeight: '100%',
+        }}
       >
         <defs>
           <filter id="map-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3.5" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <filter id="pin-shadow" x="-80%" y="-80%" width="360%" height="360%">
-            <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="rgba(0,0,0,0.5)" />
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
           </filter>
           <radialGradient id="ocean-grad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="hsl(218,30%,9%)" />
-            <stop offset="100%" stopColor="hsl(220,22%,5%)" />
+            <stop offset="0%" stopColor="hsl(218, 30%, 9%)" />
+            <stop offset="100%" stopColor="hsl(220, 22%, 5%)" />
           </radialGradient>
         </defs>
 
-        {/* Ocean */}
+        {/* Ocean background */}
         <rect width={W} height={H} fill="url(#ocean-grad)" />
 
-        {/* Graticule */}
-        <path d={graticulePath} fill="none" stroke="hsl(210,30%,50%)" strokeWidth="0.4" opacity="0.12" />
+        {/* Graticule grid */}
+        <path
+          d={graticulePath}
+          fill="none"
+          stroke="hsl(210, 30%, 50%)"
+          strokeWidth="0.3"
+          opacity="0.1"
+        />
 
-        {/* Land */}
-        <path d={landPath} fill="hsl(0,0%,16%)" stroke="hsl(0,0%,22%)" strokeWidth="0.3" />
+        {/* Land masses */}
+        <path
+          d={landPath}
+          fill="hsl(0, 0%, 16%)"
+          stroke="hsl(0, 0%, 22%)"
+          strokeWidth="0.4"
+        />
 
-        {/* Country borders */}
-        {countriesPath.map((p: string, i: number) => (
-          <path key={i} d={p} fill="none" stroke="hsl(0,0%,12%)" strokeWidth="0.25" />
-        ))}
-
-        {/* Markers */}
+        {/* Markers with pins */}
         {markers.map(({ dino, x, y, color }) => {
           const isHovered = hoveredId === dino.id;
-          const pinHeadY = y - 16;
+          const pinHeadY = y - 14;
 
           return (
             <g
               key={dino.id}
               style={{ cursor: 'pointer' }}
-              onMouseEnter={() => { setHoveredId(dino.id); setTooltipPos({ x, y }); }}
-              onMouseLeave={() => { setHoveredId(null); setTooltipPos(null); }}
+              onMouseEnter={() => setHoveredId(dino.id)}
+              onMouseLeave={() => setHoveredId(null)}
             >
               {/* Pulse ring */}
-              <circle cx={x} cy={y} r={isHovered ? 20 : 12} fill={color}
+              <circle
+                cx={x}
+                cy={y}
+                r={isHovered ? 18 : 10}
+                fill={color}
                 opacity={isHovered ? 0.2 : 0.08}
                 style={{ transition: 'all 0.25s ease' }}
               />
-              {/* Pin shadow ellipse */}
-              <ellipse cx={x} cy={y + 1.5} rx={3.5} ry={1.5} fill="rgba(0,0,0,0.35)" />
+
+              {/* Pin shadow */}
+              <ellipse
+                cx={x}
+                cy={y + 1}
+                rx={3}
+                ry={1.2}
+                fill="rgba(0, 0, 0, 0.4)"
+              />
+
               {/* Pin stem */}
               <line
-                x1={x} y1={y}
-                x2={x} y2={pinHeadY + 8}
+                x1={x}
+                y1={y}
+                x2={x}
+                y2={pinHeadY + 7}
                 stroke={color}
-                strokeWidth={isHovered ? 2 : 1.6}
-                opacity={isHovered ? 1 : 0.88}
+                strokeWidth={isHovered ? 1.8 : 1.4}
+                opacity={isHovered ? 1 : 0.85}
                 style={{ transition: 'stroke-width 0.2s ease' }}
               />
+
               {/* Pin head */}
               <circle
-                cx={x} cy={pinHeadY}
-                r={isHovered ? 6.5 : 5}
+                cx={x}
+                cy={pinHeadY}
+                r={isHovered ? 6 : 4.5}
                 fill={color}
                 filter={isHovered ? 'url(#map-glow)' : undefined}
                 style={{ transition: 'r 0.2s ease' }}
               />
+
               {/* Pin highlight */}
-              <circle cx={x - 1.5} cy={pinHeadY - 1.5} r={isHovered ? 2 : 1.6} fill="rgba(255,255,255,0.55)" />
+              <circle
+                cx={x - 1.2}
+                cy={pinHeadY - 1.2}
+                r={isHovered ? 1.8 : 1.4}
+                fill="rgba(255, 255, 255, 0.6)"
+              />
             </g>
           );
         })}
 
-        {/* Tooltip */}
-        {hoveredMarker && tooltipPos && (() => {
-          const { tx, ty } = getTooltipPos(tooltipPos.x, tooltipPos.y);
+        {/* Tooltip - Smart positioned */}
+        {hoveredMarker && (() => {
+          const mx = hoveredMarker.x;
+          const my = hoveredMarker.y;
+          const TW = 170;
+          const TH = 70;
+          const margin = 10;
+
+          // Smart positioning: flip if near edges
+          let tx = mx + 12;
+          let ty = my - TH - 12;
+
+          // Right edge check
+          if (tx + TW > W - margin) {
+            tx = mx - TW - 12;
+          }
+
+          // Top edge check
+          if (ty < margin) {
+            ty = my + 12;
+          }
+
+          // Bottom edge check
+          if (ty + TH > H - margin) {
+            ty = H - TH - margin;
+          }
+
+          // Left edge check
+          if (tx < margin) {
+            tx = margin;
+          }
+
           return (
-            <foreignObject x={tx} y={ty} width={180} height={80} style={{ pointerEvents: 'none', overflow: 'visible' }}>
+            <foreignObject
+              x={tx}
+              y={ty}
+              width={TW}
+              height={TH}
+              style={{ pointerEvents: 'none', overflow: 'visible' }}
+            >
               <div
                 style={{
-                  background: 'rgba(8,9,12,0.92)',
-                  backdropFilter: 'blur(14px)',
-                  WebkitBackdropFilter: 'blur(14px)',
-                  border: `1px solid ${hoveredMarker.color}38`,
-                  borderRadius: 10,
-                  padding: '8px 11px',
-                  boxShadow: `0 6px 24px rgba(0,0,0,0.55), 0 0 14px ${hoveredMarker.color}1a`,
-                  animation: 'mapTipIn 0.16s ease-out',
-                  width: 180,
+                  background: 'rgba(8, 9, 12, 0.94)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: `1px solid ${hoveredMarker.color}40`,
+                  borderRadius: 8,
+                  padding: '7px 10px',
+                  boxShadow: `0 4px 20px rgba(0, 0, 0, 0.6), 0 0 12px ${hoveredMarker.color}20`,
+                  animation: 'mapTipIn 0.15s ease-out',
+                  width: TW,
                   boxSizing: 'border-box',
                 }}
               >
-                <p style={{ fontSize: 10.5, fontWeight: 700, color: '#fff', marginBottom: 4, lineHeight: 1.3, wordBreak: 'break-word' }}>
+                <p
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: '#fff',
+                    marginBottom: 3,
+                    lineHeight: 1.3,
+                    wordBreak: 'break-word',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
                   {hoveredMarker.dino.name}
                 </p>
-                <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.52)', marginBottom: 3, lineHeight: 1.4, wordBreak: 'break-word' }}>
+                <p
+                  style={{
+                    fontSize: 8.5,
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    marginBottom: 2,
+                    lineHeight: 1.3,
+                    wordBreak: 'break-word',
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}
+                >
                   {hoveredMarker.dino.discovery.location}
                 </p>
-                <p style={{ fontSize: 9, color: hoveredMarker.color, lineHeight: 1.4, wordBreak: 'break-word', opacity: 0.9 }}>
+                <p
+                  style={{
+                    fontSize: 8.5,
+                    color: hoveredMarker.color,
+                    lineHeight: 1.3,
+                    wordBreak: 'break-word',
+                    opacity: 0.9,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {hoveredMarker.formation}
                 </p>
               </div>
@@ -234,8 +333,8 @@ export default function LocationMap({ dinosaurs }: Props) {
 
         <style>{`
           @keyframes mapTipIn {
-            from { opacity: 0; transform: scale(0.93) translateY(3px); }
-            to   { opacity: 1; transform: scale(1)    translateY(0);    }
+            from { opacity: 0; transform: scale(0.94) translateY(2px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
           }
         `}</style>
       </svg>
