@@ -113,7 +113,7 @@ export default function LocationMap({ dinosaurs }: Props) {
 
   return (
     <div
-      className="w-full rounded-xl"
+      className="w-full h-full rounded-xl"
       style={{
         background: 'hsl(220, 22%, 5%)',
         position: 'relative',
@@ -124,11 +124,12 @@ export default function LocationMap({ dinosaurs }: Props) {
       <svg
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
-        className="w-full block"
+        className="w-full h-full block"
         style={{
           display: 'block',
-          height: 'auto',
+          maxWidth: '100%',
           maxHeight: '100%',
+          objectFit: 'contain',
         }}
       >
         <defs>
