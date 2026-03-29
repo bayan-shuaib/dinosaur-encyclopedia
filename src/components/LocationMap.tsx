@@ -234,8 +234,8 @@ export default function LocationMap({ dinosaurs }: Props) {
         {hoveredMarker && (() => {
           const mx = hoveredMarker.x;
           const my = hoveredMarker.y;
-          const TW = 170;
-          const TH = 70;
+          const TW = 220;
+          const TH = 90;
           const margin = 10;
 
           // Smart positioning: flip if near edges
@@ -277,7 +277,7 @@ export default function LocationMap({ dinosaurs }: Props) {
                   WebkitBackdropFilter: 'blur(12px)',
                   border: `1px solid ${hoveredMarker.color}40`,
                   borderRadius: 8,
-                  padding: '7px 10px',
+                  padding: '10px 14px',
                   boxShadow: `0 4px 20px rgba(0, 0, 0, 0.6), 0 0 12px ${hoveredMarker.color}20`,
                   animation: 'mapTipIn 0.15s ease-out',
                   width: TW,
@@ -286,10 +286,10 @@ export default function LocationMap({ dinosaurs }: Props) {
               >
                 <p
                   style={{
-                    fontSize: 10,
+                    fontSize: 14,
                     fontWeight: 700,
                     color: '#fff',
-                    marginBottom: 3,
+                    marginBottom: 5,
                     lineHeight: 1.3,
                     wordBreak: 'break-word',
                     overflow: 'hidden',
@@ -300,9 +300,9 @@ export default function LocationMap({ dinosaurs }: Props) {
                 </p>
                 <p
                   style={{
-                    fontSize: 8.5,
+                    fontSize: 12,
                     color: 'rgba(255, 255, 255, 0.5)',
-                    marginBottom: 2,
+                    marginBottom: 4,
                     lineHeight: 1.3,
                     wordBreak: 'break-word',
                     overflow: 'hidden',
@@ -315,7 +315,7 @@ export default function LocationMap({ dinosaurs }: Props) {
                 </p>
                 <p
                   style={{
-                    fontSize: 8.5,
+                    fontSize: 12,
                     color: hoveredMarker.color,
                     lineHeight: 1.3,
                     wordBreak: 'break-word',
