@@ -528,8 +528,8 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
           </div>
         </section>
 
-        {/* Geological Timeline - Museum Style */}
-        <section className="info-panel flex flex-col" style={{ minHeight: 500, maxHeight: 600 }}>
+        {/* Geological Timeline - Museum Style Horizontal */}
+        <section className="info-panel flex flex-col overflow-hidden" style={{ height: 380 }}>
           <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-3 font-medium flex-shrink-0">Geological Timeline</p>
           <div className="flex-1 min-h-0">
             <InteractiveTimeline dinosaurs={dinosaurs} />
