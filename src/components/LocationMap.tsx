@@ -113,7 +113,7 @@ export default function LocationMap({ dinosaurs }: Props) {
 
   return (
     <div
-      className="w-full rounded-xl"
+      className="w-full h-full rounded-xl"
       style={{
         background: 'hsl(220, 22%, 5%)',
         position: 'relative',
@@ -124,11 +124,12 @@ export default function LocationMap({ dinosaurs }: Props) {
       <svg
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
-        className="w-full block"
+        className="w-full h-full block"
         style={{
           display: 'block',
-          height: 'auto',
+          maxWidth: '100%',
           maxHeight: '100%',
+          objectFit: 'contain',
         }}
       >
         <defs>
@@ -233,8 +234,8 @@ export default function LocationMap({ dinosaurs }: Props) {
         {hoveredMarker && (() => {
           const mx = hoveredMarker.x;
           const my = hoveredMarker.y;
-          const TW = 170;
-          const TH = 70;
+          const TW = 280;
+          const TH = 120;
           const margin = 10;
 
           // Smart positioning: flip if near edges
@@ -276,7 +277,7 @@ export default function LocationMap({ dinosaurs }: Props) {
                   WebkitBackdropFilter: 'blur(12px)',
                   border: `1px solid ${hoveredMarker.color}40`,
                   borderRadius: 8,
-                  padding: '7px 10px',
+                  padding: '14px 18px',
                   boxShadow: `0 4px 20px rgba(0, 0, 0, 0.6), 0 0 12px ${hoveredMarker.color}20`,
                   animation: 'mapTipIn 0.15s ease-out',
                   width: TW,
@@ -285,10 +286,10 @@ export default function LocationMap({ dinosaurs }: Props) {
               >
                 <p
                   style={{
-                    fontSize: 10,
+                    fontSize: 18,
                     fontWeight: 700,
                     color: '#fff',
-                    marginBottom: 3,
+                    marginBottom: 8,
                     lineHeight: 1.3,
                     wordBreak: 'break-word',
                     overflow: 'hidden',
@@ -299,9 +300,9 @@ export default function LocationMap({ dinosaurs }: Props) {
                 </p>
                 <p
                   style={{
-                    fontSize: 8.5,
+                    fontSize: 15,
                     color: 'rgba(255, 255, 255, 0.5)',
-                    marginBottom: 2,
+                    marginBottom: 6,
                     lineHeight: 1.3,
                     wordBreak: 'break-word',
                     overflow: 'hidden',
@@ -314,7 +315,7 @@ export default function LocationMap({ dinosaurs }: Props) {
                 </p>
                 <p
                   style={{
-                    fontSize: 8.5,
+                    fontSize: 15,
                     color: hoveredMarker.color,
                     lineHeight: 1.3,
                     wordBreak: 'break-word',
