@@ -17,7 +17,8 @@ const GEOLOGICAL_PERIODS = [
     start: 419,
     end: 359,
     color: 'hsl(195, 45%, 32%)',
-    colorLight: 'hsl(195, 40%, 50%)',
+    colorLight: 'hsl(195, 35%, 18%)',
+    colorLighter: 'hsl(195, 30%, 12%)',
     subdivisions: [
       { name: 'Early', start: 419, end: 393 },
       { name: 'Middle', start: 393, end: 383 },
@@ -29,7 +30,8 @@ const GEOLOGICAL_PERIODS = [
     start: 359,
     end: 299,
     color: 'hsl(145, 35%, 28%)',
-    colorLight: 'hsl(145, 32%, 45%)',
+    colorLight: 'hsl(145, 28%, 16%)',
+    colorLighter: 'hsl(145, 22%, 10%)',
     subdivisions: [
       { name: 'Mississippian', start: 359, end: 323 },
       { name: 'Pennsylvanian', start: 323, end: 299 },
@@ -40,7 +42,8 @@ const GEOLOGICAL_PERIODS = [
     start: 299,
     end: 252,
     color: 'hsl(35, 40%, 35%)',
-    colorLight: 'hsl(35, 38%, 52%)',
+    colorLight: 'hsl(35, 32%, 18%)',
+    colorLighter: 'hsl(35, 25%, 12%)',
     subdivisions: [
       { name: 'Cisuralian', start: 299, end: 273 },
       { name: 'Guadalupian', start: 273, end: 260 },
@@ -52,7 +55,8 @@ const GEOLOGICAL_PERIODS = [
     start: 252,
     end: 201,
     color: 'hsl(20, 45%, 38%)',
-    colorLight: 'hsl(20, 42%, 55%)',
+    colorLight: 'hsl(20, 35%, 18%)',
+    colorLighter: 'hsl(20, 28%, 12%)',
     subdivisions: [
       { name: 'Early', start: 252, end: 247 },
       { name: 'Middle', start: 247, end: 237 },
@@ -64,7 +68,8 @@ const GEOLOGICAL_PERIODS = [
     start: 201,
     end: 145,
     color: 'hsl(130, 38%, 30%)',
-    colorLight: 'hsl(130, 35%, 48%)',
+    colorLight: 'hsl(130, 28%, 16%)',
+    colorLighter: 'hsl(130, 22%, 10%)',
     subdivisions: [
       { name: 'Early', start: 201, end: 174 },
       { name: 'Middle', start: 174, end: 164 },
@@ -76,7 +81,8 @@ const GEOLOGICAL_PERIODS = [
     start: 145,
     end: 66,
     color: 'hsl(45, 42%, 38%)',
-    colorLight: 'hsl(45, 40%, 55%)',
+    colorLight: 'hsl(45, 32%, 18%)',
+    colorLighter: 'hsl(45, 25%, 12%)',
     subdivisions: [
       { name: 'Early', start: 145, end: 100 },
       { name: 'Late', start: 100, end: 66 },
@@ -90,11 +96,13 @@ const TOTAL_SPAN = TOTAL_START - TOTAL_END;
 
 // Flatten all subdivisions for column generation
 const ALL_SUBDIVISIONS = GEOLOGICAL_PERIODS.flatMap(period => 
-  period.subdivisions.map(sub => ({
+  period.subdivisions.map((sub, subIdx) => ({
     ...sub,
     periodName: period.name,
     periodColor: period.color,
     periodColorLight: period.colorLight,
+    periodColorLighter: period.colorLighter,
+    isEven: subIdx % 2 === 0,
     fullName: sub.name === 'Early' || sub.name === 'Middle' || sub.name === 'Late' 
       ? `${sub.name} ${period.name}` 
       : sub.name,
@@ -145,9 +153,10 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
   }, [dinosaurs]);
 
   const TIMELINE_WIDTH = 1600;
-  const ROW_HEIGHT = 32;
-  const HEADER_HEIGHT = 56;
-  const SUBHEADER_HEIGHT = 28;
+  const ROW_HEIGHT = 28;
+  const HEADER_HEIGHT = 44;
+  const SUBHEADER_HEIGHT = 24;
+  const TOTAL_ROWS = 8; // Fixed number of rows to fill the grid area
 
   return (
     <div className="select-none h-full flex flex-col relative" ref={containerRef}>
@@ -185,10 +194,10 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
         style={{ minHeight: 0 }}
       >
         <div 
-          className="relative h-full"
+          className="relative"
           style={{ 
             width: TIMELINE_WIDTH,
-            minHeight: '100%',
+            height: HEADER_HEIGHT + SUBHEADER_HEIGHT + (TOTAL_ROWS * ROW_HEIGHT),
             background: 'hsl(220, 15%, 5%)',
           }}
         >
@@ -207,8 +216,8 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
                     width: `${widthPct}%`,
                     height: HEADER_HEIGHT,
                     background: period.color,
-                    borderRight: '1px solid rgba(255,255,255,0.1)',
-                    borderBottom: '2px solid rgba(0,0,0,0.3)',
+                    borderRight: '1px solid rgba(255,255,255,0.15)',
+                    borderBottom: '2px solid rgba(0,0,0,0.4)',
                   }}
                   onMouseEnter={(e) => handleMouseMove(e, (
                     <div>
@@ -250,9 +259,9 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
                     left: `${leftPct}%`,
                     width: `${widthPct}%`,
                     height: SUBHEADER_HEIGHT,
-                    background: isHovered ? sub.periodColorLight : `${sub.periodColor}cc`,
-                    borderRight: '1px solid rgba(255,255,255,0.08)',
-                    borderBottom: '1px solid rgba(0,0,0,0.4)',
+                    background: isHovered ? sub.periodColor : sub.periodColorLight,
+                    borderRight: '1px solid rgba(255,255,255,0.1)',
+                    borderBottom: '1px solid rgba(0,0,0,0.5)',
                   }}
                   onMouseEnter={(e) => {
                     setHoveredCol(sub.fullName);
@@ -279,53 +288,69 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
             })}
           </div>
 
-          {/* === GRID AREA: Dinosaur Rows with Column Dividers === */}
+          {/* === GRID AREA: Full-height columns + Rows === */}
           <div 
-            className="absolute left-0 right-0 bottom-0"
-            style={{ top: HEADER_HEIGHT + SUBHEADER_HEIGHT }}
+            className="absolute left-0 right-0"
+            style={{ 
+              top: HEADER_HEIGHT + SUBHEADER_HEIGHT,
+              height: TOTAL_ROWS * ROW_HEIGHT,
+            }}
           >
-            {/* Column dividers (vertical lines for each subdivision) */}
-            {ALL_SUBDIVISIONS.map((sub, idx) => {
-              const leftPct = myaToPercent(sub.start);
-              const isHovered = hoveredCol === sub.fullName;
-              
-              return (
-                <div
-                  key={`divider-${idx}`}
-                  className="absolute top-0 bottom-0 transition-all duration-200"
-                  style={{
-                    left: `${leftPct}%`,
-                    width: 1,
-                    background: isHovered 
-                      ? `linear-gradient(180deg, ${sub.periodColorLight} 0%, ${sub.periodColorLight}40 100%)`
-                      : `linear-gradient(180deg, ${sub.periodColor}60 0%, ${sub.periodColor}20 100%)`,
-                  }}
-                />
-              );
-            })}
-
-            {/* Subdivision background columns */}
+            {/* Full-height subdivision columns with period-based gradient coloring */}
             {ALL_SUBDIVISIONS.map((sub, idx) => {
               const leftPct = myaToPercent(sub.start);
               const widthPct = myaToPercent(sub.end) - leftPct;
               const isHovered = hoveredCol === sub.fullName;
               
+              // Alternating light gradient based on parent period color
+              const bgColor = sub.isEven ? sub.periodColorLight : sub.periodColorLighter;
+              const hoverBgColor = sub.periodColorLight;
+              
               return (
                 <div
-                  key={`col-bg-${idx}`}
-                  className="absolute top-0 bottom-0 transition-all duration-200"
+                  key={`col-${idx}`}
+                  className="absolute top-0 transition-all duration-200 cursor-pointer"
                   style={{
                     left: `${leftPct}%`,
                     width: `${widthPct}%`,
-                    background: isHovered 
-                      ? `${sub.periodColor}25`
-                      : idx % 2 === 0 ? `${sub.periodColor}10` : 'transparent',
+                    height: '100%',
+                    background: isHovered ? hoverBgColor : bgColor,
+                    borderRight: '1px solid rgba(255,255,255,0.06)',
                   }}
+                  onMouseEnter={(e) => {
+                    setHoveredCol(sub.fullName);
+                    handleMouseMove(e, (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground">{sub.fullName}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{sub.start} - {sub.end} MYA</p>
+                      </div>
+                    ));
+                  }}
+                  onMouseMove={(e) => handleMouseMove(e, (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">{sub.fullName}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{sub.start} - {sub.end} MYA</p>
+                    </div>
+                  ))}
+                  onMouseLeave={handleMouseLeave}
                 />
               );
             })}
 
-            {/* Dinosaur Rows */}
+            {/* Horizontal row lines for ALL rows */}
+            {Array.from({ length: TOTAL_ROWS }).map((_, rowIdx) => (
+              <div
+                key={`row-line-${rowIdx}`}
+                className="absolute left-0 right-0"
+                style={{
+                  top: rowIdx * ROW_HEIGHT,
+                  height: ROW_HEIGHT,
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
+                }}
+              />
+            ))}
+
+            {/* Dinosaur bars overlaid on rows */}
             {relevantDinos.map((dino, dinoIdx) => {
               const dinoColor = COLORS[dinoIdx % COLORS.length];
               const isRowHovered = hoveredDino === dino.id;
@@ -339,28 +364,28 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
               return (
                 <div
                   key={dino.id}
-                  className="absolute left-0 right-0 flex items-center transition-all duration-200"
+                  className="absolute left-0 right-0 flex items-center pointer-events-none"
                   style={{
                     top: topOffset,
                     height: ROW_HEIGHT,
-                    background: isRowHovered ? 'rgba(255,255,255,0.03)' : 'transparent',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    background: isRowHovered ? 'rgba(255,255,255,0.02)' : 'transparent',
+                    zIndex: 10,
                   }}
                 >
                   {/* Dinosaur lifespan bar */}
                   <div
-                    className="dino-bar absolute rounded-full cursor-pointer"
+                    className="dino-bar absolute rounded-full cursor-pointer pointer-events-auto"
                     style={{
                       left: `${barLeftPct}%`,
                       width: `${Math.max(barWidthPct, 0.5)}%`,
-                      height: 18,
+                      height: 16,
                       top: '50%',
                       transform: 'translateY(-50%)',
                       background: `linear-gradient(90deg, ${dinoColor} 0%, ${dinoColor}bb 60%, ${dinoColor}80 100%)`,
                       boxShadow: isRowHovered 
-                        ? `0 0 16px ${dinoColor}70, 0 2px 8px ${dinoColor}50`
-                        : `0 2px 6px ${dinoColor}30`,
-                      zIndex: 10,
+                        ? `0 0 14px ${dinoColor}70, 0 2px 6px ${dinoColor}50`
+                        : `0 2px 4px ${dinoColor}25`,
+                      zIndex: 20,
                     }}
                     onMouseEnter={(e) => {
                       setHoveredDino(dino.id);
@@ -383,18 +408,18 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
                   >
                     {/* Start marker */}
                     <div 
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
                       style={{ 
                         backgroundColor: dinoColor,
-                        boxShadow: isRowHovered ? `0 0 8px ${dinoColor}` : 'none',
+                        boxShadow: isRowHovered ? `0 0 6px ${dinoColor}` : 'none',
                       }}
                     />
                     
                     {/* Name label inside bar */}
                     {barWidthPct > 6 && (
                       <span 
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-white whitespace-nowrap"
-                        style={{ textShadow: `0 1px 3px rgba(0,0,0,0.8)` }}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[9px] font-semibold text-white whitespace-nowrap"
+                        style={{ textShadow: `0 1px 2px rgba(0,0,0,0.8)` }}
                       >
                         {dino.name}
                       </span>
@@ -404,14 +429,16 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
               );
             })}
 
-            {/* K-Pg Extinction marker */}
+            {/* K-Pg Extinction marker - full height */}
             <div 
-              className="absolute top-0 bottom-0 cursor-pointer"
+              className="absolute top-0 cursor-pointer"
               style={{
                 right: 0,
                 width: 3,
-                background: 'linear-gradient(180deg, hsl(0, 70%, 55%) 0%, hsl(0, 70%, 40%) 100%)',
-                boxShadow: '0 0 15px hsl(0, 70%, 50%, 0.7)',
+                height: '100%',
+                background: 'linear-gradient(180deg, hsl(0, 70%, 55%) 0%, hsl(0, 70%, 35%) 100%)',
+                boxShadow: '0 0 12px hsl(0, 70%, 50%, 0.6)',
+                zIndex: 30,
               }}
               onMouseEnter={(e) => handleMouseMove(e, (
                 <div>
@@ -424,14 +451,15 @@ export default function InteractiveTimeline({ dinosaurs }: Props) {
             
             {/* Extinction pulse */}
             <div 
-              className="absolute w-2.5 h-2.5 rounded-full"
+              className="absolute w-2 h-2 rounded-full"
               style={{
-                right: -1,
+                right: -0.5,
                 top: '50%',
                 transform: 'translateY(-50%)',
                 backgroundColor: 'hsl(0, 70%, 55%)',
-                boxShadow: '0 0 10px hsl(0, 70%, 55%)',
+                boxShadow: '0 0 8px hsl(0, 70%, 55%)',
                 animation: 'pulse 2s ease-in-out infinite',
+                zIndex: 31,
               }}
             />
           </div>
