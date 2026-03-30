@@ -300,8 +300,8 @@ function EcologicalRadar({ dinosaurs }: { dinosaurs: Dinosaur[] }) {
   const cx = 180, cy = 180, maxR = 130;
   const numAxes = ECOLOGICAL_STATS.length;
 
-  // Cool-toned colors for ecological chart
-  const ECOLOGICAL_COLORS = ['hsl(180, 60%, 50%)', 'hsl(160, 50%, 45%)', 'hsl(200, 55%, 55%)', 'hsl(140, 45%, 50%)'];
+  // Distinct blue-themed colors for ecological chart (more contrast for visibility)
+  const ECOLOGICAL_COLORS = ['hsl(210, 100%, 60%)', 'hsl(280, 70%, 65%)', 'hsl(180, 80%, 50%)', 'hsl(240, 80%, 70%)'];
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
