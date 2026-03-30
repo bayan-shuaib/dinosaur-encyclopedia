@@ -237,31 +237,31 @@ function CombatRadar({ dinosaurs }: { dinosaurs: Dinosaur[] }) {
   }, [dinosaurs]);
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-full">
+    <div className="relative flex flex-col items-center justify-center w-full h-full">
       <canvas
         ref={canvasRef}
         width={360}
         height={360}
         className="mx-auto block cursor-crosshair"
-        style={{ width: 280, height: 280 }}
+        style={{ width: 220, height: 220 }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       />
       {/* Tooltip */}
       {hoveredAxis !== null && mousePos && (
         <div
-          className="absolute pointer-events-none z-10 px-3 py-2 rounded-lg bg-card/95 border border-border shadow-lg backdrop-blur-sm"
+          className="absolute pointer-events-none z-10 px-2 py-1.5 rounded-lg bg-card/95 border border-border shadow-lg backdrop-blur-sm"
           style={{
-            left: Math.min(mousePos.x + 10, 200),
-            top: mousePos.y - 40,
-            maxWidth: 180,
+            left: Math.min(mousePos.x + 10, 160),
+            top: mousePos.y - 35,
+            maxWidth: 160,
           }}
         >
-          <p className="text-xs font-semibold text-foreground">{COMBAT_STATS[hoveredAxis]}</p>
-          <div className="mt-1 space-y-0.5">
+          <p className="text-[10px] font-semibold text-foreground">{COMBAT_STATS[hoveredAxis]}</p>
+          <div className="mt-0.5 space-y-0.5">
             {dinosaurs.map((d, i) => (
-              <div key={d.id} className="flex items-center gap-2 text-[10px]">
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i] }} />
+              <div key={d.id} className="flex items-center gap-1.5 text-[9px]">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: COLORS[i] }} />
                 <span className="text-muted-foreground">{d.name}:</span>
                 <span className="font-medium text-foreground">{d.combatStats[COMBAT_STAT_KEYS[COMBAT_STATS[hoveredAxis]]]}/10</span>
               </div>
@@ -270,20 +270,20 @@ function CombatRadar({ dinosaurs }: { dinosaurs: Dinosaur[] }) {
         </div>
       )}
       {/* Legend */}
-      <div className="flex items-center gap-4 mt-3 flex-wrap justify-center">
+      <div className="flex items-center gap-3 mt-2 flex-wrap justify-center">
         {dinosaurs.map((d, i) => (
-          <div key={d.id} className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i] }} />
-            <span className="text-xs text-muted-foreground">{d.name}</span>
+          <div key={d.id} className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i] }} />
+            <span className="text-[10px] text-muted-foreground">{d.name}</span>
           </div>
         ))}
       </div>
       {/* Overall winner */}
-      <div className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border">
-        <Trophy className="h-4 w-4" style={{ color: winner.color }} />
-        <span className="text-xs text-muted-foreground">Overall Winner:</span>
-        <span className="text-sm font-semibold" style={{ color: winner.color }}>{winner.name}</span>
-        <span className="text-xs text-muted-foreground/60">({winner.total}/60)</span>
+      <div className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary/50 border border-border">
+        <Trophy className="h-3 w-3" style={{ color: winner.color }} />
+        <span className="text-[10px] text-muted-foreground">Winner:</span>
+        <span className="text-xs font-semibold" style={{ color: winner.color }}>{winner.name}</span>
+        <span className="text-[9px] text-muted-foreground/60">({winner.total}/60)</span>
       </div>
     </div>
   );
@@ -521,9 +521,9 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
       {/* ROW 1: Combat Analysis (40%) + Geological Timeline (60%) */}
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6 mb-6">
         {/* Combat Analysis Chart */}
-        <section className="info-panel flex items-center justify-center" style={{ minHeight: 420 }}>
-          <div className="w-full">
-            <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-4 font-medium text-center">Combat Analysis</p>
+        <section className="info-panel flex flex-col overflow-hidden" style={{ height: 380 }}>
+          <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-2 font-medium text-center flex-shrink-0">Combat Analysis</p>
+          <div className="flex-1 min-h-0 flex items-center justify-center">
             <CombatRadar dinosaurs={dinosaurs} />
           </div>
         </section>
