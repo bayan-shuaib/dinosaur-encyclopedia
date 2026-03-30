@@ -64,6 +64,15 @@ export interface CombatStats {
   size: number;        // 1-10
 }
 
+export interface EcologicalStats {
+  apexStatus: number;        // 1-10: Position in food chain
+  geographicSpread: number;  // 1-10: Distribution across regions
+  populationDensity: number; // 1-10: Abundance within habitat
+  competitionPressure: number; // 1-10: Ability to compete against rivals
+  nicheControl: number;      // 1-10: Dominance in ecological role
+  evolutionaryLongevity: number; // 1-10: How long species persisted
+}
+
 export interface Dinosaur {
   id: string;
   name: string;
@@ -86,5 +95,6 @@ export interface Dinosaur {
   skeletonData: SkeletonData;
   relatedIds: string[];
   combatStats: CombatStats;
+  ecologicalStats?: EcologicalStats;
   sketchfabUrl?: string;
 }

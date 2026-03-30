@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { Dinosaur } from '@/data/types';
 
 const COLORS = [
@@ -10,318 +10,494 @@ const COLORS = [
   'hsl(188, 58%, 56%)',
 ];
 
-const PERIODS = [
-  { name: 'Permian',    start: 299, end: 252, bg: 'hsl(30,26%,12%)',  accent: 'hsl(30,40%,38%)' },
-  { name: 'Triassic',   start: 252, end: 201, bg: 'hsl(10,26%,13%)',  accent: 'hsl(10,40%,40%)' },
-  { name: 'Jurassic',   start: 201, end: 145, bg: 'hsl(140,22%,12%)', accent: 'hsl(140,36%,36%)' },
-  { name: 'Cretaceous', start: 145, end: 66,  bg: 'hsl(210,26%,12%)', accent: 'hsl(210,40%,38%)' },
+// Geological periods with subdivisions
+const GEOLOGICAL_PERIODS = [
+  {
+    name: 'Devonian',
+    start: 419,
+    end: 359,
+    color: 'hsl(195, 45%, 32%)',
+    colorLight: 'hsl(195, 35%, 18%)',
+    colorLighter: 'hsl(195, 30%, 12%)',
+    subdivisions: [
+      { name: 'Early', start: 419, end: 393 },
+      { name: 'Middle', start: 393, end: 383 },
+      { name: 'Late', start: 383, end: 359 },
+    ],
+  },
+  {
+    name: 'Carboniferous',
+    start: 359,
+    end: 299,
+    color: 'hsl(145, 35%, 28%)',
+    colorLight: 'hsl(145, 28%, 16%)',
+    colorLighter: 'hsl(145, 22%, 10%)',
+    subdivisions: [
+      { name: 'Mississippian', start: 359, end: 323 },
+      { name: 'Pennsylvanian', start: 323, end: 299 },
+    ],
+  },
+  {
+    name: 'Permian',
+    start: 299,
+    end: 252,
+    color: 'hsl(35, 40%, 35%)',
+    colorLight: 'hsl(35, 32%, 18%)',
+    colorLighter: 'hsl(35, 25%, 12%)',
+    subdivisions: [
+      { name: 'Cisuralian', start: 299, end: 273 },
+      { name: 'Guadalupian', start: 273, end: 260 },
+      { name: 'Lopingian', start: 260, end: 252 },
+    ],
+  },
+  {
+    name: 'Triassic',
+    start: 252,
+    end: 201,
+    color: 'hsl(20, 45%, 38%)',
+    colorLight: 'hsl(20, 35%, 18%)',
+    colorLighter: 'hsl(20, 28%, 12%)',
+    subdivisions: [
+      { name: 'Early', start: 252, end: 247 },
+      { name: 'Middle', start: 247, end: 237 },
+      { name: 'Late', start: 237, end: 201 },
+    ],
+  },
+  {
+    name: 'Jurassic',
+    start: 201,
+    end: 145,
+    color: 'hsl(130, 38%, 30%)',
+    colorLight: 'hsl(130, 28%, 16%)',
+    colorLighter: 'hsl(130, 22%, 10%)',
+    subdivisions: [
+      { name: 'Early', start: 201, end: 174 },
+      { name: 'Middle', start: 174, end: 164 },
+      { name: 'Late', start: 164, end: 145 },
+    ],
+  },
+  {
+    name: 'Cretaceous',
+    start: 145,
+    end: 66,
+    color: 'hsl(45, 42%, 38%)',
+    colorLight: 'hsl(45, 32%, 18%)',
+    colorLighter: 'hsl(45, 25%, 12%)',
+    subdivisions: [
+      { name: 'Early', start: 145, end: 100 },
+      { name: 'Late', start: 100, end: 66 },
+    ],
+  },
 ];
 
-const TOTAL_START = 299;
-const TOTAL_END   = 62;
-const TOTAL_SPAN  = TOTAL_START - TOTAL_END;
-const TICK_MARKS  = [299, 270, 240, 210, 180, 150, 120, 90, 66];
+const TOTAL_START = 419;
+const TOTAL_END = 66;
+const TOTAL_SPAN = TOTAL_START - TOTAL_END;
 
-function pct(mya: number) {
-  return ((TOTAL_START - mya) / TOTAL_SPAN) * 100;
-}
+// Flatten all subdivisions for column generation
+const ALL_SUBDIVISIONS = GEOLOGICAL_PERIODS.flatMap(period => 
+  period.subdivisions.map((sub, subIdx) => ({
+    ...sub,
+    periodName: period.name,
+    periodColor: period.color,
+    periodColorLight: period.colorLight,
+    periodColorLighter: period.colorLighter,
+    isEven: subIdx % 2 === 0,
+    fullName: sub.name === 'Early' || sub.name === 'Middle' || sub.name === 'Late' 
+      ? `${sub.name} ${period.name}` 
+      : sub.name,
+  }))
+);
 
 interface TooltipState {
-  dino: Dinosaur;
-  color: string;
-  side: 'left' | 'right' | 'center';
-  barLeftPct: number;
+  content: React.ReactNode;
+  x: number;
+  y: number;
 }
 
-interface Props { dinosaurs: Dinosaur[] }
+interface Props {
+  dinosaurs: Dinosaur[];
+}
 
 export default function InteractiveTimeline({ dinosaurs }: Props) {
+  const [hoveredCol, setHoveredCol] = useState<string | null>(null);
+  const [hoveredDino, setHoveredDino] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleEnter = useCallback((
-    e: React.MouseEvent<HTMLDivElement>,
-    dino: Dinosaur,
-    color: string,
-    barLeftPct: number,
-  ) => {
-    const scroll = scrollRef.current;
-    if (!scroll) {
-      setTooltip({ dino, color, side: 'center', barLeftPct });
-      return;
-    }
-    const rect = e.currentTarget.getBoundingClientRect();
-    const containerRect = scroll.getBoundingClientRect();
-    const relLeft = rect.left - containerRect.left;
-    const relRight = containerRect.right - rect.left;
-    const EDGE = 160;
-    let side: 'left' | 'right' | 'center' = 'center';
-    if (relLeft < EDGE) side = 'right';
-    else if (relRight < EDGE) side = 'left';
-    setTooltip({ dino, color, side, barLeftPct });
-  }, []);
+  // Calculate percentage position from MYA
+  const myaToPercent = (mya: number) => ((TOTAL_START - mya) / TOTAL_SPAN) * 100;
+
+  const handleMouseMove = (e: React.MouseEvent, content: React.ReactNode) => {
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    setTooltip({
+      content,
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip(null);
+    setHoveredCol(null);
+    setHoveredDino(null);
+  };
+
+  // Get relevant dinosaurs
+  const relevantDinos = useMemo(() => {
+    return dinosaurs.filter(d => 
+      d.periodRange.start <= TOTAL_START && d.periodRange.end >= TOTAL_END
+    );
+  }, [dinosaurs]);
+
+  const TIMELINE_WIDTH = 1600;
+  const ROW_HEIGHT = 28;
+  const HEADER_HEIGHT = 44;
+  const SUBHEADER_HEIGHT = 24;
+  const TOTAL_ROWS = 8; // Fixed number of rows to fill the grid area
 
   return (
-    <div className="select-none">
+    <div className="select-none h-full flex flex-col relative" ref={containerRef}>
       <style>{`
-        .tl-outer::-webkit-scrollbar { display: none; }
-        @keyframes tlFadeIn {
-          from { opacity: 0; transform: translateY(4px); }
-          to   { opacity: 1; transform: translateY(0);   }
+        .timeline-scroll::-webkit-scrollbar {
+          height: 6px;
+        }
+        .timeline-scroll::-webkit-scrollbar-track {
+          background: hsl(0, 0%, 8%);
+          border-radius: 3px;
+        }
+        .timeline-scroll::-webkit-scrollbar-thumb {
+          background: linear-gradient(90deg, hsl(35, 40%, 30%), hsl(145, 35%, 30%));
+          border-radius: 3px;
+        }
+        .timeline-scroll::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(90deg, hsl(35, 45%, 40%), hsl(145, 40%, 40%));
+        }
+        .dino-bar {
+          transition: all 0.2s ease;
+        }
+        .dino-bar:hover {
+          filter: brightness(1.3);
+          transform: scaleY(1.15);
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
         }
       `}</style>
 
-      <div
-        ref={scrollRef}
-        className="tl-outer"
-        style={{
-          overflowX: 'auto',
-          overflowY: 'visible',
-          scrollbarWidth: 'none',
-          WebkitOverflowScrolling: 'touch',
-        }}
+      {/* Scrollable Timeline */}
+      <div 
+        className="timeline-scroll flex-1 overflow-x-auto overflow-y-hidden"
+        style={{ minHeight: 0 }}
       >
-        <div style={{ minWidth: 560, paddingBottom: 6, paddingTop: 4, position: 'relative' }}>
-
-          {/* Period labels row */}
-          <div style={{ display: 'flex', marginBottom: 4 }}>
-            {PERIODS.map(p => {
-              const w = ((p.start - p.end) / TOTAL_SPAN) * 100;
+        <div 
+          className="relative"
+          style={{ 
+            width: TIMELINE_WIDTH,
+            height: HEADER_HEIGHT + SUBHEADER_HEIGHT + (TOTAL_ROWS * ROW_HEIGHT),
+            background: 'hsl(220, 15%, 5%)',
+          }}
+        >
+          {/* === HEADER ROW: Major Periods === */}
+          <div className="absolute top-0 left-0 right-0 flex" style={{ height: HEADER_HEIGHT }}>
+            {GEOLOGICAL_PERIODS.map((period) => {
+              const leftPct = myaToPercent(period.start);
+              const widthPct = myaToPercent(period.end) - leftPct;
+              
               return (
-                <div key={p.name} style={{ width: `${w}%`, flexShrink: 0, display: 'flex', justifyContent: 'center' }}>
-                  <span style={{
-                    fontSize: 8.5,
-                    fontWeight: 700,
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: p.accent,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    maxWidth: '100%',
-                    padding: '0 4px',
-                  }}>
-                    {p.name}
+                <div
+                  key={period.name}
+                  className="absolute top-0 flex items-center justify-center cursor-pointer transition-all duration-200"
+                  style={{
+                    left: `${leftPct}%`,
+                    width: `${widthPct}%`,
+                    height: HEADER_HEIGHT,
+                    background: period.color,
+                    borderRight: '1px solid rgba(255,255,255,0.15)',
+                    borderBottom: '2px solid rgba(0,0,0,0.4)',
+                  }}
+                  onMouseEnter={(e) => handleMouseMove(e, (
+                    <div>
+                      <p className="text-sm font-bold text-foreground">{period.name} Period</p>
+                      <p className="text-xs text-muted-foreground mt-1">{period.start} - {period.end} MYA</p>
+                    </div>
+                  ))}
+                  onMouseMove={(e) => handleMouseMove(e, (
+                    <div>
+                      <p className="text-sm font-bold text-foreground">{period.name} Period</p>
+                      <p className="text-xs text-muted-foreground mt-1">{period.start} - {period.end} MYA</p>
+                    </div>
+                  ))}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <span className="text-xs font-bold uppercase tracking-[0.15em] text-white/90 drop-shadow">
+                    {period.name}
                   </span>
                 </div>
               );
             })}
           </div>
 
-          {/* Period segments bar */}
-          <div style={{ display: 'flex', height: 32, borderRadius: 6, overflow: 'hidden', border: '1px solid hsl(0,0%,13%)', position: 'relative' }}>
-            {PERIODS.map((p, pi) => {
-              const w = ((p.start - p.end) / TOTAL_SPAN) * 100;
+          {/* === SUBHEADER ROW: Subdivisions === */}
+          <div 
+            className="absolute left-0 right-0 flex" 
+            style={{ top: HEADER_HEIGHT, height: SUBHEADER_HEIGHT }}
+          >
+            {ALL_SUBDIVISIONS.map((sub, idx) => {
+              const leftPct = myaToPercent(sub.start);
+              const widthPct = myaToPercent(sub.end) - leftPct;
+              const isHovered = hoveredCol === sub.fullName;
+              
               return (
                 <div
-                  key={p.name}
+                  key={`sub-${idx}`}
+                  className="absolute top-0 flex items-center justify-center cursor-pointer transition-all duration-200"
                   style={{
-                    width: `${w}%`,
-                    flexShrink: 0,
-                    background: p.bg,
-                    borderRight: pi < PERIODS.length - 1 ? '1px solid hsl(0,0%,10%)' : 'none',
-                    position: 'relative',
+                    left: `${leftPct}%`,
+                    width: `${widthPct}%`,
+                    height: SUBHEADER_HEIGHT,
+                    background: isHovered ? sub.periodColor : sub.periodColorLight,
+                    borderRight: '1px solid rgba(255,255,255,0.1)',
+                    borderBottom: '1px solid rgba(0,0,0,0.5)',
                   }}
+                  onMouseEnter={(e) => {
+                    setHoveredCol(sub.fullName);
+                    handleMouseMove(e, (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground">{sub.fullName}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{sub.start} - {sub.end} MYA</p>
+                      </div>
+                    ));
+                  }}
+                  onMouseMove={(e) => handleMouseMove(e, (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">{sub.fullName}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{sub.start} - {sub.end} MYA</p>
+                    </div>
+                  ))}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <span className="text-[9px] font-medium text-white/80 truncate px-1">
+                    {sub.name}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* === GRID AREA: Full-height columns + Rows === */}
+          <div 
+            className="absolute left-0 right-0"
+            style={{ 
+              top: HEADER_HEIGHT + SUBHEADER_HEIGHT,
+              height: TOTAL_ROWS * ROW_HEIGHT,
+            }}
+          >
+            {/* Full-height subdivision columns with period-based gradient coloring */}
+            {ALL_SUBDIVISIONS.map((sub, idx) => {
+              const leftPct = myaToPercent(sub.start);
+              const widthPct = myaToPercent(sub.end) - leftPct;
+              const isHovered = hoveredCol === sub.fullName;
+              
+              // Alternating light gradient based on parent period color
+              const bgColor = sub.isEven ? sub.periodColorLight : sub.periodColorLighter;
+              const hoverBgColor = sub.periodColorLight;
+              
+              return (
+                <div
+                  key={`col-${idx}`}
+                  className="absolute top-0 transition-all duration-200 cursor-pointer"
+                  style={{
+                    left: `${leftPct}%`,
+                    width: `${widthPct}%`,
+                    height: '100%',
+                    background: isHovered ? hoverBgColor : bgColor,
+                    borderRight: '1px solid rgba(255,255,255,0.06)',
+                  }}
+                  onMouseEnter={(e) => {
+                    setHoveredCol(sub.fullName);
+                    handleMouseMove(e, (
+                      <div>
+                        <p className="text-xs font-semibold text-foreground">{sub.fullName}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{sub.start} - {sub.end} MYA</p>
+                      </div>
+                    ));
+                  }}
+                  onMouseMove={(e) => handleMouseMove(e, (
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">{sub.fullName}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{sub.start} - {sub.end} MYA</p>
+                    </div>
+                  ))}
+                  onMouseLeave={handleMouseLeave}
                 />
               );
             })}
 
-            {/* K-Pg extinction marker */}
-            <div style={{
-              position: 'absolute',
-              left: `${pct(66)}%`,
-              top: 0,
-              bottom: 0,
-              width: 2,
-              background: 'hsl(0,78%,58%)',
-              boxShadow: '0 0 8px hsl(0,78%,58%), 0 0 3px hsl(0,78%,58%)',
-              opacity: 0.8,
-              zIndex: 5,
-            }} />
-            <span style={{
-              position: 'absolute',
-              left: `calc(${pct(66)}% + 4px)`,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 7,
-              fontWeight: 800,
-              letterSpacing: '0.1em',
-              color: 'hsl(0,72%,70%)',
-              zIndex: 5,
-              pointerEvents: 'none',
-              whiteSpace: 'nowrap',
-            }}>K-Pg</span>
-          </div>
+            {/* Horizontal row lines for ALL rows */}
+            {Array.from({ length: TOTAL_ROWS }).map((_, rowIdx) => (
+              <div
+                key={`row-line-${rowIdx}`}
+                className="absolute left-0 right-0"
+                style={{
+                  top: rowIdx * ROW_HEIGHT,
+                  height: ROW_HEIGHT,
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
+                }}
+              />
+            ))}
 
-          {/* Dinosaur range rows */}
-          <div style={{ position: 'relative', marginTop: 10, paddingBottom: 4 }}>
-            {dinosaurs.map((d, i) => {
-              const leftPct  = pct(d.periodRange.start);
-              const rightPct = pct(d.periodRange.end);
-              const widthPct = Math.max(rightPct - leftPct, 1.2);
-              const color    = COLORS[i % COLORS.length];
-              const isHov    = tooltip?.dino.id === d.id;
+            {/* Dinosaur bars overlaid on rows */}
+            {relevantDinos.map((dino, dinoIdx) => {
+              const dinoColor = COLORS[dinoIdx % COLORS.length];
+              const isRowHovered = hoveredDino === dino.id;
+              const topOffset = dinoIdx * ROW_HEIGHT;
+              
+              // Calculate bar position
+              const barLeftPct = myaToPercent(Math.min(dino.periodRange.start, TOTAL_START));
+              const barRightPct = myaToPercent(Math.max(dino.periodRange.end, TOTAL_END));
+              const barWidthPct = barRightPct - barLeftPct;
 
               return (
                 <div
-                  key={d.id}
-                  style={{ position: 'relative', height: 26, marginBottom: 2 }}
+                  key={dino.id}
+                  className="absolute left-0 right-0 flex items-center pointer-events-none"
+                  style={{
+                    top: topOffset,
+                    height: ROW_HEIGHT,
+                    background: isRowHovered ? 'rgba(255,255,255,0.02)' : 'transparent',
+                    zIndex: 10,
+                  }}
                 >
-                  {/* Track guide */}
-                  <div style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    top: '50%',
-                    height: 1,
-                    background: 'hsl(0,0%,10%)',
-                    transform: 'translateY(-50%)',
-                  }} />
-
-                  {/* Dino bar trigger area */}
+                  {/* Dinosaur lifespan bar */}
                   <div
+                    className="dino-bar absolute rounded-full cursor-pointer pointer-events-auto"
                     style={{
-                      position: 'absolute',
-                      left: `${leftPct}%`,
-                      width: `${widthPct}%`,
+                      left: `${barLeftPct}%`,
+                      width: `${Math.max(barWidthPct, 0.5)}%`,
+                      height: 16,
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      height: 12,
-                      cursor: 'pointer',
-                      zIndex: isHov ? 20 : 5,
+                      background: `linear-gradient(90deg, ${dinoColor} 0%, ${dinoColor}bb 60%, ${dinoColor}80 100%)`,
+                      boxShadow: isRowHovered 
+                        ? `0 0 14px ${dinoColor}70, 0 2px 6px ${dinoColor}50`
+                        : `0 2px 4px ${dinoColor}25`,
+                      zIndex: 20,
                     }}
-                    onMouseEnter={e => handleEnter(e, d, color, leftPct)}
-                    onMouseLeave={() => setTooltip(null)}
-                  >
-                    {/* Range pill */}
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: 999,
-                      background: `linear-gradient(to right, ${color}cc, ${color}44)`,
-                      boxShadow: isHov ? `0 0 12px ${color}88` : 'none',
-                      transition: 'box-shadow 0.2s ease',
-                    }} />
-
-                    {/* Start dot */}
-                    <div style={{
-                      position: 'absolute',
-                      left: 0,
-                      top: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: isHov ? 12 : 9,
-                      height: isHov ? 12 : 9,
-                      borderRadius: '50%',
-                      background: color,
-                      boxShadow: isHov ? `0 0 12px ${color}` : `0 0 6px ${color}88`,
-                      transition: 'all 0.18s ease',
-                      zIndex: 6,
-                    }} />
-
-                    {/* Dino name label inside bar (only if wide enough) */}
-                    {widthPct > 8 && (
-                      <span style={{
-                        position: 'absolute',
-                        left: 8,
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        fontSize: 8,
-                        fontWeight: 600,
-                        color: 'rgba(255,255,255,0.7)',
-                        whiteSpace: 'nowrap',
-                        pointerEvents: 'none',
-                        letterSpacing: '0.04em',
-                      }}>
-                        {d.name}
-                      </span>
-                    )}
-
-                    {/* Tooltip */}
-                    {isHov && tooltip && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          bottom: 'calc(100% + 10px)',
-                          ...(tooltip.side === 'right'
-                            ? { left: 0 }
-                            : tooltip.side === 'left'
-                            ? { right: 0 }
-                            : { left: '50%', transform: 'translateX(-50%)' }),
-                          zIndex: 200,
-                          pointerEvents: 'none',
-                          animation: 'tlFadeIn 0.15s ease-out forwards',
-                        }}
-                      >
-                        <div style={{
-                          background: 'rgba(7,9,13,0.95)',
-                          backdropFilter: 'blur(14px)',
-                          WebkitBackdropFilter: 'blur(14px)',
-                          border: `1px solid ${color}44`,
-                          borderRadius: 8,
-                          padding: '8px 12px',
-                          boxShadow: `0 8px 24px rgba(0,0,0,0.6), 0 0 12px ${color}18`,
-                          maxWidth: 200,
-                          width: 'max-content',
-                          whiteSpace: 'normal',
-                          wordBreak: 'break-word',
-                          overflowWrap: 'break-word',
-                        }}>
-                          <p style={{ fontSize: 11, fontWeight: 700, color: '#fff', marginBottom: 3, lineHeight: 1.35 }}>
-                            {d.name}
-                          </p>
-                          <p style={{ fontSize: 9.5, color, marginBottom: 2, lineHeight: 1.4 }}>
-                            {d.period}
-                          </p>
-                          <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', lineHeight: 1.4 }}>
-                            {d.periodRange.start}–{d.periodRange.end} MYA
-                          </p>
+                    onMouseEnter={(e) => {
+                      setHoveredDino(dino.id);
+                      handleMouseMove(e, (
+                        <div>
+                          <p className="text-sm font-bold" style={{ color: dinoColor }}>{dino.name}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">{dino.periodRange.start} - {dino.periodRange.end} MYA</p>
+                          <p className="text-[10px] text-foreground/70 mt-1">{dino.period}</p>
                         </div>
+                      ));
+                    }}
+                    onMouseMove={(e) => handleMouseMove(e, (
+                      <div>
+                        <p className="text-sm font-bold" style={{ color: dinoColor }}>{dino.name}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{dino.periodRange.start} - {dino.periodRange.end} MYA</p>
+                        <p className="text-[10px] text-foreground/70 mt-1">{dino.period}</p>
                       </div>
+                    ))}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    {/* Start marker */}
+                    <div 
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
+                      style={{ 
+                        backgroundColor: dinoColor,
+                        boxShadow: isRowHovered ? `0 0 6px ${dinoColor}` : 'none',
+                      }}
+                    />
+                    
+                    {/* Name label inside bar */}
+                    {barWidthPct > 6 && (
+                      <span 
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[9px] font-semibold text-white whitespace-nowrap"
+                        style={{ textShadow: `0 1px 2px rgba(0,0,0,0.8)` }}
+                      >
+                        {dino.name}
+                      </span>
                     )}
                   </div>
                 </div>
               );
             })}
-          </div>
 
-          {/* MYA tick scale */}
-          <div style={{ position: 'relative', height: 22, marginTop: 4 }}>
-            {TICK_MARKS.map(mya => {
-              const left = pct(mya);
-              if (left < 0 || left > 100) return null;
-              return (
-                <div
-                  key={mya}
-                  style={{
-                    position: 'absolute',
-                    left: `${left}%`,
-                    top: 0,
-                    transform: 'translateX(-50%)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 2,
-                  }}
-                >
-                  <div style={{ width: 1, height: 5, background: 'hsl(0,0%,24%)' }} />
-                  <span style={{ fontSize: 7.5, color: 'hsl(0,0%,40%)', whiteSpace: 'nowrap' }}>
-                    {mya}
-                  </span>
+            {/* K-Pg Extinction marker - full height */}
+            <div 
+              className="absolute top-0 cursor-pointer"
+              style={{
+                right: 0,
+                width: 3,
+                height: '100%',
+                background: 'linear-gradient(180deg, hsl(0, 70%, 55%) 0%, hsl(0, 70%, 35%) 100%)',
+                boxShadow: '0 0 12px hsl(0, 70%, 50%, 0.6)',
+                zIndex: 30,
+              }}
+              onMouseEnter={(e) => handleMouseMove(e, (
+                <div>
+                  <p className="text-sm font-bold text-red-400">K-Pg Extinction</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">66 Million Years Ago</p>
                 </div>
-              );
-            })}
-            <span style={{
-              position: 'absolute',
-              right: 0,
-              bottom: 0,
-              fontSize: 7,
-              color: 'hsl(0,0%,32%)',
-              whiteSpace: 'nowrap',
-            }}>
-              MYA
-            </span>
+              ))}
+              onMouseLeave={handleMouseLeave}
+            />
+            
+            {/* Extinction pulse */}
+            <div 
+              className="absolute w-2 h-2 rounded-full"
+              style={{
+                right: -0.5,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                backgroundColor: 'hsl(0, 70%, 55%)',
+                boxShadow: '0 0 8px hsl(0, 70%, 55%)',
+                animation: 'pulse 2s ease-in-out infinite',
+                zIndex: 31,
+              }}
+            />
           </div>
 
+          {/* Tooltip */}
+          {tooltip && (
+            <div
+              className="absolute pointer-events-none z-50 px-3 py-2 rounded-lg bg-card/95 border border-border shadow-xl backdrop-blur-sm"
+              style={{
+                left: Math.min(tooltip.x + 12, TIMELINE_WIDTH - 160),
+                top: Math.max(tooltip.y - 50, 10),
+                maxWidth: 180,
+              }}
+            >
+              {tooltip.content}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div className="flex-shrink-0 pt-2 mt-1 border-t border-border/20">
+        <div className="flex flex-wrap gap-3 justify-center">
+          {relevantDinos.map((dino, i) => (
+            <div 
+              key={dino.id} 
+              className="flex items-center gap-1.5 cursor-pointer transition-opacity duration-200"
+              style={{ opacity: hoveredDino === dino.id ? 1 : 0.7 }}
+              onMouseEnter={() => setHoveredDino(dino.id)}
+              onMouseLeave={() => setHoveredDino(null)}
+            >
+              <span 
+                className="w-2.5 h-2.5 rounded-full" 
+                style={{ backgroundColor: COLORS[i % COLORS.length] }} 
+              />
+              <span className="text-[10px] text-muted-foreground">{dino.name}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
