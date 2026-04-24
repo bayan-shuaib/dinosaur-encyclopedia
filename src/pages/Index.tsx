@@ -3,21 +3,19 @@ import { dinosaurs } from '@/data/dinosaurs';
 import { DinosaurGridCard, DinosaurListCard } from '@/components/DinosaurCard';
 import { ChevronDown, LayoutGrid, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Period, DinosaurGroup } from '@/data/types';
+import { Period } from '@/data/types';
 import { AnimatePresence, motion } from 'framer-motion';
+import { getTaxonomyType } from '@/lib/taxonomy';
 
 const periodOrder: Period[] = ['Permian', 'Triassic', 'Jurassic', 'Cretaceous'];
 
-type TabKey = 'dinosaurs' | 'pterosaurs' | 'archosaurs';
+type TabKey = 'dinosaurs' | 'pterosaurs' | 'marine_reptiles';
 
 const tabs: { key: TabKey; label: string }[] = [
   { key: 'dinosaurs', label: 'Dinosaurs' },
   { key: 'pterosaurs', label: 'Pterosaurs' },
-  { key: 'archosaurs', label: 'Archosaurs' },
+  { key: 'marine_reptiles', label: 'Marine Reptiles' },
 ];
-
-const pterosaurGroups: DinosaurGroup[] = ['Pterosaurs'];
-const archosaurGroups: DinosaurGroup[] = ['Phytosaurs', 'Rauisuchians', 'Crocodylomorphs'];
 
 const Index = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -27,13 +25,12 @@ const Index = () => {
 
   const filteredDinos = useMemo(() => {
     if (activeTab === 'pterosaurs') {
-      return dinosaurs.filter(d => pterosaurGroups.includes(d.group));
+      return dinosaurs.filter(d => getTaxonomyType(d) === 'pterosaur');
     }
-    if (activeTab === 'archosaurs') {
-      return dinosaurs.filter(d => archosaurGroups.includes(d.group));
+    if (activeTab === 'marine_reptiles') {
+      return dinosaurs.filter(d => getTaxonomyType(d) === 'marine_reptile');
     }
-    // Dinosaurs: exclude pterosaurs and archosaurs
-    return dinosaurs.filter(d => !pterosaurGroups.includes(d.group) && !archosaurGroups.includes(d.group));
+    return dinosaurs.filter(d => getTaxonomyType(d) === 'dinosaur');
   }, [activeTab]);
 
   const grouped = useMemo(() => {

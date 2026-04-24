@@ -97,4 +97,10 @@ export interface Dinosaur {
   combatStats: CombatStats;
   ecologicalStats?: EcologicalStats;
   sketchfabUrl?: string;
+  // Taxonomy-aware optional attributes
+  wingspan?: number;        // meters — pterosaurs primary metric
+  bodyDepth?: number;       // meters — marine reptiles (replaces height)
+  flipperSpan?: number;     // meters — marine reptiles, optional
+  tailFinType?: string;     // marine reptiles, optional descriptor
+  swimmingStyle?: string;   // marine reptiles, optional descriptor
 }

@@ -1,37 +1,79 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Dinosaur } from '@/data/types';
-import { Trophy, Ruler, Weight as WeightIcon } from 'lucide-react';
+import { Trophy, Ruler, Weight as WeightIcon, Wind } from 'lucide-react';
 import { COLORS } from '@/pages/ComparePage';
+import { getTaxonomyType, getTaxonomyLabel, formatWeight } from '@/lib/taxonomy';
 
 interface Props {
   dinosaurs: Dinosaur[];
 }
 
+const wingspanOf = (d: Dinosaur) => d.wingspan ?? d.length;
+const depthOf    = (d: Dinosaur) => d.bodyDepth ?? d.height;
+
 export default function FieldReport({ dinosaurs }: Props) {
-  const largest = useMemo(() => dinosaurs.reduce((a, b) => a.length > b.length ? a : b), [dinosaurs]);
+  const types = dinosaurs.map(getTaxonomyType);
+  const hasPterosaur     = types.includes('pterosaur');
+  const hasMarineReptile = types.includes('marine_reptile');
+  const hasDinosaur      = types.includes('dinosaur');
+
+  const largest  = useMemo(() => dinosaurs.reduce((a, b) => a.length > b.length ? a : b), [dinosaurs]);
   const heaviest = useMemo(() => dinosaurs.reduce((a, b) => a.weight > b.weight ? a : b), [dinosaurs]);
-  const tallest = useMemo(() => dinosaurs.reduce((a, b) => a.height > b.height ? a : b), [dinosaurs]);
+  const tallest  = useMemo(() => dinosaurs.reduce((a, b) => a.height > b.height ? a : b), [dinosaurs]);
+  const widestWing = useMemo(() => {
+    const pteros = dinosaurs.filter(d => getTaxonomyType(d) === 'pterosaur');
+    if (pteros.length === 0) return null;
+    return pteros.reduce((a, b) => wingspanOf(a) > wingspanOf(b) ? a : b);
+  }, [dinosaurs]);
 
   const awards = [
     { icon: Trophy, label: 'Longest Specimen', dino: largest, stat: `${largest.length}m` },
-    { icon: WeightIcon, label: 'Heaviest Specimen', dino: heaviest, stat: heaviest.weight >= 1000 ? `${(heaviest.weight / 1000).toFixed(1)}t` : `${heaviest.weight}kg` },
-    { icon: Ruler, label: 'Tallest Specimen', dino: tallest, stat: `${tallest.height}m` },
+    { icon: WeightIcon, label: 'Heaviest Specimen', dino: heaviest, stat: formatWeight(heaviest.weight) },
+    widestWing
+      ? { icon: Wind, label: 'Largest Wingspan', dino: widestWing, stat: `${wingspanOf(widestWing)}m` }
+      : { icon: Ruler, label: 'Tallest Specimen', dino: tallest, stat: `${tallest.height}m` },
   ];
 
-  const tableRows = [
-    { label: 'Scientific Name', fn: (d: Dinosaur) => <em className="text-foreground/60">{d.scientificName}</em> },
-    { label: 'Period', fn: (d: Dinosaur) => d.period },
-    { label: 'Diet', fn: (d: Dinosaur) => d.diet },
-    { label: 'Length', fn: (d: Dinosaur) => `${d.length} m` },
-    { label: 'Height', fn: (d: Dinosaur) => `${d.height} m` },
-    { label: 'Weight', fn: (d: Dinosaur) => d.weight >= 1000 ? `${(d.weight / 1000).toFixed(1)} t` : `${d.weight} kg` },
-    { label: 'Habitat', fn: (d: Dinosaur) => d.habitat.split('.')[0] },
-    { label: 'Discovery', fn: (d: Dinosaur) => `${d.discovery.year} — ${d.discovery.location}` },
-    { label: 'Continent', fn: (d: Dinosaur) => d.continent },
-    { label: 'Classification', fn: (d: Dinosaur) => d.classification.family },
-    { label: 'Notable Traits', fn: (d: Dinosaur) => d.distinctFeatures[0] || '—' },
-  ];
+  // Build rows dynamically based on taxonomies present
+  const tableRows = useMemo(() => {
+    const rows: { label: string; fn: (d: Dinosaur) => React.ReactNode }[] = [
+      { label: 'Scientific Name', fn: d => <em className="text-foreground/60">{d.scientificName}</em> },
+      { label: 'Taxonomy',        fn: d => getTaxonomyLabel(getTaxonomyType(d)) },
+      { label: 'Period',          fn: d => d.period },
+      { label: 'Diet',            fn: d => d.diet },
+      { label: 'Length',          fn: d => `${d.length} m` },
+    ];
+
+    if (hasPterosaur) {
+      rows.push({
+        label: 'Wingspan',
+        fn: d => getTaxonomyType(d) === 'pterosaur' ? `${wingspanOf(d)} m` : '—',
+      });
+    }
+    if (hasDinosaur) {
+      rows.push({
+        label: 'Height',
+        fn: d => getTaxonomyType(d) === 'dinosaur' ? `${d.height} m` : '—',
+      });
+    }
+    if (hasMarineReptile) {
+      rows.push({
+        label: 'Body Depth',
+        fn: d => getTaxonomyType(d) === 'marine_reptile' ? `${depthOf(d)} m` : '—',
+      });
+    }
+
+    rows.push(
+      { label: 'Weight',         fn: d => formatWeight(d.weight) },
+      { label: 'Habitat',        fn: d => d.habitat.split('.')[0] },
+      { label: 'Discovery',      fn: d => `${d.discovery.year} — ${d.discovery.location}` },
+      { label: 'Continent',      fn: d => d.continent },
+      { label: 'Classification', fn: d => d.classification.family },
+      { label: 'Notable Traits', fn: d => d.distinctFeatures[0] || '—' },
+    );
+    return rows;
+  }, [hasPterosaur, hasDinosaur, hasMarineReptile]);
 
   return (
     <div>

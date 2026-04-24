@@ -1,0 +1,211 @@
+Implement a major upgrade to the Dinosaur Encyclopedia app focusing on consistency, taxonomy-aware attributes, structured information, and a high-quality visual layout system.
+
+---
+
+🔷 TASK I — FIXES & SYSTEM IMPROVEMENTS
+
+### 1. GEOLOGICAL TIMELINE CONSISTENCY
+
+- Reuse the EXACT visual style and behavior of the "Geological Timeline Comparison" component from the Comparison tab.
+- Integrate this same timeline into each individual species page in the Encyclopedia tab.
+
+REQUIREMENTS:
+- Same horizontal scrolling behavior
+- Same layered structure (major periods + sub-periods)
+- Same color gradients and visual depth
+- Same interaction (hover highlights, tooltips, smooth transitions)
+
+- Each species page must display:
+  → a highlighted lifespan bar aligned correctly to its geological time range
+
+- This must NOT be a simplified version — reuse the component logic and styling directly.
+
+---
+
+### 2. TAXONOMY-AWARE ATTRIBUTE SYSTEM
+
+Implement dynamic attributes based on classification:
+
+---
+
+#### 🦖 DINOSAURS
+- Length
+- Height
+- Weight
+
+---
+
+#### 🦅 PTEROSAURS
+- Wingspan (PRIMARY)
+- Weight
+- Optional: Body Length (secondary)
+
+---
+
+#### 🌊 MARINE REPTILES (Replace "Archosaurs" section name)
+
+- Length (PRIMARY)
+- Weight
+- Replace height with:
+  → "Body Depth" OR remove if not meaningful
+
+Optional:
+- Flipper Span
+- Tail Fin Type
+- Swimming Style
+
+---
+
+REQUIREMENTS:
+- Rename "Archosaurs" → **"Marine Reptiles"**
+- UI must dynamically adapt attributes
+- Comparison system must respect correct metrics
+
+---
+
+🔷 TASK II — INFORMATION EXPANSION SYSTEM
+
+### 1. MODE TOGGLE
+
+Add:
+- "Life Appearance & Behavior"
+- "Anatomy & Scientific Evidence"
+
+Behavior:
+- Full content switch
+- Smooth fade transition
+- No layout shifting
+
+---
+
+### 2. SECTION STRUCTURE
+
+#### 🟢 LIFE MODE
+- Overview
+- Habitat & Distribution
+- Diet & Feeding Behavior
+- Ecological Role
+- Behavior & Lifestyle
+- Social Structure (cautious wording)
+- Reproduction (only if evidence-based)
+
+Tone:
+- Documentary style
+- Use "likely", "evidence suggests", etc.
+
+---
+
+#### 🔵 SCIENTIFIC MODE
+- Skeletal Structure
+- Muscle Reconstruction & Locomotion
+- Speed & Movement
+- Feeding Mechanics / Bite Force
+- Physical Strength & Durability
+- Intelligence
+- Fossil Evidence & Pathologies
+
+Tone:
+- Analytical, evidence-based
+
+---
+
+### 3. EXPANDABLE CONTENT SYSTEM
+
+- Default: short (2–3 lines)
+- "Read More" expands inline
+- Smooth animation
+- Can collapse back
+
+---
+
+🔷 TASK III — IMAGE PLACEMENT SYSTEM (CRITICAL)
+
+⚠️ DO NOT GENERATE ANY IMAGES  
+⚠️ DO NOT USE AI-GENERATED VISUALS  
+
+---
+
+### 1. PLACEHOLDER SYSTEM
+
+- Insert image placeholders instead of images
+- Each placeholder must include:
+  → clear label (e.g. "Habitat Image", "Skeleton Diagram")
+  → fixed aspect ratio box
+  → subtle border or styled container
+
+- Placeholders must be visually appealing even when empty
+
+---
+
+### 2. CONTEXTUAL POSITIONING
+
+- Place image placeholders NEAR relevant content sections
+- Each section may have 1–2 placeholders max
+
+Examples:
+- Habitat → environment placeholder
+- Diet → feeding scene placeholder
+- Skeleton → fossil diagram placeholder
+
+---
+
+### 3. CINEMATIC LAYOUT (VERY IMPORTANT)
+
+DO NOT:
+- Stack all images on one side
+- Separate text and images into rigid columns
+
+INSTEAD:
+- Use alternating and dynamic layouts:
+  → Some sections: image left, text right
+  → Others: image right, text left
+  → Some: image full-width above text
+  → Some: image embedded between paragraphs
+
+- Create a flowing, magazine-style layout
+
+---
+
+### 4. VISUAL QUALITY
+
+- Rounded corners
+- Soft shadows
+- Subtle hover effects
+- Smooth spacing between elements
+
+---
+
+### 5. MODE-BASED PLACEHOLDERS
+
+- Life Mode:
+  → reconstruction scenes
+  → habitat visuals
+
+- Scientific Mode:
+  → skeletons
+  → fossil images
+  → anatomical diagrams
+
+- Switching modes:
+  → placeholders remain in position
+  → content labels update smoothly
+
+---
+
+🔷 FINAL GOAL
+
+The page must feel like:
+
+→ a high-end documentary interface  
+→ a museum-grade digital exhibit  
+
+NOT:
+
+→ a basic text + image layout  
+→ a generated AI page  
+
+Focus on:
+- elegance
+- flow
+- immersion
+- user engagement
