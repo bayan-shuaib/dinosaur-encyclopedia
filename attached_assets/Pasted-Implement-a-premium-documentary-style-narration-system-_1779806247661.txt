@@ -1,0 +1,200 @@
+Implement a premium documentary-style narration system for all encyclopedia species pages.
+
+---
+
+🔷 CORE CONCEPT
+
+The narration system should function like a museum audio guide or documentary experience.
+
+The user should be able to:
+
+- Play narration
+- Pause narration
+- Scrub through narration
+- Watch reading progress
+- Automatically follow the narrated content as it is spoken
+
+---
+
+🔷 AUDIO PLAYER UI
+
+Create a visually refined audio player.
+
+Requirements:
+
+- Place near the top of the information section
+- Match the app's existing visual style
+- Elegant and modern appearance
+
+Components:
+
+🎧 Narrated Experience
+
+▶ Play Button
+⏸ Pause Button
+
+Progress Bar
+
+Current Time
+Total Duration
+
+---
+
+🔷 VISUAL DESIGN
+
+The player should feel premium.
+
+Requirements:
+
+- Rounded corners
+- Subtle shadows
+- Soft glow effects
+- Smooth hover animations
+- Smooth transitions
+
+Avoid:
+
+- Default browser audio controls
+- Generic media-player appearance
+
+Goal:
+
+Feel like a museum audio guide.
+
+---
+
+🔷 TRANSCRIPT SYNCHRONIZATION
+
+Each narration file must support a synchronized transcript.
+
+Structure:
+
+Audio File
++
+Timestamped Transcript
+
+The system must know:
+
+- Which sentence is currently being spoken
+- Which section is currently active
+
+---
+
+🔷 ACTIVE SENTENCE HIGHLIGHTING
+
+While narration is playing:
+
+- Highlight the currently spoken sentence
+- Use a subtle visual emphasis
+- Smooth transitions
+
+Avoid:
+
+- Flashing
+- Harsh colors
+
+The highlight should feel elegant and readable.
+
+---
+
+🔷 AUTOMATIC SCROLLING
+
+As narration progresses:
+
+- Automatically scroll the page to the currently narrated section
+- Keep active content comfortably centered in view
+- Scrolling must be smooth and cinematic
+
+Requirements:
+
+- No sudden jumps
+- No aggressive movement
+- User can still manually scroll
+
+If user manually scrolls:
+
+- Respect user interaction
+- Resume automatic tracking after a short delay
+
+---
+
+🔷 SECTION SYNCHRONIZATION
+
+The narration system must recognize:
+
+- Overview
+- Habitat & Distribution
+- Diet & Feeding Behavior
+- Ecological Role
+- Behavior & Lifestyle
+- Social Structure
+- Reproduction
+
+Scientific Mode sections as well.
+
+When narration reaches a new section:
+
+- Automatically scroll into that section
+- Highlight section title briefly
+- Maintain reading flow
+
+---
+
+🔷 MODE SUPPORT
+
+Life Appearance & Behavior
+
+- Uses Life narration audio
+- Uses Life transcript
+
+Anatomy & Scientific Evidence
+
+- Uses Scientific narration audio
+- Uses Scientific transcript
+
+Switching modes:
+
+- Stops current narration
+- Loads correct audio and transcript
+- Resets progress
+
+---
+
+🔷 PROGRESS BAR
+
+Create a custom progress bar.
+
+Requirements:
+
+- Smooth animated progress
+- Click to seek
+- Drag to seek
+- Hover preview effects
+
+Display:
+
+Current Time / Total Duration
+
+---
+
+🔷 FUTURE CONTENT SUPPORT
+
+Design the system so every species can have:
+
+audio:
+- life.mp3
+- scientific.mp3
+
+transcript:
+- life.json
+- scientific.json
+
+The player should automatically load the correct files based on the selected species and active mode.
+
+---
+
+🔷 FINAL EXPERIENCE
+
+The user should feel like they are listening to a narrated documentary while being guided through the page.
+
+The narration, scrolling, highlighting, and progress tracking should work together as a single immersive experience.
