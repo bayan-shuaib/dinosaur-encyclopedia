@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Leaf, FlaskConical, Lightbulb, Sparkles, Headphones } from 'lucide-react';
+import { ChevronDown, Leaf, FlaskConical, Lightbulb, Sparkles } from 'lucide-react';
 import { Dinosaur } from '@/data/types';
 import { ImagePlaceholder, PlaceholderKind } from '@/components/ImagePlaceholder';
 import { getTaxonomyType } from '@/lib/taxonomy';
-import { NarrationPlayer, TranscriptSegment } from '@/components/NarrationPlayer';
+import { NarrationPlayer } from '@/components/NarrationPlayer';
 
 type Mode = 'life' | 'scientific';
 
@@ -303,43 +303,6 @@ function buildScientificFunFacts(d: Dinosaur): string[] {
   return facts.slice(0, 5);
 }
 
-// ============================================================================
-// TRANSCRIPT BUILDER — maps sections → flat segment list for narration
-// ============================================================================
-
-function buildSegments(sections: Section[]): TranscriptSegment[] {
-  return sections.flatMap((section) =>
-    section.body
-      .split(/\n{2,}/)
-      .map(p => p.trim())
-      .filter(Boolean)
-      .map(text => ({
-        sectionId:    section.id,
-        sectionTitle: section.title,
-        // Clean bullet markers so TTS doesn't say "bullet"
-        text: text.replace(/^[•\-]\s*/gm, ''),
-      }))
-  );
-}
-
-// Given the global segment index, find which paragraph within a section is active
-function activeParagraphFor(
-  sectionId: string,
-  sections: Section[],
-  globalIdx: number | null,
-): number | undefined {
-  if (globalIdx === null) return undefined;
-  let offset = 0;
-  for (const s of sections) {
-    const paras = s.body.split(/\n{2,}/).filter(Boolean).length;
-    if (s.id === sectionId) {
-      const local = globalIdx - offset;
-      return local >= 0 && local < paras ? local : undefined;
-    }
-    offset += paras;
-  }
-  return undefined;
-}
 
 // ============================================================================
 // PARAGRAPH LIST — with optional active-paragraph highlight
@@ -564,74 +527,29 @@ function FunFactsBlock({ facts, mode }: { facts: string[]; mode: Mode }) {
   );
 }
 
-// ============================================================================
-// NARRATION MODE TOGGLE
-// ============================================================================
-
-function NarrationToggle({
-  active,
-  onChange,
-}: {
-  active: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <button
-      onClick={() => onChange(!active)}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-display border transition-all ${
-        active
-          ? 'bg-primary/10 border-primary/30 text-primary'
-          : 'bg-card border-border text-muted-foreground hover:text-foreground hover:border-border/80'
-      }`}
-      data-testid="button-narration-toggle"
-      aria-pressed={active}
-    >
-      <Headphones className="h-3.5 w-3.5" />
-      <span>Narration</span>
-      {/* ON/OFF pill */}
-      <span
-        className={`text-[10px] font-mono px-1.5 py-0.5 rounded-sm uppercase tracking-wider ${
-          active ? 'bg-primary/20 text-primary' : 'bg-secondary text-muted-foreground'
-        }`}
-      >
-        {active ? 'ON' : 'OFF'}
-      </span>
-    </button>
-  );
-}
 
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
 export function SpeciesContent({ dino }: Props) {
-  const [mode, setMode]                     = useState<Mode>('life');
-  const [narrationMode, setNarrationMode]   = useState(false);
-  const [globalSegmentIdx, setGlobalSegmentIdx] = useState<number | null>(null);
+  const [mode, setMode]                       = useState<Mode>('life');
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
   const sections = useMemo(
     () => mode === 'life' ? buildLifeSections(dino) : buildScientificSections(dino),
     [dino, mode],
   );
-  const segments  = useMemo(() => buildSegments(sections), [sections]);
   const funFacts  = useMemo(
     () => mode === 'life' ? buildLifeFunFacts(dino) : buildScientificFunFacts(dino),
     [dino, mode],
   );
 
-  // Derive which section is currently active in narration
-  const activeSectionId = useMemo(
-    () => globalSegmentIdx !== null ? (segments[globalSegmentIdx]?.sectionId ?? null) : null,
-    [globalSegmentIdx, segments],
-  );
-
-  // ── Auto-scroll to active section ────────────────────────────────────────
+  // ── Auto-scroll to active section when narration drives section changes ──
   const userScrolledRef = useRef(false);
   const scrollTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Detect manual scroll
   useEffect(() => {
-    if (!narrationMode) return;
     const onScroll = () => {
       userScrolledRef.current = true;
       if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
@@ -641,35 +559,26 @@ export function SpeciesContent({ dino }: Props) {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [narrationMode]);
+  }, []);
 
   useEffect(() => {
     if (!activeSectionId || userScrolledRef.current) return;
     const el = document.querySelector(`[data-section-id="${activeSectionId}"]`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [activeSectionId]);
 
-  // ── Stop narration when mode changes ─────────────────────────────────────
+  // ── Reset active section when mode changes ────────────────────────────────
   const handleModeChange = useCallback((newMode: Mode) => {
     setMode(newMode);
-    setGlobalSegmentIdx(null);
-  }, []);
-
-  // ── Toggle narration mode off → reset state ───────────────────────────────
-  const handleNarrationToggle = useCallback((v: boolean) => {
-    setNarrationMode(v);
-    if (!v) setGlobalSegmentIdx(null);
+    setActiveSectionId(null);
   }, []);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <section className="space-y-10" data-testid="species-content">
 
-      {/* ── Top controls: mode toggle + narration toggle ─────────────────── */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-        {/* Mode toggle */}
+      {/* ── Top controls: mode toggle ─────────────────────────────────────── */}
+      <div className="flex items-center justify-center">
         <div className="inline-flex items-center gap-1 bg-card rounded-lg p-1 border border-border">
           <button
             onClick={() => handleModeChange('life')}
@@ -692,21 +601,15 @@ export function SpeciesContent({ dino }: Props) {
             Anatomy & Scientific Evidence
           </button>
         </div>
-
-        {/* Narration mode toggle */}
-        <NarrationToggle active={narrationMode} onChange={handleNarrationToggle} />
       </div>
 
-      {/* ── Narration player — slides in when active ────────────────────── */}
-      <AnimatePresence>
-        {narrationMode && (
-          <NarrationPlayer
-            key={`${dino.id}-${mode}`}
-            segments={segments}
-            onSegmentChange={setGlobalSegmentIdx}
-          />
-        )}
-      </AnimatePresence>
+      {/* ── Narration player — always visible ───────────────────────────────── */}
+      <NarrationPlayer
+        key={`${dino.id}-${mode}`}
+        speciesId={dino.id}
+        mode={mode}
+        onActiveSectionId={setActiveSectionId}
+      />
 
       {/* ── Sections ─────────────────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
@@ -719,13 +622,12 @@ export function SpeciesContent({ dino }: Props) {
           className="space-y-14 md:space-y-20"
         >
           {sections.map((s, i) => {
-            const isActive = narrationMode && activeSectionId === s.id;
-            // In narration mode: force open active section, force close others.
-            // Outside narration mode: undefined = user-controlled.
-            const controlledOpen = narrationMode ? isActive : undefined;
-            const activeParaIdx = isActive
-              ? activeParagraphFor(s.id, sections, globalSegmentIdx)
-              : undefined;
+            const isActive = activeSectionId === s.id;
+            // When narration is driving (activeSectionId !== null):
+            //   force open the active section, force close all others.
+            // When narration is idle (activeSectionId === null):
+            //   undefined = fully user-controlled accordion.
+            const controlledOpen = activeSectionId !== null ? isActive : undefined;
 
             return (
               <SectionBlock
@@ -733,8 +635,7 @@ export function SpeciesContent({ dino }: Props) {
                 section={s}
                 index={i}
                 controlledOpen={controlledOpen}
-                activeParagraphIndex={activeParaIdx}
-                isNarrationActive={isActive}
+                isNarrationActive={isActive && activeSectionId !== null}
               />
             );
           })}

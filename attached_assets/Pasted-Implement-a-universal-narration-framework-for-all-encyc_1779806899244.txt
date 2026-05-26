@@ -1,0 +1,162 @@
+Implement a universal narration framework for all encyclopedia species pages.
+
+---
+
+🔷 GLOBAL NARRATION SYSTEM
+
+Every species page must contain a Narrated Experience section.
+
+This section should always appear regardless of whether audio currently exists.
+
+The narration system should automatically determine whether narration files are available for the selected species and active mode.
+
+---
+
+🔷 AUDIO AVAILABLE
+
+When narration exists:
+
+Display the complete narration interface:
+
+🎧 Narrated Experience
+
+▶ Play
+⏸ Pause
+
+Progress Bar
+
+Current Time / Total Duration
+
+Enable:
+
+* Audio playback
+* Transcript synchronization
+* Active sentence highlighting
+* Auto-scroll
+* Automatic section expansion
+* Progress tracking
+
+---
+
+🔷 AUDIO NOT YET AVAILABLE
+
+When narration files do not exist:
+
+DO NOT hide the narration component.
+
+Instead display a premium placeholder state.
+
+Title:
+
+🎧 Narrated Experience
+
+Message:
+
+"Audio narration for this species is currently being prepared.
+
+Our documentary team is carefully producing narrated content to ensure accuracy and quality.
+
+Check back soon to experience this species through guided narration."
+
+---
+
+🔷 PLACEHOLDER DESIGN
+
+The unavailable state should feel intentional and elegant.
+
+Requirements:
+
+* Same card design as active narration player
+* Preserve visual consistency
+* Soft animated icon
+* Subtle glow effects
+* Gentle pulse animation
+* Museum-quality presentation
+
+Avoid:
+
+* Error messages
+* Warning messages
+* Empty boxes
+* Generic 'Coming Soon' labels
+
+The user should feel:
+
+"This feature is being expanded."
+
+Not:
+
+"This feature is missing."
+
+---
+
+🔷 OPTIONAL SPECIES-SPECIFIC MESSAGE
+
+Allow custom messages per species.
+
+Example:
+
+"For Quetzalcoatlus, narration is currently in production."
+
+This should be optional and data-driven.
+
+---
+
+🔷 AUTOMATIC DETECTION
+
+The system should automatically check:
+
+audio/
+└── species-name/
+├── life.mp3
+└── scientific.mp3
+
+If audio exists:
+→ Show active narration player
+
+If audio does not exist:
+→ Show premium placeholder state
+
+No manual toggling required.
+
+---
+
+🔷 PARTIAL SUPPORT
+
+If only one narration mode exists:
+
+Example:
+
+life.mp3 exists
+scientific.mp3 missing
+
+Then:
+
+Life Appearance & Behavior:
+→ Active narration available
+
+Anatomy & Scientific Evidence:
+→ Display premium placeholder state
+
+---
+
+🔷 FUTURE SCALABILITY
+
+The narration system must support every current and future species automatically.
+
+When a new audio file is added:
+
+* The placeholder should disappear automatically
+* The active narration player should become available immediately
+
+No code changes should be required.
+
+---
+
+🔷 FINAL EXPERIENCE
+
+The narration framework should feel like a living museum exhibit.
+
+Species with narration provide a complete guided documentary experience.
+
+Species without narration still provide an elegant and professional experience that encourages users to return when narration becomes available.
