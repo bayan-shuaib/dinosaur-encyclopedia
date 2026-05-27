@@ -1,0 +1,359 @@
+MUSEUM EXHIBIT SYSTEM V2 — SCIENTIFIC RECONSTRUCTION OVERHAUL
+
+The current exhibit system is functional but not yet museum-quality.
+
+This update must transform exhibits from simple numerical calculators into interactive scientific reconstructions.
+
+The objective is for visitors to understand:
+
+• What scientists think
+• Why scientists think it
+• What evidence supports it
+• How confident scientists are
+
+Every exhibit should feel like a premium Natural History Museum installation.
+
+==================================================
+REMOVE EXHIBIT REPETITION
+==================================================
+
+No exhibit may appear in both information modes.
+
+Each mode must contain unique educational content.
+
+--------------------------------------------------
+LIFE APPEARANCE & BEHAVIOR MODE
+--------------------------------------------------
+
+Focus ONLY on:
+
+• Ecology
+• Lifestyle
+• Habitat
+• Hunting
+• Migration
+• Social behavior
+• Reproduction
+• Competition
+• Survival strategies
+• Environmental interaction
+
+DO NOT include:
+
+✖ Bite Force
+✖ Sensory Reconstruction
+✖ Skeletal Mechanics
+✖ Bone Stress Analysis
+✖ Muscle Reconstruction
+
+These belong exclusively to Anatomy Mode.
+
+--------------------------------------------------
+ANATOMY & SCIENTIFIC EVIDENCE MODE
+--------------------------------------------------
+
+Focus ONLY on:
+
+• Bite Force Laboratory
+• Sensory Reconstruction
+• Skeletal Mechanics
+• Muscle Reconstruction
+• Bone Stress Analysis
+• Paleopathology
+• Growth Analysis
+• Respiratory Reconstruction
+• Brain Reconstruction
+• Fossil Evidence
+
+DO NOT include:
+
+✖ Hunting Simulators
+✖ Social Structure Simulators
+✖ Habitat Simulators
+✖ Reproduction Simulators
+
+These belong exclusively to Life Mode.
+
+==================================================
+ADVANCED LOCOMOTION SYSTEM
+==================================================
+
+Locomotion exhibits must account for multiple environments.
+
+Current locomotion exhibits are too limited.
+
+--------------------------------------------------
+DINOSAURS
+--------------------------------------------------
+
+LAND ENVIRONMENTS
+
+• Flat Terrain
+• Incline
+• Rough Ground
+
+WATER ENVIRONMENTS
+
+• Shallow Wading
+• River Crossing
+• Open Water Swimming
+
+Display:
+
+Most Probable Speed
+
+Display confidence indicator.
+
+Examples:
+
+High Confidence
+Moderate Confidence
+Speculative Estimate
+
+--------------------------------------------------
+PTEROSAURS
+--------------------------------------------------
+
+AIR ENVIRONMENTS
+
+• Thermal Soaring
+• Powered Flight
+• Headwind Flight
+
+LAND ENVIRONMENTS
+
+• Quadrupedal Walking
+• Sprint Launch
+• Rough Ground Movement
+
+WATER ENVIRONMENTS
+
+• Surface Floating
+• Water Takeoff
+• Surface Paddling
+
+Display:
+
+Most Probable Speed
+
+Display confidence indicator.
+
+--------------------------------------------------
+MARINE REPTILES
+--------------------------------------------------
+
+WATER ENVIRONMENTS
+
+• Open Ocean
+• Coastal Waters
+• Deep Water
+
+LAND ENVIRONMENTS
+
+Where scientifically reasonable:
+
+• Beach Movement
+• Nesting Crawl
+
+Display:
+
+Most Probable Speed
+
+Display confidence indicator.
+
+==================================================
+SCIENTIFIC RECONSTRUCTION VISUALIZATION
+==================================================
+
+Every exhibit must contain visual educational components.
+
+The user should understand HOW calculations are made.
+
+Do not simply display numerical results.
+
+Every scientific exhibit should contain:
+
+• Annotated diagrams
+• Reconstruction imagery
+• Highlighted evidence
+• Interactive overlays
+• Scientific explanations
+
+==================================================
+BITE FORCE LABORATORY OVERHAUL
+==================================================
+
+Inspired by professional paleontology documentaries.
+
+Display:
+
+Annotated skull reconstruction
+
+Highlight:
+
+• Jaw muscles
+• Muscle attachment points
+• Lever mechanics
+• Tooth contact points
+• Force vectors
+
+User can click structures.
+
+Display explanation panel.
+
+Examples:
+
+Masseter Equivalent
+Jaw Adductor Complex
+Muscle Attachment Area
+
+Show:
+
+Why these affect bite force.
+
+Display:
+
+Final Bite Force
+
+AND
+
+Evidence Used.
+
+==================================================
+SENSORY RECONSTRUCTION OVERHAUL
+==================================================
+
+Display visual reconstruction.
+
+Show:
+
+• Vision cone
+• Depth perception
+• Smell capability
+• Hearing sensitivity
+
+Allow users to inspect structures.
+
+Highlight:
+
+• Eye placement
+• Olfactory bulbs
+• Inner ear anatomy
+
+Display confidence level.
+
+==================================================
+SKELETAL MECHANICS LAB
+==================================================
+
+Interactive skeleton.
+
+Highlight:
+
+• Femur
+• Tibia
+• Tail
+• Vertebrae
+
+Show:
+
+• Load distribution
+• Balance
+• Center of mass
+
+Explain how speed estimates are calculated.
+
+==================================================
+MUSCLE RECONSTRUCTION LAB
+==================================================
+
+Display layered reconstruction.
+
+View modes:
+
+• Skeleton
+• Muscles
+• Life Reconstruction
+
+Highlight:
+
+Major muscle groups.
+
+Explain:
+
+• Movement generation
+• Strength production
+• Speed contribution
+
+==================================================
+PALEOPATHOLOGY EXHIBIT
+==================================================
+
+Display known injuries and diseases.
+
+Examples:
+
+• Bite marks
+• Healed fractures
+• Arthritis
+• Infection
+
+Allow users to inspect damage.
+
+Show:
+
+Scientific evidence.
+
+==================================================
+EVIDENCE VISUALIZATION RULE
+==================================================
+
+Every exhibit must include:
+
+WHAT SCIENTISTS THINK
+
+WHY SCIENTISTS THINK IT
+
+WHAT EVIDENCE SUPPORTS IT
+
+HOW CONFIDENT SCIENTISTS ARE
+
+Display confidence badges:
+
+High Confidence
+
+Moderate Confidence
+
+Speculative
+
+==================================================
+IMAGE-RICH EXHIBITS
+==================================================
+
+The current exhibits contain insufficient imagery.
+
+Increase visual content substantially.
+
+Use:
+
+• Annotated reconstructions
+• Skeletal diagrams
+• Muscle overlays
+• Fossil evidence displays
+• Scientific illustrations
+
+The user should learn visually before reading.
+
+Exhibits should resemble a museum documentary installation rather than a calculator.
+
+==================================================
+FINAL GOAL
+==================================================
+
+The encyclopedia should no longer feel like a collection of statistics.
+
+Each species page should feel like a premium interactive natural history museum exhibit.
+
+Visitors should be able to explore scientific evidence, fossil discoveries, anatomical reconstructions, ecological simulations, and behavioral interpretations through immersive educational displays.
+
+Every exhibit should tell a scientific story.
