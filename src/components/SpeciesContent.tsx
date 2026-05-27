@@ -1,10 +1,12 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { Fragment, useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Leaf, FlaskConical, Lightbulb, Sparkles } from 'lucide-react';
 import { Dinosaur } from '@/data/types';
 import { ImagePlaceholder, PlaceholderKind } from '@/components/ImagePlaceholder';
 import { getTaxonomyType } from '@/lib/taxonomy';
 import { NarrationPlayer } from '@/components/NarrationPlayer';
+import { SectionExhibit } from '@/components/exhibits/MuseumExhibits';
+import { NomenclatureDictionary } from '@/components/NomenclatureDictionary';
 
 type Mode = 'life' | 'scientific';
 
@@ -623,24 +625,24 @@ export function SpeciesContent({ dino }: Props) {
         >
           {sections.map((s, i) => {
             const isActive = activeSectionId === s.id;
-            // When narration is driving (activeSectionId !== null):
-            //   force open the active section, force close all others.
-            // When narration is idle (activeSectionId === null):
-            //   undefined = fully user-controlled accordion.
             const controlledOpen = activeSectionId !== null ? isActive : undefined;
 
             return (
-              <SectionBlock
-                key={s.id}
-                section={s}
-                index={i}
-                controlledOpen={controlledOpen}
-                isNarrationActive={isActive && activeSectionId !== null}
-              />
+              <Fragment key={s.id}>
+                <SectionBlock
+                  section={s}
+                  index={i}
+                  controlledOpen={controlledOpen}
+                  isNarrationActive={isActive && activeSectionId !== null}
+                />
+                <SectionExhibit sectionId={s.id} dino={dino} mode={mode} />
+              </Fragment>
             );
           })}
 
           <FunFactsBlock facts={funFacts} mode={mode} />
+
+          <NomenclatureDictionary dino={dino} mode={mode} sections={sections} />
         </motion.div>
       </AnimatePresence>
     </section>

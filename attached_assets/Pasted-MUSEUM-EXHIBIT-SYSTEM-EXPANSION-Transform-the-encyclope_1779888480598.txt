@@ -1,0 +1,287 @@
+MUSEUM EXHIBIT SYSTEM EXPANSION
+
+Transform the encyclopedia into a digital natural history museum by adding Interactive Museum Exhibits to every species page.
+
+The exhibit system must exist inside both:
+
+• Life Appearance & Behavior Mode
+• Anatomy & Scientific Evidence Mode
+
+Exhibits should appear naturally throughout the information sections and directly correspond to the topic being discussed.
+
+The goal is NOT to create games.
+
+The goal is to create educational museum-quality interactives that help users understand scientific concepts through exploration.
+
+==================================================
+EXHIBIT DESIGN PHILOSOPHY
+==================================================
+
+Each exhibit should feel like a premium museum installation.
+
+Visual style must match the existing dark museum aesthetic.
+
+Use:
+- elegant borders
+- glowing highlights
+- animated diagrams
+- scientific labels
+- museum exhibit cards
+- educational annotations
+- smooth transitions
+
+Avoid:
+- cartoon styling
+- arcade game styling
+- childish interactions
+
+Every exhibit should teach something meaningful.
+
+==================================================
+LIFE APPEARANCE & BEHAVIOR EXHIBITS
+==================================================
+
+Generate exhibits based on behavioral information.
+
+Examples:
+
+If species was a swimmer:
+
+Create:
+
+🌊 Aquatic Locomotion Simulator
+
+User adjusts:
+- water depth
+- current strength
+- prey location
+
+Visualize:
+- swimming posture
+- speed efficiency
+- maneuverability
+
+Show scientific explanation.
+
+----------------------------------
+
+If species was a flyer:
+
+🪽 Flight Dynamics Exhibit
+
+User adjusts:
+- wind speed
+- altitude
+- thermal strength
+
+Visualize:
+- glide distance
+- energy usage
+- turning radius
+
+----------------------------------
+
+If species was a hunter:
+
+🦖 Predation Strategy Simulator
+
+User adjusts:
+- prey size
+- prey speed
+- terrain type
+
+Visualize:
+- hunting success
+- ambush effectiveness
+- energy expenditure
+
+----------------------------------
+
+If species was social:
+
+👥 Social Structure Exhibit
+
+Visualize:
+- herd size
+- dominance structure
+- cooperative behaviors
+
+----------------------------------
+
+If species migrated:
+
+🌍 Seasonal Migration Simulator
+
+Interactive map showing:
+- movement routes
+- climate changes
+- seasonal resources
+
+==================================================
+ANATOMY & SCIENTIFIC EVIDENCE EXHIBITS
+==================================================
+
+Create exhibits based on skeletal and anatomical evidence.
+
+Examples:
+
+🦷 Bite Force Laboratory
+
+Interactive jaw reconstruction.
+
+Adjust:
+- jaw opening angle
+- prey resistance
+
+Display:
+- bite force
+- pressure distribution
+- mechanical efficiency
+
+----------------------------------
+
+🏃 Locomotion Reconstruction Lab
+
+Use fossil evidence.
+
+Visualize:
+- estimated speed
+- stride length
+- acceleration
+
+Based on:
+- limb proportions
+- muscle attachment points
+
+----------------------------------
+
+🦴 Skeletal Stress Simulator
+
+Highlight bones.
+
+Show:
+- force distribution
+- load-bearing capacity
+- weak points
+
+----------------------------------
+
+🧠 Sensory Reconstruction Exhibit
+
+Visualize:
+
+- vision field
+- smell capability
+- hearing range
+
+Based on skull evidence.
+
+----------------------------------
+
+⚕ Paleopathology Exhibit
+
+Display:
+
+Known injuries
+Known diseases
+Healed fractures
+Bite marks
+
+Allow users to inspect each case.
+
+==================================================
+AUTOMATIC EXHIBIT GENERATION
+==================================================
+
+The system should dynamically generate appropriate exhibit types based on species traits.
+
+Examples:
+
+Mosasaurus:
+- Swimming exhibits
+- Aquatic hunting exhibits
+
+Quetzalcoatlus:
+- Flight exhibits
+- Launch mechanics exhibits
+
+Ankylosaurus:
+- Defensive weapon exhibits
+- Armor effectiveness exhibits
+
+Tyrannosaurus:
+- Bite force exhibits
+- Predation exhibits
+
+Dimetrodon:
+- Sail thermoregulation exhibits
+- Hunting efficiency exhibits
+
+Each species should feel unique.
+
+==================================================
+INFORMATION INTEGRATION
+==================================================
+
+Exhibits must be embedded directly within the information sections.
+
+Example:
+
+Behavior Section
+
+[Text]
+
+[Interactive Exhibit]
+
+[Text]
+
+[Interactive Diagram]
+
+[Text]
+
+This creates a museum documentary experience.
+
+==================================================
+NARRATION COMPATIBILITY
+==================================================
+
+When Narration Mode is active:
+
+- exhibits automatically scroll into view
+- narration references exhibit components
+- important exhibit elements highlight during narration
+
+Example:
+
+Professor Paleo says:
+
+"Notice how the sail rapidly absorbs solar energy..."
+
+The sail diagram highlights automatically.
+
+==================================================
+IMAGE COMPATIBILITY
+==================================================
+
+Existing paleoart image placeholders remain.
+
+Exhibits should integrate alongside images.
+
+Do NOT place all images on one side and all text on another.
+
+Create a balanced museum exhibit layout with:
+
+- images
+- text
+- interactives
+- scientific diagrams
+
+all working together.
+
+==================================================
+FINAL GOAL
+==================================================
+
+The encyclopedia should no longer feel like a webpage.
+
+It should feel like walking through a world-class interactive natural history museum where every species has its own educational exhibits, scientific demonstrations, reconstructions, and hands-on learning experiences.

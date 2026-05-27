@@ -1,0 +1,2 @@
+- [Dinopedia architecture](dinopedia-arch.md) — SpeciesContent.tsx is the central hub; Section, SectionExhibit, NomenclatureDictionary all wire through it.
+- [Audio detection pattern](audio-detection.md) — NarrationPlayer uses HEAD fetch to `/audio/{speciesId}/{mode}.mp3`; no code change needed when files are added.
