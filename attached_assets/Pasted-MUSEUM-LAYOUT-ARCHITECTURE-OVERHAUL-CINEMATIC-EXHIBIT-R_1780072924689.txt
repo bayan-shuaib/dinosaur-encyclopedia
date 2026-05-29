@@ -1,0 +1,278 @@
+MUSEUM LAYOUT ARCHITECTURE OVERHAUL — CINEMATIC EXHIBIT REDESIGN
+
+The current encyclopedia layout contains too much centralized stacking and excessive unused side space.
+
+Although the content quality is strong, the page still structurally feels like a vertically stacked website rather than a premium museum exhibit system.
+
+This update must completely redesign the encyclopedia page architecture into a dense, cinematic, asymmetrical museum-style layout.
+
+==================================================
+CORE DESIGN PHILOSOPHY
+==================================================
+
+The encyclopedia should feel like:
+
+• A futuristic natural history museum
+• A documentary interface
+• A scientific archive terminal
+• A cinematic paleo exhibition
+
+NOT:
+
+✖ A blog page
+✖ A stacked card layout
+✖ A centered mobile-style webpage
+✖ A traditional encyclopedia article
+
+==================================================
+SPATIAL LAYOUT OVERHAUL
+==================================================
+
+The current page wastes too much horizontal space.
+
+The redesign must aggressively utilize BOTH sides of the screen while maintaining readability.
+
+Replace centered vertical stacking with:
+
+• Asymmetrical layouts
+• Split exhibit sections
+• Layered modular grids
+• Interwoven content structures
+• Floating scientific side panels
+• Edge-attached exhibit modules
+• Dynamic exhibit sizing
+
+==================================================
+REMOVE CENTRALIZATION
+==================================================
+
+The page should no longer feel compressed into the middle.
+
+Reduce excessive empty margins.
+
+Content must intelligently expand outward.
+
+Different sections should occupy different spatial arrangements.
+
+Examples:
+
+SECTION A:
+Large exhibit left
+Text right
+Floating annotations
+
+SECTION B:
+Wide cinematic image top
+Interactive module below
+Scientific notes side-attached
+
+SECTION C:
+Triple modular split layout
+
+SECTION D:
+Offset asymmetrical arrangement
+
+Every section should feel architecturally unique.
+
+==================================================
+ADAPTIVE EXHIBIT GRID SYSTEM
+==================================================
+
+Replace repetitive vertical cards with a dynamic exhibit grid system.
+
+The system should support:
+
+• Large hero modules
+• Narrow scientific sidebars
+• Floating evidence cards
+• Expandable reconstruction panels
+• Wide cinematic media sections
+• Split-screen exhibit compositions
+
+Some sections should be:
+- wide
+- tall
+- layered
+- offset
+- overlapping slightly
+
+to create visual rhythm.
+
+==================================================
+DOCUMENTARY-STYLE FRAMING
+==================================================
+
+Every exhibit should feel framed like a documentary shot.
+
+Use:
+
+• layered depth
+• panel framing
+• cinematic spacing
+• documentary composition
+• museum exhibit segmentation
+
+Add:
+- subtle panel glow
+- scientific framing lines
+- exhibit borders
+- layered overlays
+- atmospheric gradients
+
+==================================================
+IMAGE-TEXT INTERWEAVING
+==================================================
+
+Currently images and text feel separated.
+
+Redesign content flow so:
+
+• images integrate directly into reading flow
+• diagrams anchor text sections
+• scientific overlays connect to descriptions
+• exhibit visuals interrupt and enhance reading rhythm
+
+Avoid:
+✖ all images on one side
+✖ all text on another side
+
+Instead create:
+- intertwined exhibit composition
+- alternating visual anchors
+- layered scientific storytelling
+
+==================================================
+EDGE UTILIZATION
+==================================================
+
+Utilize screen edges intelligently.
+
+Examples:
+
+LEFT EDGE:
+• exhibit navigation
+• floating annotations
+• species quick facts
+
+RIGHT EDGE:
+• scientific terminology
+• evidence indicators
+• reconstruction metadata
+• narration controls
+
+The page should feel immersive from edge to edge.
+
+==================================================
+SCIENTIFIC HUD ELEMENTS
+==================================================
+
+Introduce subtle HUD-style scientific overlays.
+
+Examples:
+
+• skeletal markers
+• fossil scan indicators
+• reconstruction percentages
+• confidence indicators
+• anatomical labels
+• species classification tags
+
+These should appear integrated into the layout architecture.
+
+==================================================
+FLOATING EVIDENCE PANELS
+==================================================
+
+Add smaller floating scientific cards throughout the page.
+
+Examples:
+
+• fossil discovery snippets
+• bite force evidence
+• skeletal notes
+• paleopathology findings
+• habitat indicators
+• evolutionary lineage notes
+
+These should partially overlap or attach to larger modules to create exhibit density.
+
+==================================================
+DYNAMIC SECTION RHYTHM
+==================================================
+
+Avoid repetitive:
+TEXT -> IMAGE -> CARD
+
+Instead alternate between:
+
+• Wide cinematic sections
+• Dense scientific grids
+• Interactive exhibit rows
+• Floating side panels
+• Full-width reconstruction modules
+• Compact evidence clusters
+
+The page should visually evolve as users scroll.
+
+==================================================
+MUSEUM DENSITY WITHOUT CLUTTER
+==================================================
+
+The goal is NOT minimalism.
+
+The goal is:
+controlled scientific density.
+
+The page should feel rich with information while remaining readable.
+
+Inspired by:
+- museum exhibit kiosks
+- documentary interfaces
+- scientific archive terminals
+- cinematic sci-fi educational systems
+
+==================================================
+EXHIBIT COMPOSITION IMPROVEMENTS
+==================================================
+
+Exhibits should no longer sit isolated in large empty containers.
+
+Each exhibit should integrate:
+
+• explanatory visuals
+• supporting diagrams
+• scientific overlays
+• evidence labels
+• contextual information
+
+to feel like a complete exhibit installation.
+
+==================================================
+RESPONSIVE BEHAVIOR
+==================================================
+
+Desktop:
+- cinematic asymmetrical layout
+- maximum density
+- layered architecture
+
+Tablet:
+- balanced modular layout
+
+Mobile:
+- preserve exhibit hierarchy
+- stacked intelligently without losing museum feel
+
+==================================================
+FINAL GOAL
+==================================================
+
+The encyclopedia should no longer resemble a webpage with cards.
+
+It should feel like exploring a living digital paleontology museum filled with:
+- layered exhibits
+- scientific reconstructions
+- documentary-style presentation
+- immersive educational architecture
+- cinematic visual storytelling
+- museum-grade information density.

@@ -393,37 +393,313 @@ function ExpandableBody({ text, controlledOpen, activeParagraphIndex }: Expandab
 }
 
 // ============================================================================
-// SECTION BLOCK
+// CINEMATIC EXHIBIT SYSTEM — HELPER COMPONENTS
 // ============================================================================
 
-type Layout = 'image-right' | 'image-left' | 'image-top' | 'image-inline';
-const CYCLE: Layout[] = ['image-right', 'image-left', 'image-top', 'image-right', 'image-left', 'image-inline', 'image-top'];
+// ── Decorative corner brackets ─────────────────────────────────────────────
+
+function CinematicBrackets({ color = 'amber' }: { color?: 'amber' | 'muted' }) {
+  const cls = color === 'amber' ? 'border-amber-400/45' : 'border-border/40';
+  return (
+    <>
+      <div className={`absolute top-2 left-2 w-5 h-5 border-t border-l ${cls} pointer-events-none`} />
+      <div className={`absolute top-2 right-2 w-5 h-5 border-t border-r ${cls} pointer-events-none`} />
+      <div className={`absolute bottom-2 left-2 w-5 h-5 border-b border-l ${cls} pointer-events-none`} />
+      <div className={`absolute bottom-2 right-2 w-5 h-5 border-b border-r ${cls} pointer-events-none`} />
+    </>
+  );
+}
+
+// ── Exhibit header (number + scan line + category badge + title) ───────────
+
+const SECTION_CATEGORIES: Record<string, string> = {
+  overview: 'INTRODUCTION', habitat: 'ECOLOGY', diet: 'FEEDING',
+  role: 'ECOSYSTEM', behavior: 'BEHAVIOR', social: 'SOCIAL',
+  repro: 'REPRODUCTION', skeletal: 'OSTEOLOGY', muscle: 'MYOLOGY',
+  speed: 'BIOMECHANICS', bite: 'CRANIOLOGY', strength: 'PATHOLOGY',
+  intel: 'NEUROLOGY', fossil: 'PALEONTOLOGY',
+};
+
+function ExhibitHeader({
+  index, total, title, sectionId, isActive,
+}: {
+  index: number; total: number; title: string; sectionId: string; isActive?: boolean;
+}) {
+  const cat = SECTION_CATEGORIES[sectionId] ?? 'EXHIBIT';
+  return (
+    <div className="space-y-3 relative">
+      {/* Watermark exhibit number */}
+      <div className="absolute -top-2 right-0 text-[80px] md:text-[100px] font-display font-black tabular-nums select-none pointer-events-none leading-none"
+        style={{ color: 'rgba(251,191,36,0.04)' }}>
+        {String(index + 1).padStart(2, '0')}
+      </div>
+      {/* Exhibit counter + scan line + category */}
+      <div className="flex items-center gap-3">
+        <span className={`font-display text-[9px] uppercase tracking-[0.3em] tabular-nums whitespace-nowrap transition-colors duration-500 ${
+          isActive ? 'text-amber-400' : 'text-amber-400/45'
+        }`}>
+          {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+        </span>
+        <div className="flex-1 h-px bg-gradient-to-r from-amber-400/35 to-transparent" />
+        <span className="text-[8px] font-display uppercase tracking-[0.22em] text-muted-foreground/35 bg-secondary/60 border border-border/30 px-2 py-0.5 rounded-sm whitespace-nowrap">
+          {cat}
+        </span>
+      </div>
+      {/* Title with amber left accent */}
+      <h2 className={`text-2xl md:text-3xl lg:text-[2rem] font-display font-bold tracking-tight pl-4 border-l-2 leading-tight transition-all duration-500 ${
+        isActive ? 'border-amber-400 text-amber-50' : 'border-amber-500/30 text-foreground'
+      }`}>
+        {title}
+        {isActive && (
+          <span className="ml-3 inline-block h-2 w-2 rounded-full bg-amber-400 animate-pulse align-middle" />
+        )}
+      </h2>
+    </div>
+  );
+}
+
+// ── Floating annotation card ───────────────────────────────────────────────
+
+function getAnnotationData(sectionId: string, dino: Dinosaur, mode: 'life' | 'scientific') {
+  const eco = dino.ecologicalStats;
+  const skel = dino.skeletonData;
+  const bf = dino.combatStats.biteForce;
+  const sp = dino.combatStats.speed;
+  const iq = dino.combatStats.intelligence;
+  const sz = dino.combatStats.size;
+
+  if (mode === 'life') {
+    const map: Record<string, { badge: string; rows: [string, string][] }> = {
+      overview: { badge: 'SPECIES RECORD', rows: [
+        ['Period',  dino.period],
+        ['Range',   `${dino.periodRange.end}–${dino.periodRange.start} Mya`],
+        ['Described', String(dino.discovery.year)],
+        ['Family',  dino.classification.family],
+      ]},
+      habitat: { badge: 'HABITAT DATA', rows: [
+        ['Continent', dino.continent],
+        ['Formation', dino.discovery.location.split(',')[0]],
+        ['Climate', dino.period === 'Cretaceous' ? 'Warm, no polar ice' : dino.period === 'Jurassic' ? 'Warm & humid' : 'Arid–seasonal'],
+        ['Period', dino.period],
+      ]},
+      diet: { badge: 'FEEDING PROFILE', rows: [
+        ['Diet',  dino.diet],
+        ['Bite Force', bf >= 7 ? 'Extreme' : bf >= 5 ? 'High' : bf >= 3 ? 'Moderate' : 'Low'],
+        ['Mass', `${(dino.weight / 1000).toFixed(1)} tonnes`],
+        ['Length', `${dino.length} m`],
+      ]},
+      role: { badge: 'ECOLOGICAL INDEX', rows: eco ? [
+        ['Apex Influence', `${eco.apexStatus} / 10`],
+        ['Niche Control',  `${eco.nicheControl} / 10`],
+        ['Geo. Range',     `${eco.geographicSpread} / 10`],
+        ['Pop. Density',   `${eco.populationDensity} / 10`],
+      ] : [
+        ['Group',  dino.group],
+        ['Period', dino.period],
+        ['Continent', dino.continent],
+        ['Diet', dino.diet],
+      ]},
+      behavior: { badge: 'LOCOMOTION', rows: [
+        ['Speed Class',  sp >= 7 ? 'Cursorial' : sp >= 4 ? 'Moderate' : 'Graviportal'],
+        ['Speed Index',  `${sp} / 10`],
+        ['Aggression',   `${dino.combatStats.aggression} / 10`],
+        ['Body Mass',    `${(dino.weight / 1000).toFixed(1)} t`],
+      ]},
+      social: { badge: 'BEHAVIORAL DATA', rows: [
+        ['Intelligence', `${iq} / 10`],
+        ['Social Index', iq >= 7 ? 'Complex' : iq >= 5 ? 'Moderate' : 'Minimal'],
+        ['Group Size',   iq >= 7 ? 'Likely social' : 'Likely solitary'],
+        ['Brain Class',  iq >= 7 ? 'High EQ' : iq >= 5 ? 'Medium EQ' : 'Low EQ'],
+      ]},
+      repro: { badge: 'REPRODUCTIVE DATA', rows: [
+        ['Strategy', getTaxonomyType(dino) === 'marine_reptile' ? 'Viviparous' : 'Oviparous'],
+        ['Group',    dino.group],
+        ['Size',     sz >= 7 ? 'Mega-fauna' : sz >= 5 ? 'Large' : 'Medium'],
+        ['Period',   dino.period],
+      ]},
+    };
+    return map[sectionId] ?? null;
+  }
+
+  // scientific mode
+  const sciMap: Record<string, { badge: string; rows: [string, string][] }> = {
+    skeletal: { badge: 'SPECIMEN DATA', rows: [
+      ['Completeness', `${skel.completeness}%`],
+      ['Known Elements', String(skel.recoveredBones.length)],
+      ['Holotype', skel.completeness >= 70 ? 'Good' : skel.completeness >= 40 ? 'Partial' : 'Fragmentary'],
+      ['First Described', String(dino.discovery.year)],
+    ]},
+    muscle: { badge: 'MYOLOGY DATA', rows: [
+      ['Muscle Mass Est.', `${Math.round(dino.weight * 0.38 / 1000 * 10) / 10} t`],
+      ['Build Type', sz >= 7 ? 'Graviportal' : sp >= 6 ? 'Cursorial' : 'Generalist'],
+      ['Speed Index', `${sp} / 10`],
+      ['Size Index',  `${sz} / 10`],
+    ]},
+    speed: { badge: 'BIOMECHANICS', rows: [
+      ['Speed Class', sp >= 7 ? 'Fast' : sp >= 4 ? 'Moderate' : 'Slow'],
+      ['Tibia Ratio', `${(0.75 + (sp / 10) * 0.6).toFixed(2)} : 1`],
+      ['Body Mass',   `${(dino.weight / 1000).toFixed(1)} t`],
+      ['Build',       sz >= 7 ? 'Heavy' : 'Light'],
+    ]},
+    bite: { badge: 'BITE FORCE DATA', rows: [
+      ['Force Class',  bf >= 8 ? 'Extreme' : bf >= 6 ? 'High' : bf >= 4 ? 'Moderate' : 'Low'],
+      ['Force Index',  `${bf} / 10`],
+      ['Diet',         dino.diet],
+      ['Skull Size',   sz >= 7 ? 'Massive' : sz >= 5 ? 'Large' : 'Medium'],
+    ]},
+    strength: { badge: 'PHYSICAL DATA', rows: [
+      ['Defense Index', `${dino.combatStats.defense} / 10`],
+      ['Body Size',     `${sz} / 10`],
+      ['Known Pathologies', dino.combatStats.defense >= 5 ? '3–5 types' : '1–3 types'],
+      ['Specimen Count', skel.completeness >= 70 ? 'Multiple' : 'Single'],
+    ]},
+    intel: { badge: 'NEUROLOGY DATA', rows: [
+      ['Intelligence', `${iq} / 10`],
+      ['EQ Class',     iq >= 7 ? 'High' : iq >= 5 ? 'Medium' : 'Low'],
+      ['Primary Sense', dino.diet === 'Carnivore' ? 'Vision + Olfaction' : 'Vision (wide)'],
+      ['Diet',         dino.diet],
+    ]},
+    fossil: { badge: 'DISCOVERY DATA', rows: [
+      ['Described By', dino.discovery.discoverer],
+      ['Year', String(dino.discovery.year)],
+      ['Location', dino.discovery.location.split(',').slice(-2).join(',').trim()],
+      ['Completeness', `${skel.completeness}%`],
+    ]},
+  };
+  return sciMap[sectionId] ?? null;
+}
+
+function FloatingAnnotationCard({ sectionId, dino, mode }: {
+  sectionId: string; dino: Dinosaur; mode: 'life' | 'scientific';
+}) {
+  const data = getAnnotationData(sectionId, dino, mode);
+  if (!data) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: 0.15 }}
+      className="rounded-lg border border-amber-500/18 bg-amber-500/[0.03] backdrop-blur-sm overflow-hidden"
+    >
+      <div className="px-3 py-2 border-b border-amber-500/15">
+        <span className="text-[8px] uppercase tracking-[0.22em] font-display text-amber-400/55">
+          {data.badge}
+        </span>
+      </div>
+      <div className="px-3 py-2.5 space-y-1.5">
+        {data.rows.map(([label, value]) => (
+          <div key={label} className="flex items-baseline justify-between gap-2">
+            <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-display whitespace-nowrap flex-shrink-0">
+              {label}
+            </span>
+            <span className="text-[11px] text-foreground/70 font-body text-right min-w-0 truncate">{value}</span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+// ── Second annotation card — specimen/evidence card ────────────────────────
+
+function SpecimenEvidenceCard({ dino, mode }: { dino: Dinosaur; mode: 'life' | 'scientific' }) {
+  const skel = dino.skeletonData;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: 0.25 }}
+      className="rounded-lg border border-border/30 bg-secondary/20 p-3 space-y-2"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40">Skeletal Record</span>
+        <span className="text-[9px] font-mono tabular-nums text-amber-400/60">{skel.completeness}% KNOWN</span>
+      </div>
+      <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+        <motion.div
+          className="h-full rounded-full bg-gradient-to-r from-amber-500/60 to-amber-300/60"
+          initial={{ width: 0 }}
+          whileInView={{ width: `${skel.completeness}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+        />
+      </div>
+      <p className="text-[9px] text-muted-foreground/40 font-body">
+        {mode === 'scientific'
+          ? `${skel.recoveredBones.length} elements recovered · missing: ${skel.missingBones.slice(0, 2).join(', ') || 'minor details'}`
+          : `Described ${dino.discovery.year} · ${dino.discovery.location.split(',').pop()?.trim()}`
+        }
+      </p>
+    </motion.div>
+  );
+}
+
+// ── Image container with cinematic framing ────────────────────────────────
+
+function CinematicImage({ kind, label, ratio, scanLabel }: {
+  kind: PlaceholderKind; label?: string; ratio: string; scanLabel?: string;
+}) {
+  return (
+    <div className="relative rounded-lg overflow-hidden group">
+      <ImagePlaceholder kind={kind} label={label} ratio={ratio} />
+      <CinematicBrackets />
+      {scanLabel && (
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 bg-gradient-to-t from-black/60 to-transparent">
+          <span className="text-[8px] uppercase tracking-[0.18em] font-display text-amber-400/60">{scanLabel}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Section divider ────────────────────────────────────────────────────────
+
+function SectionDivider({ index }: { index: number }) {
+  if (index === 0) return null;
+  return (
+    <div className="flex items-center gap-4 py-2">
+      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/15 to-transparent" />
+      <div className="h-1 w-1 rounded-full bg-amber-400/25" />
+      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/15 to-transparent" />
+    </div>
+  );
+}
+
+// ============================================================================
+// SECTION BLOCK — CINEMATIC EXHIBIT LAYOUTS
+// ============================================================================
 
 interface SectionBlockProps {
   section: Section;
   index: number;
+  total: number;
+  dino: Dinosaur;
+  mode: Mode;
   controlledOpen?: boolean;
   activeParagraphIndex?: number;
   isNarrationActive?: boolean;
 }
 
-function SectionBlock({ section, index, controlledOpen, activeParagraphIndex, isNarrationActive }: SectionBlockProps) {
-  const layout = CYCLE[index % CYCLE.length];
+// Layout assignment: 4 alternating cinematic layouts
+type ExhibitLayout = 'hero' | 'screenplay' | 'reversed' | 'dense';
+function getLayout(index: number): ExhibitLayout {
+  const cycle: ExhibitLayout[] = ['hero', 'screenplay', 'reversed', 'dense'];
+  return cycle[index % 4];
+}
+
+function SectionBlock({ section, index, total, dino, mode, controlledOpen, activeParagraphIndex, isNarrationActive }: SectionBlockProps) {
+  const layout = getLayout(index);
 
   const header = (
-    <header>
-      <h3 className="text-xs uppercase tracking-[0.18em] text-muted-foreground font-display mb-1">Section</h3>
-      <h2
-        className={`text-2xl md:text-3xl font-display font-bold tracking-tight transition-colors duration-500 ${
-          isNarrationActive ? 'text-primary' : 'text-foreground'
-        }`}
-      >
-        {section.title}
-        {isNarrationActive && (
-          <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse align-middle" />
-        )}
-      </h2>
-    </header>
+    <ExhibitHeader
+      index={index}
+      total={total}
+      title={section.title}
+      sectionId={section.id}
+      isActive={isNarrationActive}
+    />
   );
 
   const body = (
@@ -434,24 +710,58 @@ function SectionBlock({ section, index, controlledOpen, activeParagraphIndex, is
     />
   );
 
-  if (layout === 'image-top') {
+  // ── HERO: cinematic wide image top, 2-col text + annotation below ─────────
+  if (layout === 'hero') {
+    return (
+      <article
+        className="space-y-6"
+        data-testid={`section-${section.id}`}
+        data-section-id={section.id}
+      >
+        {header}
+        <CinematicImage
+          kind={section.placeholder}
+          label={section.placeholderLabel}
+          ratio="21/9"
+          scanLabel={`${SECTION_CATEGORIES[section.id] ?? 'SPECIMEN'} · VISUAL RECORD`}
+        />
+        <div className="grid md:grid-cols-3 gap-6 items-start">
+          <div className="md:col-span-2">{body}</div>
+          <div className="space-y-3">
+            <FloatingAnnotationCard sectionId={section.id} dino={dino} mode={mode} />
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  // ── SCREENPLAY: 3/5 text left — 2/5 image + cards right ──────────────────
+  if (layout === 'screenplay') {
     return (
       <article
         className="space-y-5"
         data-testid={`section-${section.id}`}
         data-section-id={section.id}
       >
-        <ImagePlaceholder kind={section.placeholder} label={section.placeholderLabel} ratio="21/9" />
         {header}
-        {body}
+        <div className="grid md:grid-cols-5 gap-6 items-start">
+          <div className="md:col-span-3 space-y-4">{body}</div>
+          <div className="md:col-span-2 space-y-3">
+            <CinematicImage
+              kind={section.placeholder}
+              label={section.placeholderLabel}
+              ratio="4/3"
+              scanLabel={SECTION_CATEGORIES[section.id]}
+            />
+            <FloatingAnnotationCard sectionId={section.id} dino={dino} mode={mode} />
+          </div>
+        </div>
       </article>
     );
   }
 
-  if (layout === 'image-inline') {
-    const paragraphs = section.body.split(/\n{2,}/);
-    const first = paragraphs[0] || '';
-    const rest  = paragraphs.slice(1).join('\n\n');
+  // ── REVERSED: 2/5 image + cards left — 3/5 text right ────────────────────
+  if (layout === 'reversed') {
     return (
       <article
         className="space-y-5"
@@ -459,70 +769,97 @@ function SectionBlock({ section, index, controlledOpen, activeParagraphIndex, is
         data-section-id={section.id}
       >
         {header}
-        <ParagraphList text={first} activeParagraphIndex={activeParagraphIndex === 0 ? 0 : undefined} />
-        <ImagePlaceholder kind={section.placeholder} label={section.placeholderLabel} ratio="16/9" />
-        {rest && (
-          <ExpandableBody
-            text={rest}
-            controlledOpen={controlledOpen}
-            activeParagraphIndex={
-              activeParagraphIndex !== undefined && activeParagraphIndex > 0
-                ? activeParagraphIndex - 1
-                : undefined
-            }
-          />
-        )}
+        <div className="grid md:grid-cols-5 gap-6 items-start">
+          <div className="md:col-span-2 space-y-3 order-last md:order-first">
+            <CinematicImage
+              kind={section.placeholder}
+              label={section.placeholderLabel}
+              ratio="4/3"
+              scanLabel={SECTION_CATEGORIES[section.id]}
+            />
+            <FloatingAnnotationCard sectionId={section.id} dino={dino} mode={mode} />
+          </div>
+          <div className="md:col-span-3 space-y-4">{body}</div>
+        </div>
       </article>
     );
   }
 
-  const imageRight = layout === 'image-right';
+  // ── DENSE GRID: image 2/3 + info cards 1/3 top — full-width text bottom ──
   return (
     <article
-      className={`grid gap-6 md:gap-8 md:grid-cols-2 items-start ${imageRight ? '' : 'md:[direction:rtl]'}`}
+      className="space-y-5"
       data-testid={`section-${section.id}`}
       data-section-id={section.id}
     >
-      <div className={`${imageRight ? '' : 'md:[direction:ltr]'} space-y-4`}>
-        {header}
-        {body}
+      {header}
+      <div className="grid md:grid-cols-3 gap-4 items-start">
+        <div className="md:col-span-2">
+          <CinematicImage
+            kind={section.placeholder}
+            label={section.placeholderLabel}
+            ratio="16/9"
+            scanLabel={`${SECTION_CATEGORIES[section.id] ?? 'EXHIBIT'} · RECONSTRUCTION`}
+          />
+        </div>
+        <div className="space-y-3">
+          <FloatingAnnotationCard sectionId={section.id} dino={dino} mode={mode} />
+          <SpecimenEvidenceCard dino={dino} mode={mode} />
+        </div>
       </div>
-      <div className={imageRight ? '' : 'md:[direction:ltr]'}>
-        <ImagePlaceholder kind={section.placeholder} label={section.placeholderLabel} ratio="4/3" />
-      </div>
+      <div className="md:columns-2 md:gap-8">{body}</div>
     </article>
   );
 }
 
 // ============================================================================
-// FUN FACTS BLOCK
+// FUN FACTS BLOCK — CINEMATIC GRID
 // ============================================================================
 
 function FunFactsBlock({ facts, mode }: { facts: string[]; mode: Mode }) {
   if (!facts.length) return null;
   return (
-    <article className="space-y-5" data-testid="section-funfacts">
-      <header className="flex items-center gap-3">
-        <div className="h-9 w-9 rounded-md bg-amber-500/10 border border-amber-500/25 flex items-center justify-center">
-          <Sparkles className="h-4 w-4 text-amber-300" />
+    <article className="space-y-6" data-testid="section-funfacts">
+      {/* Header row — same exhibit number style */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-3">
+          <span className="font-display text-[9px] uppercase tracking-[0.3em] text-amber-400/45 whitespace-nowrap">
+            FIELD NOTES
+          </span>
+          <div className="flex-1 h-px bg-gradient-to-r from-amber-400/35 to-transparent" />
+          <span className="text-[8px] font-display uppercase tracking-[0.22em] text-muted-foreground/35 bg-secondary/60 border border-border/30 px-2 py-0.5 rounded-sm">
+            {mode === 'life' ? 'NATURAL HISTORY' : 'SCIENTIFIC RECORD'}
+          </span>
         </div>
-        <div>
-          <h3 className="text-xs uppercase tracking-[0.18em] text-muted-foreground font-display mb-1">
-            {mode === 'life' ? 'Curiosities' : 'Notes from the field'}
-          </h3>
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight">Fun Facts</h2>
-        </div>
-      </header>
-      <div className="grid gap-3 md:grid-cols-2">
+        <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tight pl-4 border-l-2 border-amber-500/30 text-foreground flex items-center gap-3">
+          <Sparkles className="h-5 w-5 text-amber-300/70 flex-shrink-0" />
+          {mode === 'life' ? 'Curiosities & Notable Facts' : 'Scientific Notes from the Field'}
+        </h2>
+      </div>
+      {/* Masonry-style grid — first two wide, rest smaller */}
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         {facts.map((f, i) => (
-          <div
+          <motion.div
             key={i}
-            className="flex gap-3 p-4 rounded-md bg-amber-500/[0.04] border border-amber-500/15 transition-colors hover:bg-amber-500/[0.07]"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: i * 0.07 }}
+            className={`relative flex gap-3.5 p-4 rounded-lg border border-amber-500/15 bg-amber-500/[0.03] hover:bg-amber-500/[0.06] transition-colors group ${
+              i === 0 ? 'md:col-span-2 lg:col-span-2' : ''
+            }`}
             data-testid={`fact-${mode}-${i}`}
           >
-            <Lightbulb className="h-4 w-4 mt-[2px] flex-shrink-0 text-amber-300/90" />
-            <p className="text-sm leading-relaxed text-foreground/90 font-body">{f}</p>
-          </div>
+            {/* Fact number */}
+            <div className="flex-shrink-0 h-6 w-6 rounded-sm bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mt-0.5">
+              <span className="text-[9px] font-display font-bold text-amber-400/70 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm leading-relaxed text-foreground/85 font-body">{f}</p>
+            </div>
+            {/* Decorative corner */}
+            <div className="absolute top-2 right-2 w-3 h-3 border-t border-r border-amber-400/25 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+          </motion.div>
         ))}
       </div>
     </article>
@@ -577,35 +914,93 @@ export function SpeciesContent({ dino }: Props) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <section className="space-y-10" data-testid="species-content">
+    <section className="space-y-8" data-testid="species-content">
 
-      {/* ── Top controls: mode toggle ─────────────────────────────────────── */}
-      <div className="flex items-center justify-center">
-        <div className="inline-flex items-center gap-1 bg-card rounded-lg p-1 border border-border">
+      {/* ── Documentary mode bar ──────────────────────────────────────────── */}
+      <div className="relative rounded-lg border border-border/40 bg-card/60 overflow-hidden">
+        {/* Ambient amber strip */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+        <div className="flex flex-col sm:flex-row">
+          {/* Life mode */}
           <button
             onClick={() => handleModeChange('life')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-display transition-all ${
-              mode === 'life' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'
-            }`}
             data-testid="button-mode-life"
+            className={`relative flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+              mode === 'life' ? 'bg-secondary/60' : 'hover:bg-secondary/20'
+            }`}
           >
-            <Leaf className="h-4 w-4" />
-            Life Appearance & Behavior
+            {/* Active indicator */}
+            {mode === 'life' && (
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber-400" />
+            )}
+            <div className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
+              mode === 'life'
+                ? 'bg-amber-500/15 border-amber-500/35 text-amber-300'
+                : 'bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60'
+            }`}>
+              <Leaf className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
+                MODE A — NATURAL HISTORY
+              </div>
+              <div className={`text-sm font-display font-semibold tracking-wide transition-colors ${
+                mode === 'life' ? 'text-foreground' : 'text-muted-foreground'
+              }`}>
+                Life Appearance & Behavior
+              </div>
+            </div>
+            {mode === 'life' && (
+              <div className="ml-auto flex-shrink-0">
+                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+              </div>
+            )}
           </button>
+
+          {/* Divider */}
+          <div className="hidden sm:block w-px bg-border/30 self-stretch" />
+          <div className="block sm:hidden h-px bg-border/30" />
+
+          {/* Scientific mode */}
           <button
             onClick={() => handleModeChange('scientific')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-display transition-all ${
-              mode === 'scientific' ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'
-            }`}
             data-testid="button-mode-scientific"
+            className={`relative flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+              mode === 'scientific' ? 'bg-secondary/60' : 'hover:bg-secondary/20'
+            }`}
           >
-            <FlaskConical className="h-4 w-4" />
-            Anatomy & Scientific Evidence
+            {mode === 'scientific' && (
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber-400 sm:left-0" />
+            )}
+            <div className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
+              mode === 'scientific'
+                ? 'bg-amber-500/15 border-amber-500/35 text-amber-300'
+                : 'bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60'
+            }`}>
+              <FlaskConical className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
+                MODE B — SCIENTIFIC ARCHIVE
+              </div>
+              <div className={`text-sm font-display font-semibold tracking-wide transition-colors ${
+                mode === 'scientific' ? 'text-foreground' : 'text-muted-foreground'
+              }`}>
+                Anatomy & Scientific Evidence
+              </div>
+            </div>
+            {mode === 'scientific' && (
+              <div className="ml-auto flex-shrink-0">
+                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+              </div>
+            )}
           </button>
         </div>
+        {/* Bottom ambient strip */}
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
       </div>
 
-      {/* ── Narration player — always visible ───────────────────────────────── */}
+      {/* ── Narration player ─────────────────────────────────────────────── */}
       <NarrationPlayer
         key={`${dino.id}-${mode}`}
         speciesId={dino.id}
@@ -621,7 +1016,7 @@ export function SpeciesContent({ dino }: Props) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-          className="space-y-14 md:space-y-20"
+          className="space-y-16 md:space-y-24"
         >
           {sections.map((s, i) => {
             const isActive = activeSectionId === s.id;
@@ -629,9 +1024,20 @@ export function SpeciesContent({ dino }: Props) {
 
             return (
               <Fragment key={s.id}>
+                {/* Inter-section amber scan divider */}
+                {i > 0 && (
+                  <div className="flex items-center gap-4 -mt-6 md:-mt-10">
+                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/12 to-transparent" />
+                    <div className="h-1 w-1 rounded-full bg-amber-400/20" />
+                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/12 to-transparent" />
+                  </div>
+                )}
                 <SectionBlock
                   section={s}
                   index={i}
+                  total={sections.length}
+                  dino={dino}
+                  mode={mode}
                   controlledOpen={controlledOpen}
                   isNarrationActive={isActive && activeSectionId !== null}
                 />
@@ -639,6 +1045,15 @@ export function SpeciesContent({ dino }: Props) {
               </Fragment>
             );
           })}
+
+          {/* Field notes divider */}
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+            <span className="text-[8px] font-display uppercase tracking-[0.25em] text-amber-400/35 px-2">
+              END OF EXHIBIT RECORD
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+          </div>
 
           <FunFactsBlock facts={funFacts} mode={mode} />
 
