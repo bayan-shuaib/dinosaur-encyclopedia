@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
-  ScanLine, Bone, Gauge, Brain, ShieldHalf, Activity, Layers3, FileText,
+  ScanLine, Bone, ShieldHalf, Activity,
 } from 'lucide-react';
 import { Dinosaur } from '@/data/types';
-import { getTaxonomyType } from '@/lib/taxonomy';
 
 // ── HUD panel wrapper (right-side variant) ──────────────────────────────────
 function EvidencePanel({
@@ -56,11 +55,9 @@ function confidenceFromCompleteness(c: number): { label: string; cls: string } {
 }
 
 export function SpeciesEvidenceRail({ dino }: { dino: Dinosaur }) {
-  const taxon = getTaxonomyType(dino);
   const skel = dino.skeletonData;
   const conf = useMemo(() => confidenceFromCompleteness(skel.completeness), [skel.completeness]);
   const cs = dino.combatStats;
-  const eco = dino.ecologicalStats;
 
   return (
     <div className="space-y-3">
@@ -125,38 +122,22 @@ export function SpeciesEvidenceRail({ dino }: { dino: Dinosaur }) {
         </div>
       </EvidencePanel>
 
-      {/* Ecological evidence (optional) */}
-      {eco && (
-        <EvidencePanel icon={Layers3} label="Ecological Role" tag="MODEL">
-          <div className="space-y-2.5">
-            <StatBar label="Apex Status" value={eco.apexStatus} />
-            <StatBar label="Niche Control" value={eco.nicheControl} />
-            <StatBar label="Geographic Spread" value={eco.geographicSpread} />
-            <StatBar label="Longevity" value={eco.evolutionaryLongevity} />
-          </div>
+      {/* Diagnostic features */}
+      {dino.distinctFeatures?.length > 0 && (
+        <EvidencePanel icon={ShieldHalf} label="Diagnostic Features" tag={`${dino.distinctFeatures.length}`}>
+          <ul className="space-y-1.5">
+            {dino.distinctFeatures.map((f, i) => (
+              <li key={f} className="flex items-start gap-2">
+                <span className="mt-0.5 font-mono text-[8px] tabular-nums text-amber-400/55 flex-shrink-0">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="text-[10px] text-foreground/75 font-body leading-snug">{f}</span>
+              </li>
+            ))}
+          </ul>
         </EvidencePanel>
       )}
 
-      {/* Excavation record */}
-      <EvidencePanel icon={FileText} label="Excavation Record" tag={`${dino.discovery.year}`}>
-        <div className="space-y-2">
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/45 font-display">Described</span>
-            <span className="text-[11px] text-foreground/80 font-body tabular-nums">{dino.discovery.year}</span>
-          </div>
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/45 font-display flex-shrink-0">By</span>
-            <span className="text-[11px] text-foreground/80 font-body text-right">{dino.discovery.discoverer}</span>
-          </div>
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/45 font-display flex-shrink-0">Site</span>
-            <span className="text-[11px] text-foreground/80 font-body text-right break-words">{dino.discovery.location}</span>
-          </div>
-        </div>
-        <p className="mt-2.5 text-[9px] text-muted-foreground/40 font-body leading-relaxed border-t border-border/30 pt-2">
-          Range and diagnostic features refined through subsequent finds and modern CT imaging.
-        </p>
-      </EvidencePanel>
     </div>
   );
 }

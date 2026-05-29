@@ -4,14 +4,14 @@ import { getDinosaurById } from '@/data/dinosaurs';
 import { ModelViewer } from '@/components/ModelViewer';
 import { SizeComparison } from '@/components/SizeComparison';
 import { SkeletonViewer } from '@/components/SkeletonViewer';
-import { LocationMapSingle } from '@/components/LocationMapSingle';
 import InteractiveTimeline from '@/components/InteractiveTimeline';
 import { SpeciesContent } from '@/components/SpeciesContent';
 import { SpeciesScientificRail } from '@/components/species/SpeciesScientificRail';
 import { SpeciesEvidenceRail } from '@/components/species/SpeciesEvidenceRail';
 import {
-  ArrowLeft, MapPin, Calendar, Ruler, Weight,
+  ArrowLeft, Calendar, Ruler, Weight,
   GitCompareArrows, MoveHorizontal, MoveVertical, Wind, Waves,
+  Compass, Bone, Clock,
 } from 'lucide-react';
 import { getDisplayStats, getTaxonomyType, getTaxonomyLabel, StatIconKey } from '@/lib/taxonomy';
 
@@ -22,6 +22,44 @@ const STAT_ICON: Record<StatIconKey, typeof Ruler> = {
   wingspan: Wind,
   depth:    Waves,
 };
+
+/* ── Exhibit band — full-width section with a scan-label header ─────────────── */
+function ExhibitBand({
+  id, index, label, kicker, icon: Icon, children,
+}: {
+  id: string;
+  index: string;
+  label: string;
+  kicker?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className="scroll-mt-24" data-testid={`section-${id}`}>
+      {/* Scan-divider header — keeps the wall continuous instead of boxed cards */}
+      <div className="flex items-center gap-4 mb-7">
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <span className="font-mono text-[11px] tabular-nums text-amber-400/55">{index}</span>
+          <div className="h-9 w-9 rounded-md border border-amber-500/25 bg-amber-500/[0.06] flex items-center justify-center">
+            <Icon className="h-4 w-4 text-amber-300/80" />
+          </div>
+          <div>
+            {kicker && (
+              <p className="text-[9px] uppercase tracking-[0.24em] font-display text-amber-400/50 leading-none mb-1">
+                {kicker}
+              </p>
+            )}
+            <h2 className="text-lg md:text-xl font-display font-bold text-foreground tracking-tight leading-none">
+              {label}
+            </h2>
+          </div>
+        </div>
+        <div className="h-px flex-1 bg-gradient-to-r from-amber-500/20 via-border/40 to-transparent" />
+      </div>
+      {children}
+    </section>
+  );
+}
 
 export default function DinosaurPage() {
   const { id } = useParams<{ id: string }>();
@@ -49,7 +87,7 @@ export default function DinosaurPage() {
   return (
     <div className="min-h-screen pt-[90px]">
       {/* ── Command bar ──────────────────────────────────────────────────── */}
-      <div className="max-w-[1840px] mx-auto px-4 md:px-6 xl:px-10 py-4 flex items-center justify-between">
+      <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-4 flex items-center justify-between">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
@@ -68,14 +106,14 @@ export default function DinosaurPage() {
       </div>
 
       {/* ── CINEMATIC HERO — full-bleed exhibit frame ───────────────────────── */}
-      <section className="max-w-[1840px] mx-auto px-4 md:px-6 xl:px-10">
+      <section className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12">
         <div className="relative rounded-2xl border border-border/50 bg-card/40 overflow-hidden">
           {/* atmospheric glow */}
           <div className="pointer-events-none absolute -top-1/3 left-1/4 h-80 w-80 rounded-full bg-amber-500/[0.06] blur-[120px]" />
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
 
           {/* HUD metadata strip */}
-          <div className="relative flex flex-wrap items-center gap-x-5 gap-y-1.5 px-4 md:px-6 py-3 border-b border-border/40 text-[10px] font-display uppercase tracking-[0.18em] text-muted-foreground/55">
+          <div className="relative flex flex-wrap items-center gap-x-5 gap-y-1.5 px-4 md:px-7 py-3 border-b border-border/40 text-[10px] font-display uppercase tracking-[0.18em] text-muted-foreground/55">
             <span className="font-mono tracking-wider text-amber-400/70">{specimenCode}</span>
             <span className="hidden sm:inline text-border">/</span>
             <span>{getTaxonomyLabel(taxon)}</span>
@@ -89,14 +127,14 @@ export default function DinosaurPage() {
             </span>
           </div>
 
-          {/* Viewer + identity panel */}
-          <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px]">
+          {/* Viewer + identity panel — wider canvas */}
+          <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_440px]">
             <div className="relative p-4 md:p-6">
               <ModelViewer image={dino.image} dinoName={dino.name} sketchfabUrl={dino.sketchfabUrl} />
             </div>
 
             {/* Identity panel */}
-            <div className="relative border-t lg:border-t-0 lg:border-l border-border/40 bg-secondary/10 p-5 md:p-6 flex flex-col justify-center">
+            <div className="relative border-t lg:border-t-0 lg:border-l border-border/40 bg-secondary/10 p-5 md:p-7 flex flex-col justify-center">
               <p className="text-[10px] uppercase tracking-[0.24em] text-amber-400/55 font-display mb-2" data-testid="text-taxonomy-label">
                 {getTaxonomyLabel(taxon)} · {dino.period}
               </p>
@@ -133,18 +171,16 @@ export default function DinosaurPage() {
       </section>
 
       {/* ── MUSEUM ARCHITECTURE — left rail · exhibit hall · evidence system ── */}
-      <div className="max-w-[1840px] mx-auto px-4 md:px-6 xl:px-10 py-10 md:py-14">
-        <div className="grid grid-cols-1 xl:grid-cols-[260px_minmax(0,1fr)_300px] gap-6 xl:gap-8 items-start">
+      <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-10 md:py-14">
+        <div className="grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)_330px] gap-6 2xl:gap-10 items-start">
 
-          {/* LEFT — persistent scientific rail */}
-          <aside className="hidden xl:block">
-            <div className="sticky top-[100px] max-h-[calc(100vh-120px)] overflow-y-auto pr-1 pb-6">
-              <SpeciesScientificRail dino={dino} />
-            </div>
+          {/* LEFT — persistent scientific support column (sticky, flanks the whole wall) */}
+          <aside className="hidden xl:block self-start sticky top-[100px]">
+            <SpeciesScientificRail dino={dino} />
           </aside>
 
           {/* CENTER — exhibit hall */}
-          <main className="min-w-0 space-y-16 md:space-y-20">
+          <main className="min-w-0 space-y-16 md:space-y-24">
 
             {/* Condensed classification + location for < xl (rails hidden) */}
             <div className="grid md:grid-cols-2 gap-4 xl:hidden">
@@ -161,13 +197,19 @@ export default function DinosaurPage() {
                 </div>
               </div>
               <div className="info-panel">
-                <p className="section-label">Location & Formation</p>
-                <LocationMapSingle location={dino.discovery.location} continent={dino.continent} />
-                <div className="flex items-start gap-2 mt-3">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-sm text-foreground font-body break-words">{dino.discovery.location}</p>
-                    <p className="text-xs text-muted-foreground font-body mt-1 break-words">{dino.continent}</p>
+                <p className="section-label">Discovery</p>
+                <div className="space-y-2 mt-3">
+                  <div className="flex justify-between text-xs font-body">
+                    <span className="text-muted-foreground">Year</span>
+                    <span className="text-foreground">{dino.discovery.year}</span>
+                  </div>
+                  <div className="flex justify-between text-xs font-body">
+                    <span className="text-muted-foreground">Discoverer</span>
+                    <span className="text-foreground text-right">{dino.discovery.discoverer}</span>
+                  </div>
+                  <div className="flex justify-between text-xs font-body">
+                    <span className="text-muted-foreground">Location</span>
+                    <span className="text-foreground text-right break-words max-w-[160px]">{dino.discovery.location}</span>
                   </div>
                 </div>
               </div>
@@ -179,48 +221,49 @@ export default function DinosaurPage() {
             </div>
 
             {/* Geological Timeline */}
-            <section id="exhibit-timeline" className="scroll-mt-24 info-panel flex flex-col" style={{ height: 380 }} data-testid="section-timeline">
-              <p className="section-label mb-3">Geological Timeline</p>
-              <div className="flex-1 min-h-0">
-                <InteractiveTimeline dinosaurs={[dino]} />
+            <ExhibitBand id="exhibit-timeline" index="06" kicker="Deep Time" label="Geological Timeline" icon={Clock}>
+              <div className="rounded-xl border border-border/40 bg-card/40 p-4 md:p-5" style={{ height: 420 }}>
+                <div className="h-full">
+                  <InteractiveTimeline dinosaurs={[dino]} />
+                </div>
               </div>
-            </section>
+            </ExhibitBand>
 
             {/* Fossil Record */}
-            <section id="exhibit-fossil" className="scroll-mt-24 info-panel" data-testid="section-fossil-record">
-              <SkeletonViewer skeletonData={dino.skeletonData} dinoName={dino.name} />
-            </section>
+            <ExhibitBand id="exhibit-fossil" index="07" kicker="Physical Evidence" label="Fossil Record" icon={Bone}>
+              <div className="rounded-xl border border-border/40 bg-card/40 p-4 md:p-6">
+                <SkeletonViewer skeletonData={dino.skeletonData} dinoName={dino.name} />
+              </div>
+            </ExhibitBand>
 
-            {/* Discovery */}
-            <section id="exhibit-discovery" className="scroll-mt-24 info-panel">
-              <p className="section-label">Discovery</p>
-              <div className="grid grid-cols-3 gap-4 mt-3">
-                <div>
-                  <p className="text-xs text-muted-foreground font-body">Year</p>
-                  <p className="text-sm text-foreground font-display font-semibold">{dino.discovery.year}</p>
+            {/* True Scale */}
+            <ExhibitBand id="exhibit-scale" index="08" kicker="Human Reference" label="True Scale" icon={Ruler}>
+              <SizeComparison dinoName={dino.name} dinoHeight={dino.height} dinoLength={dino.length} dinoGroup={dino.group} dinoId={dino.id} />
+            </ExhibitBand>
+
+            {/* Discovery — wide multi-zone band */}
+            <ExhibitBand id="exhibit-discovery" index="09" kicker="Field Record" label="Discovery" icon={Compass}>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="rounded-xl border border-border/40 bg-card/40 p-5">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 font-display">Year Described</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-foreground tabular-nums">{dino.discovery.year}</p>
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground font-body">Discoverer</p>
-                  <p className="text-sm text-foreground font-body">{dino.discovery.discoverer}</p>
+                <div className="rounded-xl border border-border/40 bg-card/40 p-5">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 font-display">Discoverer</p>
+                  <p className="mt-2 text-lg font-display font-semibold text-foreground leading-snug">{dino.discovery.discoverer}</p>
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground font-body">Location</p>
-                  <p className="text-sm text-foreground font-body">{dino.discovery.location}</p>
+                <div className="rounded-xl border border-border/40 bg-card/40 p-5">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 font-display">Site & Formation</p>
+                  <p className="mt-2 text-sm font-body text-foreground/85 leading-snug break-words">{dino.discovery.location}</p>
+                  <p className="mt-1 text-xs text-muted-foreground/60 font-body">{dino.continent}</p>
                 </div>
               </div>
-            </section>
-
-            {/* Size Comparison */}
-            <div id="exhibit-scale" className="scroll-mt-24">
-              <SizeComparison dinoName={dino.name} dinoHeight={dino.height} dinoLength={dino.length} dinoGroup={dino.group} dinoId={dino.id} />
-            </div>
+            </ExhibitBand>
           </main>
 
-          {/* RIGHT — floating evidence system */}
-          <aside className="hidden xl:block">
-            <div className="sticky top-[100px] max-h-[calc(100vh-120px)] overflow-y-auto pl-1 pb-6">
-              <SpeciesEvidenceRail dino={dino} />
-            </div>
+          {/* RIGHT — persistent evidence support column (sticky, flanks the whole wall) */}
+          <aside className="hidden xl:block self-start sticky top-[100px]">
+            <SpeciesEvidenceRail dino={dino} />
           </aside>
         </div>
       </div>
