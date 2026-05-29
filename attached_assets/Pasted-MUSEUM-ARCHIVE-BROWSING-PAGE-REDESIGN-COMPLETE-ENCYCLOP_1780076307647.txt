@@ -1,0 +1,261 @@
+MUSEUM ARCHIVE BROWSING PAGE REDESIGN — COMPLETE ENCYCLOPEDIA HOME OVERHAUL
+
+The current encyclopedia browsing page feels too visually similar to Facts.app due to:
+- centered hero structure
+- evenly spaced card grids
+- large empty spacing
+- similar browsing rhythm
+- minimal archive architecture
+
+The redesign must preserve the premium cinematic dinosaur aesthetic while transforming the page into a unique museum-style archive terminal.
+
+The goal is:
+NOT a modern encyclopedia homepage.
+
+The goal is:
+a futuristic paleontology archive and museum collection system.
+
+==================================================
+CORE DESIGN DIRECTION
+==================================================
+
+The page should feel like:
+- a digital natural history museum
+- a scientific archive terminal
+- an exhibit browsing station
+- a cinematic paleontology database
+- a fossil archive command center
+
+NOT:
+✖ a Netflix-style content browser
+✖ a standard encyclopedia grid
+✖ a minimalist modern website
+✖ a copy of Facts.app
+
+==================================================
+REMOVE THE CURRENT CENTERED STRUCTURE
+==================================================
+
+The current page is too centralized.
+
+Reduce:
+- giant empty top spacing
+- centered hero dominance
+- excessive horizontal emptiness
+
+The interface should feel denser and more immersive immediately after page load.
+
+==================================================
+NEW PAGE ARCHITECTURE
+==================================================
+
+Create a layered museum archive structure.
+
+==================================================
+LEFT-SIDE ARCHIVE NAVIGATION
+==================================================
+
+Add a persistent museum-style archive navigation rail on the left side.
+
+This should contain:
+- Geological periods
+- Species categories
+- Archive filters
+- Discovery regions
+- Exhibit collections
+- Favorites/bookmarks
+- Recently viewed species
+
+The navigation should feel like:
+- a museum exhibit terminal
+- scientific archive controls
+- fossil collection indexing system
+
+Styling:
+- subtle amber/orange scientific glow
+- thin exhibit divider lines
+- fossil-inspired iconography
+- minimal but premium
+
+==================================================
+FEATURED EXHIBIT AREA
+==================================================
+
+Replace the giant centered heading with a cinematic featured exhibit section near the top.
+
+This should include:
+- featured species artwork
+- rotating exhibit highlight
+- discovery spotlight
+- “Today’s Exhibit”
+- animated environmental backdrop
+- subtle atmospheric motion
+
+Layout:
+NOT centered empty space.
+
+Instead:
+- wide asymmetrical composition
+- image-heavy presentation
+- layered exhibit framing
+- documentary-style visual storytelling
+
+==================================================
+ARCHIVE ROW SYSTEM
+==================================================
+
+Replace the current massive uniform grid layout.
+
+Instead organize species into:
+horizontal museum archive rows.
+
+Example:
+TRIASSIC COLLECTION →
+[JURASSIC COLLECTION →]
+[CRETACEOUS COLLECTION →]
+
+Each row should scroll horizontally.
+
+This creates:
+- better density
+- stronger museum feel
+- less similarity to Facts.app
+- more cinematic browsing rhythm
+
+==================================================
+SPECIES CARD REDESIGN
+==================================================
+
+Current cards feel too similar to streaming thumbnails.
+
+Transform them into:
+museum archive specimen cards.
+
+Card style inspiration:
+- fossil specimen records
+- scientific archive folders
+- exhibit identification plaques
+- classified reconstruction files
+
+==================================================
+CARD FEATURES
+==================================================
+
+Each card should contain:
+- paleoart image
+- species silhouette
+- scientific classification tags
+- geological era marker
+- dietary iconography
+- habitat indicators
+- exhibit rarity/status
+- subtle fossil scan overlays
+
+Add:
+- holographic scan effects
+- specimen ID markings
+- archive numbering
+- reconstruction confidence labels
+
+==================================================
+CARD SHAPE & STRUCTURE
+==================================================
+
+Avoid repetitive equal-sized poster rectangles.
+
+Introduce:
+- varied card proportions
+- some wider specimen panels
+- some taller reconstruction cards
+- occasional highlighted feature cards
+
+The archive should feel curated and alive.
+
+==================================================
+BACKGROUND & ATMOSPHERE
+==================================================
+
+Current background is too empty and flat.
+
+Add:
+- subtle fossil texture overlays
+- geological contour patterns
+- animated dust particles
+- museum lighting gradients
+- atmospheric environmental shading
+- faint scientific gridlines
+
+Keep it subtle and premium.
+
+==================================================
+EXHIBIT DENSITY
+==================================================
+
+The page should immediately feel rich with content.
+
+Reduce empty dead zones.
+
+Introduce:
+- floating scientific panels
+- side annotations
+- archive metadata
+- species statistics
+- discovery highlights
+
+without cluttering readability.
+
+==================================================
+HOVER INTERACTIONS
+==================================================
+
+On hover:
+- cards slightly expand
+- specimen glow activates
+- archive metadata appears
+- subtle fossil scan animation plays
+- environmental sound pulse optional
+- classification overlays emerge
+
+Hover should feel:
+scientific and cinematic.
+
+NOT:
+generic modern UI scaling.
+
+==================================================
+DOCUMENTARY MUSEUM FEEL
+==================================================
+
+Everything should feel inspired by:
+- museum exhibit kiosks
+- BBC documentary interfaces
+- scientific archive terminals
+- cinematic paleo exhibits
+- natural history installations
+
+==================================================
+TYPOGRAPHY
+==================================================
+
+Reduce oversized centered modern typography.
+
+Use:
+- documentary-style headings
+- archive labeling systems
+- exhibit typography hierarchy
+- scientific subtitle styling
+
+Mix:
+- cinematic titles
+- scientific labeling
+- museum metadata formatting
+
+==================================================
+FINAL GOAL
+==================================================
+
+The encyclopedia browsing page should no longer resemble:
+“a clean modern dinosaur browsing website.”
+
+Instead it should feel like:
+an interactive museum archive where users explore prehistoric life collections through cinematic scientific exhibits and fossil archive systems.
