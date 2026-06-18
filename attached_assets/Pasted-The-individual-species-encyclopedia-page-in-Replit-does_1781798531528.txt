@@ -1,0 +1,133 @@
+The individual species encyclopedia page in Replit does not match the latest approved v0 design.
+
+I want the species page restored to match the v0 version as closely as possible.
+
+DO NOT redesign the page.
+
+DO NOT reinterpret the layout.
+
+DO NOT create a new layout.
+
+Instead, reproduce the existing v0 structure and styling exactly.
+
+==================================================
+LAYOUT STRUCTURE
+================
+
+The page should use a three-column museum dashboard layout.
+
+LEFT SIDEBAR
+
+* Specimen identifier card
+* Taxonomy/classification card
+* Exhibit navigation menu
+* Geological timeline navigation
+* Fossil record navigation
+* Discovery section navigation
+* True scale section navigation
+
+CENTER CONTENT
+
+* Main encyclopedia content
+* Scientific modules
+* Information cards
+* Reconstruction panels
+* Scientific notes
+* Description content
+
+RIGHT SIDEBAR
+
+* Evidence system
+* Reconstruction confidence
+* Fossil evidence
+* Physiology scan
+* Completeness indicators
+* Scientific confidence metrics
+
+All three columns should remain visible on desktop.
+
+==================================================
+VISUAL STYLE
+============
+
+Match the current v0 museum aesthetic.
+
+Preserve:
+
+* Dark premium museum theme
+* Gold accent colors
+* Scientific dashboard appearance
+* Card-based structure
+* Thin borders
+* Subtle glow effects
+* Evidence-system styling
+
+Do not revert to a generic encyclopedia appearance.
+
+Do not replace cards with simple text sections.
+
+==================================================
+ENCYCLOPEDIA CONTENT
+====================
+
+The encyclopedia text currently has a major readability issue.
+
+When the user clicks:
+
+"Read More"
+
+the expanded text becomes a giant full-width block.
+
+This looks unprofessional.
+
+Fix the content flow.
+
+Requirements:
+
+* Long-form encyclopedia text should intelligently wrap around adjacent content.
+* Text should not create massive empty spaces.
+* Text should not collide with evidence cards.
+* Text should remain readable on all screen sizes.
+
+Preferred behavior:
+
+If an image card or information card exists beside the text, allow the text to flow naturally around it where appropriate.
+
+Alternative acceptable behavior:
+
+Use a responsive multi-column content layout so large text blocks are broken into readable sections.
+
+The result should resemble a museum exhibit panel rather than a Wikipedia article.
+
+==================================================
+READABILITY IMPROVEMENTS
+========================
+
+Improve typography without changing branding.
+
+Requirements:
+
+* Comfortable line length
+* Consistent spacing
+* Proper paragraph separation
+* Better handling of expanded descriptions
+* No oversized empty regions
+* No abrupt layout shifts when expanding content
+
+==================================================
+RESPONSIVENESS
+==============
+
+Desktop should closely match the approved v0 layout.
+
+Tablet and mobile should gracefully stack sections while preserving hierarchy.
+
+==================================================
+CRITICAL REQUIREMENT
+====================
+
+Treat the v0 implementation as the source of truth.
+
+Audit all encyclopedia-page components and identify anything missing, outdated, or visually different from the current v0 version.
+
+Restore those elements so Replit matches the approved v0 design as closely as possible.
