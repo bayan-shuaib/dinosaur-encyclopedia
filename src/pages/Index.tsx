@@ -1,5 +1,4 @@
 import { useState, useMemo, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { dinosaurs } from '@/data/dinosaurs';
 import { ArchiveSpecimenCard, DinosaurListCard, FeaturedExhibitCard, PERIOD_META } from '@/components/DinosaurCard';
 import { cn } from '@/lib/utils';
@@ -16,8 +15,8 @@ type TabKey = 'dinosaurs' | 'pterosaurs' | 'marine_reptiles';
 
 const TABS: { key: TabKey; label: string; sub: string; icon: React.ReactNode }[] = [
   { key: 'dinosaurs',       label: 'Dinosaurs',       sub: 'Terrestrial',  icon: <Layers className="h-3.5 w-3.5" /> },
-  { key: 'pterosaurs',      label: 'Pterosaurs',      sub: 'Aerial',       icon: <Wind className="h-3.5 w-3.5" /> },
-  { key: 'marine_reptiles', label: 'Marine Reptiles', sub: 'Aquatic',      icon: <Waves className="h-3.5 w-3.5" /> },
+  { key: 'pterosaurs',      label: 'Pterosaurs',       sub: 'Aerial',       icon: <Wind className="h-3.5 w-3.5" /> },
+  { key: 'marine_reptiles', label: 'Marine Reptiles',  sub: 'Aquatic',      icon: <Waves className="h-3.5 w-3.5" /> },
 ];
 
 const FEATURED_IDS: Record<TabKey, string[]> = {
@@ -26,38 +25,51 @@ const FEATURED_IDS: Record<TabKey, string[]> = {
   marine_reptiles: ['mosasaurus', 'plesiosaurus'],
 };
 
+// Marine clade descriptions for reorganized view
+const MARINE_CLADE_INFO: Record<string, { desc: string; color: string; textColor: string; dotColor: string }> = {
+  Mosasaurs:    { desc: 'Predatory varanoid lizards that dominated Late Cretaceous seas. Related to modern monitor lizards.', color: 'bg-blue-500/8 border-blue-500/20',    textColor: 'text-blue-400/70',    dotColor: 'bg-blue-400'    },
+  Ichthyosaurs: { desc: 'Dolphin-shaped reptiles with fully aquatic lifestyles. Gave birth to live young at sea.',            color: 'bg-teal-500/8 border-teal-500/20',   textColor: 'text-teal-400/70',   dotColor: 'bg-teal-400'   },
+  Plesiosaurs:  { desc: 'Four-flippered marine reptiles — long-necked forms and short-necked pliosaurs.',                    color: 'bg-cyan-500/8 border-cyan-500/20',   textColor: 'text-cyan-400/70',   dotColor: 'bg-cyan-400'   },
+  Pliosaurids:  { desc: 'Large-skulled, short-necked apex marine predators. Closely related to plesiosaurs.',                color: 'bg-violet-500/8 border-violet-500/20', textColor: 'text-violet-400/70', dotColor: 'bg-violet-400' },
+};
+
+const DIET_STYLE: Record<string, string> = {
+  Carnivore:   'bg-red-500/10 text-red-400/75 border-red-500/22',
+  Herbivore:   'bg-green-500/10 text-green-400/75 border-green-500/22',
+  Omnivore:    'bg-yellow-500/10 text-yellow-400/75 border-yellow-500/22',
+  Piscivore:   'bg-blue-500/10 text-blue-400/75 border-blue-500/22',
+  Insectivore: 'bg-violet-500/10 text-violet-400/75 border-violet-500/22',
+};
+
 // ── Archive Rail ─────────────────────────────────────────────────────────────
 
 function ArchiveRail({
-  activeTab, onTabChange, periodCounts, onScrollToPeriod,
+  activeTab, onTabChange, groupCounts, onScrollToGroup, totalTaxa,
 }: {
   activeTab: TabKey;
   onTabChange: (t: TabKey) => void;
-  periodCounts: Record<string, number>;
-  onScrollToPeriod: (p: string) => void;
+  groupCounts: Record<string, number>;
+  onScrollToGroup: (g: string) => void;
+  totalTaxa: number;
 }) {
+  const isMarine = activeTab === 'marine_reptiles';
+
   return (
     <aside className="hidden lg:flex flex-col w-52 flex-shrink-0 select-none">
       <div className="sticky top-[100px] flex flex-col gap-5">
         {/* Archive title */}
         <div className="pb-3 border-b border-border/25">
-          <div className="text-[7.5px] uppercase tracking-[0.32em] text-amber-400/40 font-display mb-1">
-            DINOPEDIA
-          </div>
-          <div className="text-[11px] font-display font-semibold text-foreground/80 tracking-wide">
-            Paleontology Archive
-          </div>
+          <div className="text-[7.5px] uppercase tracking-[0.32em] text-amber-400/40 font-display mb-1">DINOPEDIA</div>
+          <div className="text-[11px] font-display font-semibold text-foreground/80 tracking-wide">Paleontology Archive</div>
           <div className="flex items-center gap-1.5 mt-1">
             <div className="h-1.5 w-1.5 rounded-full bg-amber-400/60 animate-pulse" />
             <span className="text-[8px] font-mono text-muted-foreground/35 tracking-[0.12em]">ARCHIVE ACTIVE</span>
           </div>
         </div>
 
-        {/* Collection */}
+        {/* Collection tabs */}
         <div>
-          <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/35 font-display mb-2.5">
-            COLLECTION
-          </div>
+          <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/35 font-display mb-2.5">COLLECTION</div>
           <div className="space-y-0.5">
             {TABS.map(tab => (
               <button
@@ -78,40 +90,37 @@ function ArchiveRail({
                   <div className="text-[11px] font-display font-medium leading-tight">{tab.label}</div>
                   <div className="text-[8px] text-muted-foreground/35 tracking-[0.1em] uppercase font-display">{tab.sub}</div>
                 </div>
-                {activeTab === tab.key && (
-                  <div className="w-1 h-1 rounded-full bg-amber-400/60 flex-shrink-0" />
-                )}
+                {activeTab === tab.key && <div className="w-1 h-1 rounded-full bg-amber-400/60 flex-shrink-0" />}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Geological periods */}
+        {/* Geological / Taxonomic navigation */}
         <div>
           <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/35 font-display mb-2.5">
-            GEOLOGICAL RECORD
+            {isMarine ? 'TAXONOMIC GROUPS' : 'GEOLOGICAL RECORD'}
           </div>
           <div className="space-y-1">
-            {PERIOD_ORDER.filter(p => periodCounts[p] > 0).map(period => {
-              const meta = PERIOD_META[period];
+            {Object.entries(groupCounts).map(([key, count]) => {
+              const meta = isMarine
+                ? (MARINE_CLADE_INFO[key] ?? { textColor: 'text-muted-foreground/55', dotColor: 'bg-muted-foreground' })
+                : (PERIOD_META[key] ?? PERIOD_META.Cretaceous);
               return (
                 <button
-                  key={period}
-                  onClick={() => onScrollToPeriod(period)}
+                  key={key}
+                  onClick={() => onScrollToGroup(key)}
                   className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-left hover:bg-secondary/30 transition-colors group"
-                  data-testid={`rail-period-${period.toLowerCase()}`}
+                  data-testid={`rail-group-${key.toLowerCase().replace(/\s+/g, '-')}`}
                 >
                   <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${meta.dotColor} opacity-60`} />
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] font-display text-muted-foreground/55 group-hover:text-foreground/70 transition-colors">
-                      {period}
+                    <span className="text-[10px] font-display text-muted-foreground/55 group-hover:text-foreground/70 transition-colors leading-tight">
+                      {key}
                     </span>
                   </div>
                   <span className="text-[8px] font-mono text-muted-foreground/28 flex-shrink-0">
-                    {String(periodCounts[period]).padStart(2, '0')}
-                  </span>
-                  <span className={`text-[7px] font-display tracking-[0.1em] flex-shrink-0 ${meta.textColor} opacity-60`}>
-                    {PERIOD_META[period].range}
+                    {String(count).padStart(2, '0')}
                   </span>
                 </button>
               );
@@ -121,13 +130,11 @@ function ArchiveRail({
 
         {/* Archive stats */}
         <div className="rounded-lg border border-border/22 bg-secondary/15 p-3 space-y-2">
-          <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/30 font-display mb-1">
-            ARCHIVE STATUS
-          </div>
+          <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/30 font-display mb-1">ARCHIVE STATUS</div>
           {[
-            ['Total Specimens', String(Object.values(periodCounts).reduce((a, b) => a + b, 0))],
-            ['Active Periods',  String(Object.values(periodCounts).filter(c => c > 0).length)],
-            ['Collections',     '3'],
+            ['Total Taxa',    String(totalTaxa)],
+            ['Groups',        String(Object.keys(groupCounts).length)],
+            ['Collections',   '3'],
           ].map(([label, value]) => (
             <div key={label} className="flex items-center justify-between">
               <span className="text-[9px] text-muted-foreground/40 font-display">{label}</span>
@@ -140,34 +147,52 @@ function ArchiveRail({
   );
 }
 
-// ── Period Archive Row ────────────────────────────────────────────────────────
+// ── Group Archive Row ─────────────────────────────────────────────────────────
 
-function PeriodArchiveRow({
-  period, dinos, globalOffset, viewMode,
+function GroupArchiveRow({
+  groupKey, dinos, globalOffset, viewMode, isClade,
 }: {
-  period: string;
+  groupKey: string;
   dinos: typeof dinosaurs;
   globalOffset: number;
   viewMode: 'archive' | 'grid' | 'list';
+  isClade: boolean;
 }) {
-  const meta = PERIOD_META[period] ?? PERIOD_META.Cretaceous;
+  const periodMeta = PERIOD_META[groupKey];
+  const cladeMeta  = MARINE_CLADE_INFO[groupKey];
+
+  const textColor = isClade
+    ? (cladeMeta?.textColor ?? 'text-muted-foreground/60')
+    : (periodMeta?.textColor ?? 'text-amber-400/70');
+  const dotColor  = isClade
+    ? (cladeMeta?.dotColor ?? 'bg-muted-foreground')
+    : (periodMeta?.dotColor ?? 'bg-amber-400');
+  const rangeLabel = isClade ? '' : (periodMeta?.range ?? '');
 
   return (
     <div>
-      {/* Period row header */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`h-2 w-2 rounded-full flex-shrink-0 ${meta.dotColor} opacity-70`} />
-        <span className={`text-[8px] uppercase tracking-[0.28em] font-display flex-shrink-0 ${meta.textColor}`}>
-          {period.toUpperCase()}
-        </span>
-        <div className="h-px flex-1 bg-gradient-to-r from-border/30 to-transparent min-w-[20px]" />
-        <span className="text-[8px] font-mono text-muted-foreground/28 flex-shrink-0 whitespace-nowrap">
-          {meta.range} · {dinos.length} SPECIMENS
-        </span>
-        <ChevronRight className="h-3 w-3 text-muted-foreground/20 flex-shrink-0" />
+      {/* Row header */}
+      <div className="space-y-1.5 mb-4">
+        <div className="flex items-center gap-3">
+          <div className={`h-2 w-2 rounded-full flex-shrink-0 ${dotColor} opacity-70`} />
+          <span className={`text-[8px] uppercase tracking-[0.28em] font-display flex-shrink-0 ${textColor}`}>
+            {groupKey.toUpperCase()}
+          </span>
+          <div className="h-px flex-1 bg-gradient-to-r from-border/30 to-transparent min-w-[20px]" />
+          <span className="text-[8px] font-mono text-muted-foreground/28 flex-shrink-0 whitespace-nowrap">
+            {rangeLabel && `${rangeLabel} · `}{dinos.length} TAXA
+          </span>
+          <ChevronRight className="h-3 w-3 text-muted-foreground/20 flex-shrink-0" />
+        </div>
+        {/* Clade description for marine groups */}
+        {isClade && cladeMeta?.desc && (
+          <p className="text-[9px] text-muted-foreground/35 font-body leading-relaxed pl-5">
+            {cladeMeta.desc}
+          </p>
+        )}
       </div>
 
-      {/* Content: horizontal archive scroll (archive/grid) or list */}
+      {/* Content */}
       {viewMode === 'list' ? (
         <div className="flex flex-col gap-0.5">
           {dinos.map(d => <DinosaurListCard key={d.id} dinosaur={d} />)}
@@ -179,11 +204,7 @@ function PeriodArchiveRow({
           ))}
         </div>
       ) : (
-        /* Archive horizontal scroll */
-        <div
-          className="flex gap-3 overflow-x-auto pb-3"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
+        <div className="flex gap-3 overflow-x-auto pb-3" style={{ scrollbarWidth: 'none' }}>
           {dinos.map((d, i) => (
             <ArchiveSpecimenCard key={d.id} dinosaur={d} specimenIndex={globalOffset + i} />
           ))}
@@ -193,7 +214,7 @@ function PeriodArchiveRow({
   );
 }
 
-// ── Mobile collection tabs ────────────────────────────────────────────────────
+// ── Mobile tabs ───────────────────────────────────────────────────────────────
 
 function MobileTabs({ activeTab, onTabChange }: { activeTab: TabKey; onTabChange: (t: TabKey) => void }) {
   return (
@@ -204,9 +225,7 @@ function MobileTabs({ activeTab, onTabChange }: { activeTab: TabKey; onTabChange
           onClick={() => onTabChange(tab.key)}
           className={cn(
             'flex-1 flex items-center justify-center gap-1.5 py-2 px-2 rounded-md text-xs font-display transition-all',
-            activeTab === tab.key
-              ? 'bg-secondary text-foreground'
-              : 'text-muted-foreground/50 hover:text-foreground',
+            activeTab === tab.key ? 'bg-secondary text-foreground' : 'text-muted-foreground/50 hover:text-foreground',
           )}
           data-testid={`tab-${tab.key}`}
         >
@@ -225,8 +244,9 @@ const Index = () => {
   const [activeTab,  setActiveTab]  = useState<TabKey>('dinosaurs');
   const [direction,  setDirection]  = useState(1);
   const [viewMode,   setViewMode]   = useState<'archive' | 'grid' | 'list'>('archive');
+  const [dietFilter, setDietFilter] = useState<string | null>(null);
 
-  const periodRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const groupRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const filteredDinos = useMemo(() => {
@@ -235,19 +255,44 @@ const Index = () => {
     return dinosaurs.filter(d => getTaxonomyType(d) === 'dinosaur');
   }, [activeTab]);
 
-  const grouped = useMemo(() => {
-    const groups: Record<string, typeof dinosaurs> = {};
-    for (const p of PERIOD_ORDER) {
-      const dinos = filteredDinos.filter(d => d.period === p).sort((a, b) => a.name.localeCompare(b.name));
-      if (dinos.length > 0) groups[p] = dinos;
-    }
-    return groups;
+  // Unique diets in this collection (for filter chips)
+  const uniqueDiets = useMemo(() => {
+    const s = new Set(filteredDinos.map(d => d.diet));
+    return Array.from(s).sort();
   }, [filteredDinos]);
 
-  const periodCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const [p, ds] of Object.entries(grouped)) counts[p] = ds.length;
-    return counts;
+  // Apply diet filter
+  const displayDinos = useMemo(() => {
+    if (!dietFilter) return filteredDinos;
+    return filteredDinos.filter(d => d.diet === dietFilter);
+  }, [filteredDinos, dietFilter]);
+
+  // Group by period OR by taxonomic group (marine reptiles)
+  const isMarine = activeTab === 'marine_reptiles';
+  const grouped = useMemo(() => {
+    const groups: Record<string, typeof dinosaurs> = {};
+    if (isMarine) {
+      for (const dino of displayDinos) {
+        const g = dino.group as string;
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(dino);
+      }
+      for (const g of Object.keys(groups)) {
+        groups[g].sort((a, b) => a.name.localeCompare(b.name));
+      }
+    } else {
+      for (const p of PERIOD_ORDER) {
+        const dinos = displayDinos.filter(d => d.period === p).sort((a, b) => a.name.localeCompare(b.name));
+        if (dinos.length > 0) groups[p] = dinos;
+      }
+    }
+    return groups;
+  }, [isMarine, displayDinos]);
+
+  const groupCounts = useMemo(() => {
+    const c: Record<string, number> = {};
+    for (const [k, v] of Object.entries(grouped)) c[k] = v.length;
+    return c;
   }, [grouped]);
 
   const featuredDino = useMemo(() => {
@@ -266,48 +311,45 @@ const Index = () => {
     const ni = TABS.findIndex(t => t.key === tab);
     setDirection(ni > ci ? 1 : -1);
     setActiveTab(tab);
+    setDietFilter(null);
   };
 
-  const scrollToPeriod = (period: string) => {
-    periodRefs.current[period]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const scrollToGroup = (key: string) => {
+    groupRefs.current[key]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // ── Accumulated specimen index ─────────────────────────────────────────
   let globalOffset = 0;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen pt-[90px]">
-      {/* Ambient background gridlines */}
+      {/* Ambient scientific gridlines */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.018]"
         style={{
-          backgroundImage: `
-            linear-gradient(rgba(251,191,36,0.8) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(251,191,36,0.8) 1px, transparent 1px)
-          `,
+          backgroundImage: `linear-gradient(rgba(251,191,36,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,0.8) 1px, transparent 1px)`,
           backgroundSize: '80px 80px',
           zIndex: 0,
         }}
       />
 
       <div className="relative z-10 max-w-[1480px] mx-auto px-4 md:px-6 pb-20">
-        {/* ── Two-column layout: rail + main ─────────────────────────────── */}
         <div className="flex gap-8">
 
-          {/* ── Left archive rail ──────────────────────────────────────── */}
+          {/* ── Archive rail ───────────────────────────────────────────── */}
           <ArchiveRail
             activeTab={activeTab}
             onTabChange={handleTabChange}
-            periodCounts={periodCounts}
-            onScrollToPeriod={scrollToPeriod}
+            groupCounts={groupCounts}
+            onScrollToGroup={scrollToGroup}
+            totalTaxa={filteredDinos.length}
           />
 
-          {/* ── Main content area ──────────────────────────────────────── */}
+          {/* ── Main content ────────────────────────────────────────────── */}
           <div className="flex-1 min-w-0 pt-4">
 
-            {/* ── Archive header (replaces centered hero) ─────────────── */}
-            <div className="flex items-start justify-between gap-4 mb-6 pb-5 border-b border-border/20">
+            {/* Archive header */}
+            <div className="flex items-start justify-between gap-4 mb-5 pb-5 border-b border-border/20">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[7.5px] uppercase tracking-[0.3em] text-amber-400/40 font-display">
@@ -322,26 +364,24 @@ const Index = () => {
                   Prehistoric Life Database
                 </h1>
                 <p className="text-xs text-muted-foreground/45 font-body mt-1">
-                  {filteredDinos.length} specimens · {Object.keys(grouped).length} geological periods catalogued
+                  {filteredDinos.length} taxa · {Object.keys(grouped).length} {isMarine ? 'taxonomic groups' : 'geological periods'} catalogued
                 </p>
               </div>
 
-              {/* View mode toggle (compact) */}
+              {/* View mode toggle */}
               <div className="flex-shrink-0 flex items-center gap-1 bg-card/70 rounded-lg p-1 border border-border/25">
                 {([
-                  { key: 'archive', icon: <Layers className="h-3.5 w-3.5" />, label: 'Archive' },
-                  { key: 'grid',    icon: <LayoutGrid className="h-3.5 w-3.5" />, label: 'Grid' },
-                  { key: 'list',    icon: <List className="h-3.5 w-3.5" />,       label: 'List' },
-                ] as const).map(opt => (
+                  { key: 'archive' as const, icon: <Layers className="h-3.5 w-3.5" />,    label: 'Archive' },
+                  { key: 'grid'    as const, icon: <LayoutGrid className="h-3.5 w-3.5" />, label: 'Grid' },
+                  { key: 'list'    as const, icon: <List className="h-3.5 w-3.5" />,       label: 'List' },
+                ]).map(opt => (
                   <button
                     key={opt.key}
                     onClick={() => setViewMode(opt.key)}
                     title={opt.label}
                     className={cn(
                       'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-display transition-all',
-                      viewMode === opt.key
-                        ? 'bg-secondary text-foreground'
-                        : 'text-muted-foreground/40 hover:text-foreground',
+                      viewMode === opt.key ? 'bg-secondary text-foreground' : 'text-muted-foreground/40 hover:text-foreground',
                     )}
                     data-testid={`view-${opt.key}`}
                   >
@@ -352,8 +392,47 @@ const Index = () => {
               </div>
             </div>
 
-            {/* ── Mobile tabs ─────────────────────────────────────────── */}
+            {/* Mobile tabs */}
             <MobileTabs activeTab={activeTab} onTabChange={handleTabChange} />
+
+            {/* ── Diet filter chips ───────────────────────────────────── */}
+            {uniqueDiets.length > 1 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 mb-5" style={{ scrollbarWidth: 'none' }}>
+                <span className="text-[7.5px] uppercase tracking-[0.22em] text-muted-foreground/28 font-display whitespace-nowrap flex-shrink-0">
+                  FILTER
+                </span>
+                <button
+                  onClick={() => setDietFilter(null)}
+                  className={`text-[8px] font-display uppercase tracking-[0.1em] px-2.5 py-1.5 rounded-md border whitespace-nowrap flex-shrink-0 transition-all ${
+                    !dietFilter
+                      ? 'bg-secondary text-foreground border-border/40'
+                      : 'text-muted-foreground/38 border-border/18 hover:text-foreground hover:border-border/40'
+                  }`}
+                  data-testid="filter-all"
+                >
+                  All Taxa
+                </button>
+                {uniqueDiets.map(diet => (
+                  <button
+                    key={diet}
+                    onClick={() => setDietFilter(dietFilter === diet ? null : diet)}
+                    className={`text-[8px] font-display uppercase tracking-[0.1em] px-2.5 py-1.5 rounded-md border whitespace-nowrap flex-shrink-0 transition-all ${
+                      dietFilter === diet
+                        ? (DIET_STYLE[diet] ?? 'bg-secondary text-foreground border-border/40')
+                        : 'text-muted-foreground/38 border-border/18 hover:text-foreground hover:border-border/40'
+                    }`}
+                    data-testid={`filter-diet-${diet.toLowerCase()}`}
+                  >
+                    {diet}
+                  </button>
+                ))}
+                {dietFilter && (
+                  <span className="text-[8px] text-muted-foreground/28 font-body ml-1 whitespace-nowrap flex-shrink-0">
+                    {displayDinos.length} of {filteredDinos.length} taxa shown
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* ── Animated collection swap ─────────────────────────────── */}
             <AnimatePresence mode="wait" custom={direction}>
@@ -368,14 +447,16 @@ const Index = () => {
               >
                 {Object.keys(grouped).length === 0 ? (
                   <div className="text-center py-24">
-                    <p className="text-[11px] uppercase tracking-[0.3em] font-display text-muted-foreground/30">
-                      NO SPECIMENS CATALOGUED IN THIS COLLECTION
+                    <p className="text-[11px] uppercase tracking-[0.3em] font-display text-muted-foreground/28">
+                      {dietFilter
+                        ? `NO ${dietFilter.toUpperCase()} TAXA IN THIS COLLECTION`
+                        : 'NO TAXA CATALOGUED IN THIS COLLECTION'}
                     </p>
                   </div>
                 ) : (
                   <>
-                    {/* ── Featured exhibit ─────────────────────────────── */}
-                    {featuredDino && (
+                    {/* Featured exhibit — always shows from full collection */}
+                    {featuredDino && !dietFilter && (
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
                           <span className="text-[7.5px] uppercase tracking-[0.28em] text-amber-400/38 font-display">EXHIBIT HIGHLIGHT</span>
@@ -385,31 +466,43 @@ const Index = () => {
                       </div>
                     )}
 
-                    {/* ── Period archive rows ───────────────────────────── */}
-                    {Object.entries(grouped).map(([period, dinos]) => {
+                    {/* Marine clade context block */}
+                    {isMarine && !dietFilter && (
+                      <div className="rounded-lg border border-border/22 bg-secondary/10 px-4 py-3">
+                        <p className="text-[7.5px] uppercase tracking-[0.22em] text-muted-foreground/30 font-display mb-1.5">CLASSIFICATION NOTE</p>
+                        <p className="text-[10px] text-muted-foreground/50 font-body leading-relaxed">
+                          Marine reptiles are organized by taxonomic lineage rather than geological period.
+                          Each group represents a distinct evolutionary origin — convergently adapted to aquatic life.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Group rows */}
+                    {Object.entries(grouped).map(([key, dinos]) => {
                       const offset = globalOffset;
                       globalOffset += dinos.length;
                       return (
                         <div
-                          key={period}
-                          ref={el => { periodRefs.current[period] = el; }}
+                          key={key}
+                          ref={el => { groupRefs.current[key] = el; }}
                           className="scroll-mt-[110px]"
                         >
-                          <PeriodArchiveRow
-                            period={period}
+                          <GroupArchiveRow
+                            groupKey={key}
                             dinos={dinos}
                             globalOffset={offset}
                             viewMode={viewMode}
+                            isClade={isMarine}
                           />
                         </div>
                       );
                     })}
 
-                    {/* ── Archive footer ──────────────────────────────── */}
+                    {/* Archive footer */}
                     <div className="flex items-center gap-4 pt-4">
                       <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/12 to-transparent" />
                       <span className="text-[7.5px] font-display uppercase tracking-[0.28em] text-amber-400/25 px-2 whitespace-nowrap">
-                        END OF ARCHIVE — {filteredDinos.length} SPECIMENS
+                        END OF ARCHIVE — {filteredDinos.length} TAXA
                       </span>
                       <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/12 to-transparent" />
                     </div>

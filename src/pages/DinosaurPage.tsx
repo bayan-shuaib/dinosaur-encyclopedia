@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getDinosaurById } from '@/data/dinosaurs';
+import { Dinosaur } from '@/data/types';
 import { ModelViewer } from '@/components/ModelViewer';
 import { SizeComparison } from '@/components/SizeComparison';
 import { SkeletonViewer } from '@/components/SkeletonViewer';
+import { LocationMapSingle } from '@/components/LocationMapSingle';
 import InteractiveTimeline from '@/components/InteractiveTimeline';
 import { SpeciesContent } from '@/components/SpeciesContent';
-import { SpeciesScientificRail } from '@/components/species/SpeciesScientificRail';
-import { SpeciesEvidenceRail } from '@/components/species/SpeciesEvidenceRail';
 import {
-  ArrowLeft, Calendar, Ruler, Weight,
+  ArrowLeft, ChevronDown, MapPin, Calendar, Ruler, Weight,
   GitCompareArrows, MoveHorizontal, MoveVertical, Wind, Waves,
-  Compass, Bone, Clock,
+  ShieldAlert,
 } from 'lucide-react';
 import { getDisplayStats, getTaxonomyType, getTaxonomyLabel, StatIconKey } from '@/lib/taxonomy';
 
@@ -23,43 +23,123 @@ const STAT_ICON: Record<StatIconKey, typeof Ruler> = {
   depth:    Waves,
 };
 
-/* ── Exhibit band — full-width section with a scan-label header ─────────────── */
-function ExhibitBand({
-  id, index, label, kicker, icon: Icon, children,
-}: {
-  id: string;
-  index: string;
-  label: string;
-  kicker?: string;
-  icon: React.ComponentType<{ className?: string }>;
-  children: React.ReactNode;
-}) {
+// ── Reconstruction Status Panel ───────────────────────────────────────────────
+
+function ReconstructionStatus({ dino }: { dino: Dinosaur }) {
+  const completeness = dino.skeletonData.completeness;
+  const taxon = getTaxonomyType(dino);
+
+  let confidence: string;
+  let evidenceStrength: string;
+  let sciConsensus: string;
+  let confTextColor: string;
+  let confBgBorder: string;
+  let barColor: string;
+
+  if (completeness >= 70) {
+    confidence = 'High';          evidenceStrength = 'Extensive';    sciConsensus = 'Strong';
+    confTextColor = 'text-emerald-400/80'; confBgBorder = 'bg-emerald-500/8 border-emerald-500/25';
+    barColor = 'from-emerald-500/50 to-emerald-300/50';
+  } else if (completeness >= 45) {
+    confidence = 'Moderate';      evidenceStrength = 'Good';         sciConsensus = 'Supported';
+    confTextColor = 'text-amber-400/80';   confBgBorder = 'bg-amber-500/8 border-amber-500/25';
+    barColor = 'from-amber-500/50 to-amber-300/50';
+  } else if (completeness >= 20) {
+    confidence = 'Low';           evidenceStrength = 'Fragmentary';  sciConsensus = 'Debated';
+    confTextColor = 'text-orange-400/80';  confBgBorder = 'bg-orange-500/8 border-orange-500/25';
+    barColor = 'from-orange-500/50 to-orange-300/50';
+  } else {
+    confidence = 'Very Low';      evidenceStrength = 'Minimal';      sciConsensus = 'Contested';
+    confTextColor = 'text-red-400/80';     confBgBorder = 'bg-red-500/8 border-red-500/25';
+    barColor = 'from-red-500/50 to-red-300/50';
+  }
+
+  const disputes: string[] = [];
+  if (completeness < 40)
+    disputes.push('Overall body proportions partially inferred from related taxa');
+  const recoveredLower = dino.skeletonData.recoveredBones.map(b => b.toLowerCase());
+  if (!recoveredLower.some(b => b.includes('skull') || b.includes('cranium') || b.includes('jaw') || b.includes('mandible')))
+    disputes.push('Skull morphology reconstructed from fragmentary or closely related material');
+  if (dino.diet === 'Piscivore')
+    disputes.push('Aquatic hunting behavior and locomotion remain actively debated');
+  if (taxon === 'marine_reptile')
+    disputes.push('Soft tissue, coloration, and thermoregulation are largely speculative for this lineage');
+  if (completeness < 60)
+    disputes.push('Integument details (scales, feathers, or skin texture) inferred from exceptional preservation in related species');
+  if (dino.combatStats.intelligence >= 7 && completeness < 60)
+    disputes.push('Neural anatomy and cognitive capacity estimated from endocast volume comparisons');
+
+  const knownBones  = dino.skeletonData.recoveredBones.length;
+  const missingBones = dino.skeletonData.missingBones.length;
+
   return (
-    <section id={id} className="scroll-mt-24" data-testid={`section-${id}`}>
-      {/* Scan-divider header — keeps the wall continuous instead of boxed cards */}
-      <div className="flex items-center gap-4 mb-7">
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <span className="font-mono text-[11px] tabular-nums text-amber-400/55">{index}</span>
-          <div className="h-9 w-9 rounded-md border border-amber-500/25 bg-amber-500/[0.06] flex items-center justify-center">
-            <Icon className="h-4 w-4 text-amber-300/80" />
+    <section className="info-panel" data-testid="section-reconstruction-status">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <ShieldAlert className="h-4 w-4 text-muted-foreground/50" />
+          <p className="section-label mb-0">Reconstruction Status</p>
+        </div>
+        <span className={`text-[8px] font-display uppercase tracking-[0.2em] px-2 py-1 rounded border ${confTextColor} ${confBgBorder}`}>
+          {confidence} Confidence
+        </span>
+      </div>
+
+      {/* Status grid */}
+      <div className="grid grid-cols-3 gap-3 mb-5">
+        {[
+          { label: 'Confidence',  value: confidence },
+          { label: 'Evidence',    value: evidenceStrength },
+          { label: 'Consensus',   value: sciConsensus },
+        ].map(({ label, value }) => (
+          <div key={label} className="bg-secondary/30 rounded-lg p-3 text-center">
+            <p className="text-[8px] uppercase tracking-[0.18em] text-muted-foreground/38 font-display mb-1.5">{label}</p>
+            <p className={`text-sm font-display font-semibold leading-tight ${confTextColor}`}>{value}</p>
           </div>
-          <div>
-            {kicker && (
-              <p className="text-[9px] uppercase tracking-[0.24em] font-display text-amber-400/50 leading-none mb-1">
-                {kicker}
-              </p>
-            )}
-            <h2 className="text-lg md:text-xl font-display font-bold text-foreground tracking-tight leading-none">
-              {label}
-            </h2>
+        ))}
+      </div>
+
+      {/* Completeness bar */}
+      <div className="space-y-1.5 mb-5">
+        <div className="flex justify-between items-center">
+          <span className="text-[9px] uppercase tracking-[0.14em] text-muted-foreground/38 font-display">
+            Skeletal Completeness
+          </span>
+          <span className="text-[10px] font-mono text-amber-400/60">{completeness}% KNOWN</span>
+        </div>
+        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full bg-gradient-to-r ${barColor} transition-all duration-1000`}
+            style={{ width: `${completeness}%` }}
+          />
+        </div>
+        <div className="flex justify-between">
+          <span className="text-[9px] text-muted-foreground/30 font-body">{knownBones} elements recovered</span>
+          <span className="text-[9px] text-muted-foreground/25 font-body">{missingBones} elements unknown</span>
+        </div>
+      </div>
+
+      {/* Known uncertainties */}
+      {disputes.length > 0 && (
+        <div>
+          <p className="text-[8px] uppercase tracking-[0.18em] text-muted-foreground/38 font-display mb-2.5">
+            Known Uncertainties
+          </p>
+          <div className="space-y-2">
+            {disputes.map((d, i) => (
+              <div key={i} className="flex items-start gap-2.5">
+                <div className="h-1 w-1 rounded-full bg-amber-400/35 mt-1.5 flex-shrink-0" />
+                <p className="text-[10px] text-muted-foreground/55 font-body leading-relaxed">{d}</p>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="h-px flex-1 bg-gradient-to-r from-amber-500/20 via-border/40 to-transparent" />
-      </div>
-      {children}
+      )}
     </section>
   );
 }
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function DinosaurPage() {
   const { id } = useParams<{ id: string }>();
@@ -82,12 +162,11 @@ export default function DinosaurPage() {
 
   const taxon = getTaxonomyType(dino);
   const stats = getDisplayStats(dino);
-  const specimenCode = `SPC-${dino.id.replace(/[^a-z0-9]/gi, '').slice(0, 6).toUpperCase().padEnd(4, 'X')}`;
 
   return (
     <div className="min-h-screen pt-[90px]">
-      {/* ── Command bar ──────────────────────────────────────────────────── */}
-      <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-4 flex items-center justify-between">
+      {/* Back link + Compare button */}
+      <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
@@ -105,167 +184,155 @@ export default function DinosaurPage() {
         </Link>
       </div>
 
-      {/* ── CINEMATIC HERO — full-bleed exhibit frame ───────────────────────── */}
-      <section className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12">
-        <div className="relative rounded-2xl border border-border/50 bg-card/40 overflow-hidden">
-          {/* atmospheric glow */}
-          <div className="pointer-events-none absolute -top-1/3 left-1/4 h-80 w-80 rounded-full bg-amber-500/[0.06] blur-[120px]" />
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
-
-          {/* HUD metadata strip */}
-          <div className="relative flex flex-wrap items-center gap-x-5 gap-y-1.5 px-4 md:px-7 py-3 border-b border-border/40 text-[10px] font-display uppercase tracking-[0.18em] text-muted-foreground/55">
-            <span className="font-mono tracking-wider text-amber-400/70">{specimenCode}</span>
-            <span className="hidden sm:inline text-border">/</span>
-            <span>{getTaxonomyLabel(taxon)}</span>
-            <span className="hidden sm:inline text-border">/</span>
-            <span>{dino.period} · {dino.periodRange.start}–{dino.periodRange.end} Mya</span>
-            <span className="hidden md:inline text-border">/</span>
-            <span className="hidden md:inline">{dino.continent}</span>
-            <span className="ml-auto flex items-center gap-2 text-amber-400/60">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-              Exhibit Active
-            </span>
-          </div>
-
-          {/* Viewer + identity panel — wider canvas */}
-          <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_440px]">
-            <div className="relative p-4 md:p-6">
-              <ModelViewer image={dino.image} dinoName={dino.name} sketchfabUrl={dino.sketchfabUrl} />
+      {/* Hero — left panels + 360 view */}
+      <section className="max-w-[1400px] mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 items-start">
+          {/* Left panels */}
+          <div className="space-y-3 hidden lg:block">
+            <div className="info-panel">
+              <p className="section-label">Scientific Classification</p>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 mt-0.5 font-display">
+                {getTaxonomyLabel(taxon)}
+              </p>
+              <div className="space-y-1.5 mt-3">
+                {Object.entries(dino.classification).map(([key, value]) => (
+                  <div key={key} className="flex justify-between text-xs font-body">
+                    <span className="text-muted-foreground capitalize">{key}</span>
+                    <span className="text-foreground break-words text-right max-w-[160px]" data-testid={`text-classification-${key}`}>{value}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Identity panel */}
-            <div className="relative border-t lg:border-t-0 lg:border-l border-border/40 bg-secondary/10 p-5 md:p-7 flex flex-col justify-center">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-amber-400/55 font-display mb-2" data-testid="text-taxonomy-label">
-                {getTaxonomyLabel(taxon)} · {dino.period}
-              </p>
-              <h1 className="text-3xl md:text-4xl xl:text-5xl font-display font-bold text-foreground tracking-tight leading-[1.05] text-balance" data-testid="text-dino-name">
-                {dino.name}
-              </h1>
-              <p className="text-base md:text-lg text-muted-foreground italic font-body mt-1.5">{dino.scientificName}</p>
-
-              {/* Metric tiles */}
-              <div className="grid grid-cols-2 gap-2.5 mt-6">
-                {stats.map((s) => {
-                  const Icon = STAT_ICON[s.iconKey];
-                  return (
-                    <div
-                      key={s.label}
-                      className="relative rounded-lg border border-border/50 bg-card/60 px-3 py-2.5"
-                      data-testid={`stat-${s.iconKey}`}
-                    >
-                      <Icon className="h-4 w-4 text-amber-400/55 mb-1.5" />
-                      <p className="text-lg font-display font-bold text-foreground tabular-nums leading-none">{s.value}</p>
-                      <p className="text-[10px] text-muted-foreground/55 font-body mt-1">{s.label}</p>
-                    </div>
-                  );
-                })}
-                <div className="relative rounded-lg border border-border/50 bg-card/60 px-3 py-2.5" data-testid="stat-period">
-                  <Calendar className="h-4 w-4 text-amber-400/55 mb-1.5" />
-                  <p className="text-lg font-display font-bold text-foreground leading-none">{dino.period}</p>
-                  <p className="text-[10px] text-muted-foreground/55 font-body mt-1">{dino.periodRange.start}–{dino.periodRange.end} Mya</p>
+            <div className="info-panel">
+              <p className="section-label">Location & Formation</p>
+              <LocationMapSingle location={dino.discovery.location} continent={dino.continent} />
+              <div className="flex items-start gap-2 mt-3">
+                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm text-foreground font-body break-words whitespace-normal" data-testid="text-discovery-location">
+                    {dino.discovery.location}
+                  </p>
+                  <p className="text-xs text-muted-foreground font-body mt-1 break-words whitespace-normal">{dino.continent}</p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* 360 View */}
+          <div className="w-full">
+            <ModelViewer image={dino.image} dinoName={dino.name} sketchfabUrl={dino.sketchfabUrl} />
+            <div className="flex justify-center mt-4">
+              <button className="flex items-center gap-2 text-sm text-muted-foreground font-body hover:text-foreground transition-colors">
+                Scroll down <ChevronDown className="h-4 w-4 animate-bounce" />
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── MUSEUM ARCHITECTURE — left rail · exhibit hall · evidence system ── */}
-      <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-10 md:py-14">
-        <div className="grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)_330px] gap-6 2xl:gap-10 items-start">
+      {/* Main content */}
+      <div className="max-w-[1000px] mx-auto px-6 py-16 space-y-14">
 
-          {/* LEFT — persistent scientific support column (sticky, flanks the whole wall) */}
-          <aside className="hidden xl:block self-start sticky top-[100px]">
-            <SpeciesScientificRail dino={dino} />
-          </aside>
+        {/* Name */}
+        <section>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70 font-display mb-2" data-testid="text-taxonomy-label">
+            {getTaxonomyLabel(taxon)} · {dino.period}
+          </p>
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-1 tracking-tight" data-testid="text-dino-name">
+            {dino.name}
+          </h1>
+          <p className="text-lg text-muted-foreground italic font-body">{dino.scientificName}</p>
+        </section>
 
-          {/* CENTER — exhibit hall */}
-          <main className="min-w-0 space-y-16 md:space-y-24">
-
-            {/* Condensed classification + location for < xl (rails hidden) */}
-            <div className="grid md:grid-cols-2 gap-4 xl:hidden">
-              <div className="info-panel">
-                <p className="section-label">Scientific Classification</p>
-                <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 mt-0.5 font-display">{getTaxonomyLabel(taxon)}</p>
-                <div className="space-y-1.5 mt-3">
-                  {Object.entries(dino.classification).map(([key, value]) => (
-                    <div key={key} className="flex justify-between text-xs font-body">
-                      <span className="text-muted-foreground capitalize">{key}</span>
-                      <span className="text-foreground text-right break-words max-w-[160px]">{value}</span>
-                    </div>
-                  ))}
-                </div>
+        {/* Stat row */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {stats.map((s) => {
+            const Icon = STAT_ICON[s.iconKey];
+            return (
+              <div key={s.label} className="info-panel text-center" data-testid={`stat-${s.iconKey}`}>
+                <Icon className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
+                <p className="text-xl font-display font-bold text-foreground">{s.value}</p>
+                <p className="text-xs text-muted-foreground font-body">{s.label}</p>
               </div>
-              <div className="info-panel">
-                <p className="section-label">Discovery</p>
-                <div className="space-y-2 mt-3">
-                  <div className="flex justify-between text-xs font-body">
-                    <span className="text-muted-foreground">Year</span>
-                    <span className="text-foreground">{dino.discovery.year}</span>
-                  </div>
-                  <div className="flex justify-between text-xs font-body">
-                    <span className="text-muted-foreground">Discoverer</span>
-                    <span className="text-foreground text-right">{dino.discovery.discoverer}</span>
-                  </div>
-                  <div className="flex justify-between text-xs font-body">
-                    <span className="text-muted-foreground">Location</span>
-                    <span className="text-foreground text-right break-words max-w-[160px]">{dino.discovery.location}</span>
-                  </div>
+            );
+          })}
+          <div className="info-panel text-center" data-testid="stat-period">
+            <Calendar className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
+            <p className="text-xl font-display font-bold text-foreground">{dino.period}</p>
+            <p className="text-xs text-muted-foreground font-body">{dino.periodRange.start}–{dino.periodRange.end} Mya</p>
+          </div>
+        </section>
+
+        {/* Reconstruction Status — placed before main species content */}
+        <ReconstructionStatus dino={dino} />
+
+        {/* Mobile-only panels */}
+        <div className="grid md:grid-cols-2 gap-4 lg:hidden">
+          <div className="info-panel">
+            <p className="section-label">Scientific Classification</p>
+            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 mt-0.5 font-display">
+              {getTaxonomyLabel(taxon)}
+            </p>
+            <div className="space-y-1.5 mt-3">
+              {Object.entries(dino.classification).map(([key, value]) => (
+                <div key={key} className="flex justify-between text-xs font-body">
+                  <span className="text-muted-foreground capitalize">{key}</span>
+                  <span className="text-foreground">{value}</span>
                 </div>
+              ))}
+            </div>
+          </div>
+          <div className="info-panel">
+            <p className="section-label">Location & Formation</p>
+            <LocationMapSingle location={dino.discovery.location} continent={dino.continent} />
+            <div className="flex items-start gap-2 mt-3">
+              <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm text-foreground font-body break-words">{dino.discovery.location}</p>
+                <p className="text-xs text-muted-foreground font-body mt-1 break-words">{dino.continent}</p>
               </div>
             </div>
-
-            {/* RICH STRUCTURED CONTENT — Life mode / Scientific mode */}
-            <div id="exhibit-encyclopedia" className="scroll-mt-24">
-              <SpeciesContent dino={dino} />
-            </div>
-
-            {/* Geological Timeline */}
-            <ExhibitBand id="exhibit-timeline" index="06" kicker="Deep Time" label="Geological Timeline" icon={Clock}>
-              <div className="rounded-xl border border-border/40 bg-card/40 p-4 md:p-5" style={{ height: 420 }}>
-                <div className="h-full">
-                  <InteractiveTimeline dinosaurs={[dino]} />
-                </div>
-              </div>
-            </ExhibitBand>
-
-            {/* Fossil Record */}
-            <ExhibitBand id="exhibit-fossil" index="07" kicker="Physical Evidence" label="Fossil Record" icon={Bone}>
-              <div className="rounded-xl border border-border/40 bg-card/40 p-4 md:p-6">
-                <SkeletonViewer skeletonData={dino.skeletonData} dinoName={dino.name} />
-              </div>
-            </ExhibitBand>
-
-            {/* True Scale */}
-            <ExhibitBand id="exhibit-scale" index="08" kicker="Human Reference" label="True Scale" icon={Ruler}>
-              <SizeComparison dinoName={dino.name} dinoHeight={dino.height} dinoLength={dino.length} dinoGroup={dino.group} dinoId={dino.id} />
-            </ExhibitBand>
-
-            {/* Discovery — wide multi-zone band */}
-            <ExhibitBand id="exhibit-discovery" index="09" kicker="Field Record" label="Discovery" icon={Compass}>
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="rounded-xl border border-border/40 bg-card/40 p-5">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 font-display">Year Described</p>
-                  <p className="mt-2 text-3xl font-display font-bold text-foreground tabular-nums">{dino.discovery.year}</p>
-                </div>
-                <div className="rounded-xl border border-border/40 bg-card/40 p-5">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 font-display">Discoverer</p>
-                  <p className="mt-2 text-lg font-display font-semibold text-foreground leading-snug">{dino.discovery.discoverer}</p>
-                </div>
-                <div className="rounded-xl border border-border/40 bg-card/40 p-5">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 font-display">Site & Formation</p>
-                  <p className="mt-2 text-sm font-body text-foreground/85 leading-snug break-words">{dino.discovery.location}</p>
-                  <p className="mt-1 text-xs text-muted-foreground/60 font-body">{dino.continent}</p>
-                </div>
-              </div>
-            </ExhibitBand>
-          </main>
-
-          {/* RIGHT — persistent evidence support column (sticky, flanks the whole wall) */}
-          <aside className="hidden xl:block self-start sticky top-[100px]">
-            <SpeciesEvidenceRail dino={dino} />
-          </aside>
+          </div>
         </div>
+
+        {/* Rich structured content */}
+        <SpeciesContent dino={dino} />
+
+        {/* Geological Timeline */}
+        <section className="info-panel flex flex-col" style={{ height: 380 }} data-testid="section-timeline">
+          <p className="section-label mb-3">Geological Timeline</p>
+          <div className="flex-1 min-h-0">
+            <InteractiveTimeline dinosaurs={[dino]} />
+          </div>
+        </section>
+
+        {/* Fossil Record */}
+        <section className="info-panel" data-testid="section-fossil-record">
+          <SkeletonViewer skeletonData={dino.skeletonData} dinoName={dino.name} />
+        </section>
+
+        {/* Discovery */}
+        <section className="info-panel">
+          <p className="section-label">Discovery</p>
+          <div className="grid grid-cols-3 gap-4 mt-3">
+            <div>
+              <p className="text-xs text-muted-foreground font-body">Year</p>
+              <p className="text-sm text-foreground font-display font-semibold">{dino.discovery.year}</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground font-body">Discoverer</p>
+              <p className="text-sm text-foreground font-body">{dino.discovery.discoverer}</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground font-body">Location</p>
+              <p className="text-sm text-foreground font-body">{dino.discovery.location}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Size Comparison */}
+        <SizeComparison dinoName={dino.name} dinoHeight={dino.height} dinoLength={dino.length} dinoGroup={dino.group} dinoId={dino.id} />
       </div>
     </div>
   );

@@ -1,0 +1,396 @@
+You are tasked with performing a major museum-grade usability and scientific credibility overhaul of Dinopedia. Do NOT redesign the visual identity of the site. Preserve the futuristic museum aesthetic, existing color palette, animations, and overall branding. The goal is to make the platform significantly more intuitive, scientifically rigorous, and professional while retaining its current look and feel.
+
+====================================================================
+
+1. SEARCH SYSTEM OVERHAUL
+   ====================================================================
+
+The current search experience is too limited and should become one of the strongest features of the platform.
+
+Implement:
+
+* A global search bar accessible from every major page.
+* Instant search suggestions while typing.
+* Search by:
+
+  * Scientific name
+  * Common name
+  * Genus
+  * Species
+  * Clade
+  * Geological formation
+  * Geological period
+  * Continent
+  * Keywords from descriptions
+
+Examples:
+
+Typing:
+"Tyr"
+
+Should instantly suggest:
+
+* Tyrannosaurus rex
+* Tyrannosaurus
+
+Typing:
+"Azh"
+
+Should suggest:
+
+* Azhdarchidae
+* Azhdarcho
+* Hatzegopteryx
+
+Search should feel fast, modern, and museum-quality.
+
+Add fuzzy matching for spelling mistakes.
+
+Example:
+"Tyranosaurus"
+still finds:
+"Tyrannosaurus"
+
+====================================================================
+2. MULTI-LAYER CATEGORIZATION SYSTEM
+====================================
+
+The encyclopedia currently relies too heavily on geological periods.
+
+Retain period browsing but add multiple browsing systems.
+
+Users must be able to browse by:
+
+A. Geological Time
+
+* Triassic
+* Jurassic
+* Cretaceous
+* Paleogene
+* Neogene
+* Quaternary
+
+B. Major Animal Groups
+
+* Dinosaurs
+* Pterosaurs
+* Marine Reptiles
+* Synapsids
+* Crocodylomorphs
+* Early Amphibians
+* Early Reptiles
+* Mammals
+* Other Extinct Animals
+
+C. Clades
+
+Examples:
+
+Dinosaurs:
+
+* Theropoda
+* Sauropodomorpha
+* Ornithischia
+
+Pterosaurs:
+
+* Azhdarchidae
+* Ornithocheiridae
+* Pteranodontidae
+
+Marine Reptiles:
+
+* Mosasauridae
+* Ichthyosauria
+* Plesiosauria
+* Pliosauridae
+
+D. Geography
+
+Browse by:
+
+* North America
+* South America
+* Europe
+* Africa
+* Asia
+* Australia
+* Antarctica
+
+E. Ecology
+
+Browse by:
+
+* Predator
+* Herbivore
+* Omnivore
+* Aerial
+* Aquatic
+* Semi-Aquatic
+* Terrestrial
+
+All systems should work together seamlessly.
+
+====================================================================
+3. MARINE FAUNA REORGANIZATION
+==============================
+
+The marine fauna section currently feels confusing.
+
+Completely reorganize marine animals into scientifically meaningful groups.
+
+Separate clearly:
+
+* Mosasaurs
+* Ichthyosaurs
+* Plesiosaurs
+* Pliosaurs
+* Marine Crocodylomorphs
+* Marine Turtles
+* Fish
+* Other Marine Reptiles
+
+Each category should have:
+
+* Brief explanation
+* Representative species
+* Distinct identity
+
+A user unfamiliar with paleontology should immediately understand what each group is.
+
+====================================================================
+4. SCIENTIFIC CITATION SYSTEM
+=============================
+
+This is a major museum-grade feature.
+
+Every species page should support:
+
+SOURCE SECTION
+
+Display:
+
+* Authors
+* Publication year
+* Paper title
+* Journal
+
+Example:
+
+Sources
+
+Ibrahim et al. (2020)
+Tail-propelled aquatic locomotion in Spinosaurus
+Nature
+
+Hone & Holtz (2021)
+Evaluating Spinosaurus Ecology
+Palaeontologia Electronica
+
+Sources should be visually elegant and museum-like.
+
+Do NOT make them look like academic database entries.
+
+The user should be able to understand where information comes from.
+
+====================================================================
+5. RECONSTRUCTION TRANSPARENCY SYSTEM
+=====================================
+
+Dinopedia must acknowledge scientific uncertainty.
+
+Add a new section:
+
+RECONSTRUCTION STATUS
+
+Examples:
+
+Confidence:
+High
+
+Evidence:
+Extensive
+
+Scientific Consensus:
+Strong
+
+or
+
+Confidence:
+Moderate
+
+Evidence:
+Fragmentary
+
+Scientific Consensus:
+Debated
+
+Include:
+
+* Reconstruction confidence
+* Number of specimens
+* Completeness estimate
+* Major scientific disputes
+* Alternative interpretations
+
+Example:
+
+Spinosaurus
+
+Current reconstruction remains debated.
+Multiple competing interpretations exist regarding aquatic behavior and locomotion.
+
+The goal is transparency.
+
+====================================================================
+6. TERMINOLOGY CORRECTIONS
+==========================
+
+Audit the entire application.
+
+Replace incorrect use of:
+
+"Specimens"
+
+when referring to species or genera.
+
+Use correct terminology such as:
+
+* Species
+* Taxa
+* Genera
+* Entries
+
+Reserve:
+
+"Specimen"
+
+only for actual fossil specimens.
+
+Examples:
+
+Correct:
+FMNH PR 2081 ("Sue")
+
+Incorrect:
+Tyrannosaurus as a specimen
+
+Scientific terminology should be accurate throughout the site.
+
+====================================================================
+7. ADVANCED FILTERING SYSTEM
+============================
+
+Add a modern filtering interface.
+
+Allow filtering by:
+
+Taxonomy:
+
+* Clade
+* Family
+* Group
+
+Geography:
+
+* Continent
+* Country
+* Formation
+
+Time:
+
+* Period
+* Epoch
+* Age
+
+Biology:
+
+* Diet
+* Habitat
+* Locomotion
+
+Physical Characteristics:
+
+* Length
+* Weight
+* Height
+
+Evidence:
+
+* Specimen Count
+* Completeness
+* Confidence Level
+
+Users should be able to combine multiple filters simultaneously.
+
+Example:
+
+Theropods
++
+Asia
++
+Carnivore
++
+Late Cretaceous
+
+====================================================================
+8. EVIDENCE SYSTEM EXPANSION
+============================
+
+Build a dedicated Evidence & Discovery panel.
+
+Display:
+
+Number of Known Specimens
+
+Completeness Percentage
+
+Known From:
+
+* Skull
+* Teeth
+* Limbs
+* Vertebrae
+* Soft Tissue
+* Feathers
+* Skin Impressions
+
+Evidence Strength:
+
+* Very High
+* High
+* Moderate
+* Low
+
+Scientific Confidence:
+
+* Established
+* Supported
+* Tentative
+* Highly Speculative
+
+This should visually resemble a museum evidence board.
+
+The purpose is to educate users that paleontology is evidence-driven rather than absolute.
+
+====================================================================
+FINAL REQUIREMENTS
+==================
+
+Do NOT add placeholder content.
+
+Do NOT break existing functionality.
+
+Do NOT alter the museum aesthetic.
+
+Preserve the futuristic, premium museum experience.
+
+The result should feel closer to a professional natural history museum database and less like a traditional encyclopedia.
+
+Prioritize:
+
+1. Clarity
+2. Scientific credibility
+3. Discoverability
+4. Educational value
+5. Museum-quality presentation
