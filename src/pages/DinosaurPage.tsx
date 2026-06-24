@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getDinosaurById } from '@/data/dinosaurs';
 import { Dinosaur } from '@/data/types';
@@ -361,8 +361,6 @@ function ReconstructionSidebar({ dino }: { dino: Dinosaur }) {
 export default function DinosaurPage() {
   const { id } = useParams<{ id: string }>();
   const dino = getDinosaurById(id || '');
-  const heroRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [id]);
@@ -403,9 +401,50 @@ export default function DinosaurPage() {
         </Link>
       </div>
 
-      {/* ── Hero — 360 viewer (full width above 3-col layout) ──────────────── */}
-      <section ref={heroRef} className="max-w-[1400px] mx-auto px-6 mb-8">
-        <ModelViewer image={dino.image} dinoName={dino.name} sketchfabUrl={dino.sketchfabUrl} />
+      {/* ── Hero — classification panels + constrained 360 viewer ──────────── */}
+      <section className="max-w-[1400px] mx-auto px-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 items-start">
+
+          {/* Left panels — classification + location */}
+          <div className="space-y-3 hidden lg:block">
+            <div className="info-panel">
+              <p className="section-label">Scientific Classification</p>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 mt-0.5 font-display">
+                {getTaxonomyLabel(taxon)}
+              </p>
+              <div className="space-y-1.5 mt-3">
+                {Object.entries(dino.classification).map(([key, value]) => (
+                  <div key={key} className="flex justify-between text-xs font-body">
+                    <span className="text-muted-foreground capitalize">{key}</span>
+                    <span className="text-foreground break-words text-right max-w-[160px]"
+                      data-testid={`text-classification-${key}`}>{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="info-panel">
+              <p className="section-label">Location & Formation</p>
+              <LocationMapSingle location={dino.discovery.location} continent={dino.continent} />
+              <div className="flex items-start gap-2 mt-3">
+                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm text-foreground font-body break-words whitespace-normal"
+                    data-testid="text-discovery-location">{dino.discovery.location}</p>
+                  <p className="text-xs text-muted-foreground font-body mt-1 break-words whitespace-normal">
+                    {dino.continent}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 360 viewer — constrained to right column */}
+          <div className="w-full">
+            <ModelViewer image={dino.image} dinoName={dino.name} sketchfabUrl={dino.sketchfabUrl} />
+          </div>
+
+        </div>
       </section>
 
       {/* ── Three-column museum dashboard ──────────────────────────────────── */}
