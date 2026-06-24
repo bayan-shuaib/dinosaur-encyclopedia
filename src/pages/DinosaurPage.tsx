@@ -401,47 +401,41 @@ export default function DinosaurPage() {
         </Link>
       </div>
 
-      {/* ── Hero — classification panels + constrained 360 viewer ──────────── */}
-      <section className="max-w-[1400px] mx-auto px-6 mb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 items-start">
+      {/* ── Hero — ModelViewer left · Name + stats right ──────────────────── */}
+      <section className="max-w-[1400px] mx-auto px-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 items-start">
 
-          {/* Left panels — classification + location */}
-          <div className="space-y-3 hidden lg:block">
-            <div className="info-panel">
-              <p className="section-label">Scientific Classification</p>
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 mt-0.5 font-display">
-                {getTaxonomyLabel(taxon)}
+          {/* Left: 360 viewer */}
+          <ModelViewer image={dino.image} dinoName={dino.name} sketchfabUrl={dino.sketchfabUrl} />
+
+          {/* Right: name + taxonomy + compact stats (desktop only) */}
+          <div className="hidden lg:flex flex-col justify-center gap-5">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70 font-display mb-2" data-testid="text-taxonomy-label">
+                {getTaxonomyLabel(taxon)} · {dino.period}
               </p>
-              <div className="space-y-1.5 mt-3">
-                {Object.entries(dino.classification).map(([key, value]) => (
-                  <div key={key} className="flex justify-between text-xs font-body">
-                    <span className="text-muted-foreground capitalize">{key}</span>
-                    <span className="text-foreground break-words text-right max-w-[160px]"
-                      data-testid={`text-classification-${key}`}>{value}</span>
+              <h1 className="text-4xl font-display font-bold text-foreground mb-1 tracking-tight" data-testid="text-dino-name">
+                {dino.name}
+              </h1>
+              <p className="text-base text-muted-foreground italic font-body">{dino.scientificName}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {stats.map(s => {
+                const Icon = STAT_ICON[s.iconKey];
+                return (
+                  <div key={s.label} className="info-panel text-center py-2" data-testid={`stat-${s.iconKey}`}>
+                    <Icon className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
+                    <p className="text-base font-display font-bold text-foreground">{s.value}</p>
+                    <p className="text-xs text-muted-foreground font-body">{s.label}</p>
                   </div>
-                ))}
+                );
+              })}
+              <div className="info-panel text-center py-2" data-testid="stat-period">
+                <Calendar className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
+                <p className="text-base font-display font-bold text-foreground">{dino.period}</p>
+                <p className="text-xs text-muted-foreground font-body">{dino.periodRange.start}–{dino.periodRange.end} Mya</p>
               </div>
             </div>
-
-            <div className="info-panel">
-              <p className="section-label">Location & Formation</p>
-              <LocationMapSingle location={dino.discovery.location} continent={dino.continent} />
-              <div className="flex items-start gap-2 mt-3">
-                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-sm text-foreground font-body break-words whitespace-normal"
-                    data-testid="text-discovery-location">{dino.discovery.location}</p>
-                  <p className="text-xs text-muted-foreground font-body mt-1 break-words whitespace-normal">
-                    {dino.continent}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 360 viewer — constrained to right column */}
-          <div className="w-full">
-            <ModelViewer image={dino.image} dinoName={dino.name} sketchfabUrl={dino.sketchfabUrl} />
           </div>
 
         </div>
@@ -457,37 +451,37 @@ export default function DinosaurPage() {
           {/* ── CENTER CONTENT ───────────────────────────────────────────── */}
           <div className="flex-1 min-w-0 space-y-12">
 
-            {/* Name header */}
-            <section>
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70 font-display mb-2" data-testid="text-taxonomy-label">
-                {getTaxonomyLabel(taxon)} · {dino.period}
-              </p>
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-1 tracking-tight" data-testid="text-dino-name">
-                {dino.name}
-              </h1>
-              <p className="text-lg text-muted-foreground italic font-body">{dino.scientificName}</p>
-            </section>
-
-            {/* Stat row */}
-            <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {stats.map(s => {
-                const Icon = STAT_ICON[s.iconKey];
-                return (
-                  <div key={s.label} className="info-panel text-center" data-testid={`stat-${s.iconKey}`}>
-                    <Icon className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-xl font-display font-bold text-foreground">{s.value}</p>
-                    <p className="text-xs text-muted-foreground font-body">{s.label}</p>
-                  </div>
-                );
-              })}
-              <div className="info-panel text-center" data-testid="stat-period">
-                <Calendar className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
-                <p className="text-xl font-display font-bold text-foreground">{dino.period}</p>
-                <p className="text-xs text-muted-foreground font-body">{dino.periodRange.start}–{dino.periodRange.end} Mya</p>
+            {/* Mobile-only: name + stats (hero right column is hidden on mobile) */}
+            <div className="lg:hidden space-y-6">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70 font-display mb-2" data-testid="text-taxonomy-label-mobile">
+                  {getTaxonomyLabel(taxon)} · {dino.period}
+                </p>
+                <h1 className="text-3xl font-display font-bold text-foreground mb-1 tracking-tight">
+                  {dino.name}
+                </h1>
+                <p className="text-base text-muted-foreground italic font-body">{dino.scientificName}</p>
               </div>
-            </section>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {stats.map(s => {
+                  const Icon = STAT_ICON[s.iconKey];
+                  return (
+                    <div key={s.label} className="info-panel text-center py-2">
+                      <Icon className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
+                      <p className="text-base font-display font-bold text-foreground">{s.value}</p>
+                      <p className="text-xs text-muted-foreground font-body">{s.label}</p>
+                    </div>
+                  );
+                })}
+                <div className="info-panel text-center py-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
+                  <p className="text-base font-display font-bold text-foreground">{dino.period}</p>
+                  <p className="text-xs text-muted-foreground font-body">{dino.periodRange.start}–{dino.periodRange.end} Mya</p>
+                </div>
+              </div>
+            </div>
 
-            {/* Mobile-only: classification + location */}
+            {/* Mobile-only: classification + location (left sidebar hidden on mobile) */}
             <div className="grid sm:grid-cols-2 gap-4 xl:hidden">
               <div className="info-panel">
                 <p className="section-label">Scientific Classification</p>
@@ -498,7 +492,7 @@ export default function DinosaurPage() {
                   {Object.entries(dino.classification).map(([key, value]) => (
                     <div key={key} className="flex justify-between text-xs font-body">
                       <span className="text-muted-foreground capitalize">{key}</span>
-                      <span className="text-foreground">{value}</span>
+                      <span className="text-foreground" data-testid={`text-classification-${key}`}>{value}</span>
                     </div>
                   ))}
                 </div>
@@ -509,7 +503,9 @@ export default function DinosaurPage() {
                 <div className="flex items-start gap-2 mt-3">
                   <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-sm text-foreground font-body break-words">{dino.discovery.location}</p>
+                    <p className="text-sm text-foreground font-body break-words" data-testid="text-discovery-location">
+                      {dino.discovery.location}
+                    </p>
                     <p className="text-xs text-muted-foreground font-body mt-1 break-words">{dino.continent}</p>
                   </div>
                 </div>
