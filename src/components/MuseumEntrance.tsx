@@ -80,6 +80,19 @@ export function MuseumEntrance({
             <span className="text-amber-200/90">Deep Time</span>
           </h1>
 
+          {/* Institutional motto — engraved into the entrance */}
+          <div className="mt-6 flex items-center gap-4" aria-label="Museum philosophy">
+            <span className="h-px w-6 bg-amber-200/25" />
+            <p className="text-[10px] md:text-[11px] font-display uppercase text-amber-100/45 tracking-[0.46em] md:tracking-[0.58em] whitespace-nowrap">
+              Explore
+              <span className="mx-2 text-amber-300/35 align-middle">&bull;</span>
+              Learn
+              <span className="mx-2 text-amber-300/35 align-middle">&bull;</span>
+              Preserve
+            </p>
+            <span className="h-px flex-1 bg-gradient-to-r from-amber-200/25 to-transparent" />
+          </div>
+
           <p className="mt-7 text-sm md:text-base leading-relaxed text-muted-foreground/75 font-body max-w-xl text-pretty">
             Step into a curated archive of the ancient world — every specimen
             catalogued, illustrated, and preserved. Wander the halls of an era
