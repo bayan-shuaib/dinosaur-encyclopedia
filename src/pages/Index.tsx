@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Period } from '@/data/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { getTaxonomyType } from '@/lib/taxonomy';
+import { MuseumEntrance } from '@/components/MuseumEntrance';
 import { Layers, Wind, Waves, ChevronRight, LayoutGrid, List } from 'lucide-react';
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -247,6 +248,20 @@ const Index = () => {
   const [dietFilter, setDietFilter] = useState<string | null>(null);
 
   const groupRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const archiveRef = useRef<HTMLDivElement | null>(null);
+
+  // ── Entrance stats & gallery counts ────────────────────────────────────────
+  const galleryCounts = useMemo(() => ({
+    dinosaurs:       dinosaurs.filter(d => getTaxonomyType(d) === 'dinosaur').length,
+    pterosaurs:      dinosaurs.filter(d => getTaxonomyType(d) === 'pterosaur').length,
+    marine_reptiles: dinosaurs.filter(d => getTaxonomyType(d) === 'marine_reptile').length,
+  }), []);
+
+  const entranceStats = useMemo(() => ({
+    total:      dinosaurs.length,
+    periods:    new Set(dinosaurs.map(d => d.period)).size,
+    continents: new Set(dinosaurs.map(d => d.continent)).size,
+  }), []);
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const filteredDinos = useMemo(() => {
@@ -318,11 +333,16 @@ const Index = () => {
     groupRefs.current[key]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const handleSelectGallery = (tab: TabKey) => {
+    handleTabChange(tab);
+    archiveRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   let globalOffset = 0;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen pt-[90px]">
+    <div className="min-h-screen pt-[99px]">
       {/* Ambient scientific gridlines */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.018]"
@@ -333,7 +353,15 @@ const Index = () => {
         }}
       />
 
-      <div className="relative z-10 max-w-[1480px] mx-auto px-4 md:px-6 pb-20">
+      {/* ── Museum entrance hall ─────────────────────────────────────────── */}
+      <MuseumEntrance
+        activeTab={activeTab}
+        onSelectGallery={handleSelectGallery}
+        counts={galleryCounts}
+        stats={entranceStats}
+      />
+
+      <div ref={archiveRef} className="relative z-10 max-w-[1480px] mx-auto px-4 md:px-6 pb-20 pt-6 scroll-mt-[99px]">
         <div className="flex gap-8">
 
           {/* ── Archive rail ───────────────────────────────────────────── */}
@@ -360,9 +388,9 @@ const Index = () => {
                     {TABS.find(t => t.key === activeTab)?.sub.toUpperCase()} COLLECTION
                   </span>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight">
+                <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight">
                   Prehistoric Life Database
-                </h1>
+                </h2>
                 <p className="text-xs text-muted-foreground/45 font-body mt-1">
                   {filteredDinos.length} taxa · {Object.keys(grouped).length} {isMarine ? 'taxonomic groups' : 'geological periods'} catalogued
                 </p>

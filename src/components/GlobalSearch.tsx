@@ -60,7 +60,8 @@ function scoreMatch(query: string, dino: Dinosaur): number {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function GlobalSearch() {
+export function GlobalSearch({ variant = 'nav' }: { variant?: 'nav' | 'hero' }) {
+  const isHero = variant === 'hero';
   const [query, setQuery]     = useState('');
   const [open, setOpen]       = useState(false);
   const [focused, setFocused] = useState(0);
@@ -107,6 +108,106 @@ export function GlobalSearch() {
   };
 
   const showDropdown = open && query.trim().length >= 2;
+
+  if (isHero) {
+    return (
+      <div ref={wrapRef} className="relative w-full">
+        {/* Hero input — museum archive console */}
+        <div className={`flex items-center gap-3.5 px-5 py-4 rounded-none border-y transition-all duration-300 ${
+          open
+            ? 'bg-background/40 border-amber-400/30'
+            : 'bg-background/20 border-border/40 hover:border-amber-400/20'
+        }`}>
+          <Search className="h-4 w-4 text-amber-400/55 flex-shrink-0" />
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={e => { setQuery(e.target.value); setOpen(true); }}
+            onFocus={() => setOpen(true)}
+            onKeyDown={handleKey}
+            placeholder="Search the archive — taxa, genera, periods, continents…"
+            className="flex-1 min-w-0 bg-transparent text-sm md:text-[15px] text-foreground placeholder:text-muted-foreground/40 outline-none font-body tracking-wide"
+            data-testid="input-global-search"
+            autoComplete="off"
+            spellCheck={false}
+          />
+          {query ? (
+            <button
+              onClick={() => { setQuery(''); inputRef.current?.focus(); }}
+              className="flex-shrink-0 text-muted-foreground/40 hover:text-foreground transition-colors"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          ) : (
+            <span className="hidden md:block flex-shrink-0 text-[8px] font-display uppercase tracking-[0.28em] text-muted-foreground/30">
+              Archive Index
+            </span>
+          )}
+        </div>
+
+        {/* Dropdown */}
+        <AnimatePresence>
+          {showDropdown && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.14 }}
+              className="absolute top-full left-0 right-0 mt-2 z-[300] bg-card/95 backdrop-blur-md border border-border/45 rounded-lg overflow-hidden shadow-2xl shadow-black/60"
+            >
+              <div className="flex items-center justify-between px-4 py-2 border-b border-border/20">
+                <span className="text-[8px] uppercase tracking-[0.26em] text-amber-400/45 font-display">
+                  ARCHIVE SEARCH
+                </span>
+                <span className="text-[8px] font-mono text-muted-foreground/30">
+                  {results.length} {results.length === 1 ? 'RESULT' : 'RESULTS'}
+                </span>
+              </div>
+              {results.length > 0 ? (
+                results.map((dino, i) => {
+                  const period = PERIOD_META[dino.period] ?? PERIOD_META.Cretaceous;
+                  return (
+                    <button
+                      key={dino.id}
+                      onMouseEnter={() => setFocused(i)}
+                      onClick={() => go(dino.id)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors border-b border-border/10 last:border-b-0 ${
+                        i === focused ? 'bg-secondary/65' : 'hover:bg-secondary/35'
+                      }`}
+                      data-testid={`search-result-${dino.id}`}
+                    >
+                      <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${period.dotColor} opacity-70`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-condensed font-bold uppercase tracking-wide text-foreground leading-tight">
+                          {dino.name}
+                        </p>
+                        <p className="text-[10px] italic text-muted-foreground/50 font-body leading-tight truncate mt-0.5">
+                          {dino.scientificName}
+                        </p>
+                      </div>
+                      <span className={`text-[7px] font-display uppercase tracking-[0.1em] px-1.5 py-[3px] rounded-sm border ${period.textColor} ${period.bgBorder} flex-shrink-0`}>
+                        {dino.period.slice(0, 4).toUpperCase()}
+                      </span>
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="px-4 py-6 text-center">
+                  <p className="text-[10px] font-display uppercase tracking-[0.2em] text-muted-foreground/30">
+                    NO TAXA FOUND
+                  </p>
+                  <p className="text-[9px] text-muted-foreground/22 font-body mt-1.5">
+                    Try a different name, genus, or period
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
 
   return (
     <div ref={wrapRef} className="relative flex-1 max-w-xs hidden sm:block mx-4">
