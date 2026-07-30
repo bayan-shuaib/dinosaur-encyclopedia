@@ -39,11 +39,14 @@ export function ArchiveSpecimenCard({
   return (
     <Link
       to={`/dinosaur/${dinosaur.id}`}
-      className="group flex-shrink-0 w-[158px] rounded-lg bg-card border border-border/30 overflow-hidden hover:border-amber-500/45 hover:shadow-[0_0_18px_rgba(251,191,36,0.07)] transition-all duration-300"
+      className="group flex-shrink-0 w-[158px] rounded-lg bg-card border border-border/30 overflow-hidden hover:border-amber-500/45 hover:shadow-[0_0_22px_rgba(251,191,36,0.09)] hover:-translate-y-0.5 transition-all duration-300"
       data-testid={`card-archive-${dinosaur.id}`}
     >
-      {/* ── Image / specimen area ─────────────────────────────────────── */}
+      {/* ── Display case ──────────────────────────────────────────────── */}
       <div className="relative h-[112px] bg-secondary/45 overflow-hidden">
+        {/* Case lighting — soft spotlight from above */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_0%,rgba(251,191,36,0.10),transparent_62%)] opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+
         {/* Corner brackets */}
         <div className="absolute top-1.5 left-1.5 w-3 h-3 border-t border-l border-amber-400/28 pointer-events-none transition-opacity group-hover:border-amber-400/55" />
         <div className="absolute bottom-1.5 right-1.5 w-3 h-3 border-b border-r border-amber-400/28 pointer-events-none transition-opacity group-hover:border-amber-400/55" />
@@ -89,7 +92,8 @@ export function ArchiveSpecimenCard({
         </div>
       </div>
 
-      {/* ── Info block ────────────────────────────────────────────────── */}
+      {/* ── Engraved placard ──────────────────────────────────────────── */}
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-400/20 to-transparent" />
       <div className="px-2.5 pt-2 pb-2.5">
         <p className="font-condensed font-bold uppercase text-[11px] tracking-wide text-foreground leading-tight line-clamp-1">
           {dinosaur.name.toUpperCase()}

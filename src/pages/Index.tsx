@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Period } from '@/data/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { getTaxonomyType } from '@/lib/taxonomy';
+import { MuseumEntrance } from '@/components/MuseumEntrance';
 import { Layers, Wind, Waves, ChevronRight, LayoutGrid, List } from 'lucide-react';
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -13,10 +14,10 @@ const PERIOD_ORDER: Period[] = ['Permian', 'Triassic', 'Jurassic', 'Cretaceous']
 
 type TabKey = 'dinosaurs' | 'pterosaurs' | 'marine_reptiles';
 
-const TABS: { key: TabKey; label: string; sub: string; icon: React.ReactNode }[] = [
-  { key: 'dinosaurs',       label: 'Dinosaurs',       sub: 'Terrestrial',  icon: <Layers className="h-3.5 w-3.5" /> },
-  { key: 'pterosaurs',      label: 'Pterosaurs',       sub: 'Aerial',       icon: <Wind className="h-3.5 w-3.5" /> },
-  { key: 'marine_reptiles', label: 'Marine Reptiles',  sub: 'Aquatic',      icon: <Waves className="h-3.5 w-3.5" /> },
+const TABS: { key: TabKey; label: string; sub: string; numeral: string; blurb: string; icon: React.ReactNode }[] = [
+  { key: 'dinosaurs',       label: 'Dinosaurs',       sub: 'Terrestrial',  numeral: 'I',   blurb: 'The great land-dwelling archosaurs that ruled the continents across three geological periods.',  icon: <Layers className="h-3.5 w-3.5" /> },
+  { key: 'pterosaurs',      label: 'Pterosaurs',       sub: 'Aerial',       numeral: 'II',  blurb: 'The first vertebrates to master powered flight, soaring over the ancient skies of the Mesozoic.', icon: <Wind className="h-3.5 w-3.5" /> },
+  { key: 'marine_reptiles', label: 'Marine Reptiles',  sub: 'Aquatic',      numeral: 'III', blurb: 'Reptilian lineages that returned to the water and rose to dominate the prehistoric seas.',        icon: <Waves className="h-3.5 w-3.5" /> },
 ];
 
 const FEATURED_IDS: Record<TabKey, string[]> = {
@@ -56,39 +57,44 @@ function ArchiveRail({
 
   return (
     <aside className="hidden lg:flex flex-col w-52 flex-shrink-0 select-none">
-      <div className="sticky top-[100px] flex flex-col gap-5">
-        {/* Archive title */}
-        <div className="pb-3 border-b border-border/25">
-          <div className="text-[7.5px] uppercase tracking-[0.32em] text-amber-400/40 font-display mb-1">DINOPEDIA</div>
-          <div className="text-[11px] font-display font-semibold text-foreground/80 tracking-wide">Paleontology Archive</div>
-          <div className="flex items-center gap-1.5 mt-1">
+      <div className="sticky top-[100px] flex flex-col gap-6">
+        {/* Directory title */}
+        <div className="pb-4 border-b border-border/25">
+          <div className="text-[7.5px] uppercase tracking-[0.32em] text-amber-400/45 font-display mb-1.5">Museum Directory</div>
+          <div className="text-[12px] font-display font-semibold text-foreground/85 tracking-wide">Floor Guide</div>
+          <div className="flex items-center gap-1.5 mt-2">
             <div className="h-1.5 w-1.5 rounded-full bg-amber-400/60 animate-pulse" />
-            <span className="text-[8px] font-mono text-muted-foreground/35 tracking-[0.12em]">ARCHIVE ACTIVE</span>
+            <span className="text-[8px] font-mono text-muted-foreground/35 tracking-[0.12em]">GALLERIES OPEN</span>
           </div>
         </div>
 
-        {/* Collection tabs */}
+        {/* Wings / collections */}
         <div>
-          <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/35 font-display mb-2.5">COLLECTION</div>
+          <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/35 font-display mb-2.5">Wings</div>
           <div className="space-y-0.5">
             {TABS.map(tab => (
               <button
                 key={tab.key}
                 onClick={() => onTabChange(tab.key)}
                 className={cn(
-                  'w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-left transition-all',
+                  'group/wing w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-left transition-all',
                   activeTab === tab.key
                     ? 'bg-secondary/70 text-foreground border border-border/30'
-                    : 'text-muted-foreground/50 hover:text-foreground/80 hover:bg-secondary/30',
+                    : 'text-muted-foreground/50 hover:text-foreground/80 hover:bg-secondary/30 border border-transparent',
                 )}
                 data-testid={`rail-tab-${tab.key}`}
               >
-                <span className={cn('flex-shrink-0 transition-colors', activeTab === tab.key ? 'text-amber-300/70' : '')}>
-                  {tab.icon}
+                <span className={cn(
+                  'flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full border text-[8px] font-display transition-colors',
+                  activeTab === tab.key
+                    ? 'border-amber-400/40 text-amber-300/80'
+                    : 'border-border/40 text-muted-foreground/45 group-hover/wing:border-amber-400/25 group-hover/wing:text-amber-300/60',
+                )}>
+                  {tab.numeral}
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="text-[11px] font-display font-medium leading-tight">{tab.label}</div>
-                  <div className="text-[8px] text-muted-foreground/35 tracking-[0.1em] uppercase font-display">{tab.sub}</div>
+                  <div className="text-[8px] text-muted-foreground/35 tracking-[0.1em] uppercase font-display">{tab.sub} Wing</div>
                 </div>
                 {activeTab === tab.key && <div className="w-1 h-1 rounded-full bg-amber-400/60 flex-shrink-0" />}
               </button>
@@ -99,7 +105,7 @@ function ArchiveRail({
         {/* Geological / Taxonomic navigation */}
         <div>
           <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/35 font-display mb-2.5">
-            {isMarine ? 'TAXONOMIC GROUPS' : 'GEOLOGICAL RECORD'}
+            {isMarine ? 'Taxonomic Groups' : 'Geological Record'}
           </div>
           <div className="space-y-1">
             {Object.entries(groupCounts).map(([key, count]) => {
@@ -130,11 +136,11 @@ function ArchiveRail({
 
         {/* Archive stats */}
         <div className="rounded-lg border border-border/22 bg-secondary/15 p-3 space-y-2">
-          <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/30 font-display mb-1">ARCHIVE STATUS</div>
+          <div className="text-[7.5px] uppercase tracking-[0.25em] text-muted-foreground/30 font-display mb-1">Wing Summary</div>
           {[
-            ['Total Taxa',    String(totalTaxa)],
-            ['Groups',        String(Object.keys(groupCounts).length)],
-            ['Collections',   '3'],
+            ['Specimens',  String(totalTaxa)],
+            ['Sections',   String(Object.keys(groupCounts).length)],
+            ['Wings',      '3'],
           ].map(([label, value]) => (
             <div key={label} className="flex items-center justify-between">
               <span className="text-[9px] text-muted-foreground/40 font-display">{label}</span>
@@ -171,22 +177,22 @@ function GroupArchiveRow({
 
   return (
     <div>
-      {/* Row header */}
-      <div className="space-y-1.5 mb-4">
-        <div className="flex items-center gap-3">
-          <div className={`h-2 w-2 rounded-full flex-shrink-0 ${dotColor} opacity-70`} />
-          <span className={`text-[8px] uppercase tracking-[0.28em] font-display flex-shrink-0 ${textColor}`}>
-            {groupKey.toUpperCase()}
+      {/* Vitrine label */}
+      <div className="space-y-2 mb-5">
+        <div className="flex items-baseline gap-3">
+          <div className={`h-2 w-2 rounded-full flex-shrink-0 self-center ${dotColor} opacity-75`} />
+          <h3 className={`text-base md:text-lg font-display font-bold tracking-wide flex-shrink-0 ${textColor}`}>
+            {groupKey}
+          </h3>
+          <div className="h-px flex-1 bg-gradient-to-r from-border/35 to-transparent min-w-[20px] self-center" />
+          <span className="text-[8px] font-mono text-muted-foreground/32 flex-shrink-0 whitespace-nowrap uppercase tracking-[0.12em]">
+            {rangeLabel && `${rangeLabel} · `}{String(dinos.length).padStart(2, '0')} specimens
           </span>
-          <div className="h-px flex-1 bg-gradient-to-r from-border/30 to-transparent min-w-[20px]" />
-          <span className="text-[8px] font-mono text-muted-foreground/28 flex-shrink-0 whitespace-nowrap">
-            {rangeLabel && `${rangeLabel} · `}{dinos.length} TAXA
-          </span>
-          <ChevronRight className="h-3 w-3 text-muted-foreground/20 flex-shrink-0" />
+          <ChevronRight className="h-3 w-3 text-muted-foreground/20 flex-shrink-0 self-center" />
         </div>
         {/* Clade description for marine groups */}
         {isClade && cladeMeta?.desc && (
-          <p className="text-[9px] text-muted-foreground/35 font-body leading-relaxed pl-5">
+          <p className="text-[10px] text-muted-foreground/38 font-body leading-relaxed pl-5 max-w-2xl">
             {cladeMeta.desc}
           </p>
         )}
@@ -247,6 +253,20 @@ const Index = () => {
   const [dietFilter, setDietFilter] = useState<string | null>(null);
 
   const groupRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const archiveRef = useRef<HTMLDivElement | null>(null);
+
+  // ── Entrance stats & gallery counts ────────────────────────────────────────
+  const galleryCounts = useMemo(() => ({
+    dinosaurs:       dinosaurs.filter(d => getTaxonomyType(d) === 'dinosaur').length,
+    pterosaurs:      dinosaurs.filter(d => getTaxonomyType(d) === 'pterosaur').length,
+    marine_reptiles: dinosaurs.filter(d => getTaxonomyType(d) === 'marine_reptile').length,
+  }), []);
+
+  const entranceStats = useMemo(() => ({
+    total:      dinosaurs.length,
+    periods:    new Set(dinosaurs.map(d => d.period)).size,
+    continents: new Set(dinosaurs.map(d => d.continent)).size,
+  }), []);
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const filteredDinos = useMemo(() => {
@@ -318,11 +338,18 @@ const Index = () => {
     groupRefs.current[key]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const handleSelectGallery = (tab: TabKey) => {
+    handleTabChange(tab);
+    archiveRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const activeWing = TABS.find(t => t.key === activeTab) ?? TABS[0];
+
   let globalOffset = 0;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen pt-[90px]">
+    <div className="min-h-screen pt-[99px]">
       {/* Ambient scientific gridlines */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.018]"
@@ -333,8 +360,16 @@ const Index = () => {
         }}
       />
 
-      <div className="relative z-10 max-w-[1480px] mx-auto px-4 md:px-6 pb-20">
-        <div className="flex gap-8">
+      {/* ── Museum entrance hall ─────────────────────────────────────────── */}
+      <MuseumEntrance
+        activeTab={activeTab}
+        onSelectGallery={handleSelectGallery}
+        counts={galleryCounts}
+        stats={entranceStats}
+      />
+
+      <div ref={archiveRef} className="relative z-10 max-w-[1480px] mx-auto px-4 md:px-6 pb-20 pt-6 scroll-mt-[99px]">
+        <div className="flex gap-10">
 
           {/* ── Archive rail ───────────────────────────────────────────── */}
           <ArchiveRail
@@ -348,47 +383,60 @@ const Index = () => {
           {/* ── Main content ────────────────────────────────────────────── */}
           <div className="flex-1 min-w-0 pt-4">
 
-            {/* Archive header */}
-            <div className="flex items-start justify-between gap-4 mb-5 pb-5 border-b border-border/20">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[7.5px] uppercase tracking-[0.3em] text-amber-400/40 font-display">
-                    NATURAL HISTORY ARCHIVE
-                  </span>
-                  <div className="h-px w-8 bg-amber-400/20" />
-                  <span className="text-[7.5px] uppercase tracking-[0.2em] text-muted-foreground/25 font-display">
-                    {TABS.find(t => t.key === activeTab)?.sub.toUpperCase()} COLLECTION
-                  </span>
-                </div>
-                <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight">
-                  Prehistoric Life Database
-                </h1>
-                <p className="text-xs text-muted-foreground/45 font-body mt-1">
-                  {filteredDinos.length} taxa · {Object.keys(grouped).length} {isMarine ? 'taxonomic groups' : 'geological periods'} catalogued
-                </p>
+            {/* ── Gallery wing threshold ──────────────────────────────── */}
+            <div className="mb-9 pb-7 border-b border-border/20">
+              <div className="flex items-center gap-2.5 mb-4">
+                <span className="text-[7.5px] uppercase tracking-[0.34em] text-amber-400/45 font-display">
+                  Now Entering
+                </span>
+                <span className="h-px w-8 bg-amber-400/25" />
+                <span className="text-[7.5px] uppercase tracking-[0.22em] text-muted-foreground/30 font-display">
+                  Gallery {activeWing.numeral}
+                </span>
               </div>
 
-              {/* View mode toggle */}
-              <div className="flex-shrink-0 flex items-center gap-1 bg-card/70 rounded-lg p-1 border border-border/25">
-                {([
-                  { key: 'archive' as const, icon: <Layers className="h-3.5 w-3.5" />,    label: 'Archive' },
-                  { key: 'grid'    as const, icon: <LayoutGrid className="h-3.5 w-3.5" />, label: 'Grid' },
-                  { key: 'list'    as const, icon: <List className="h-3.5 w-3.5" />,       label: 'List' },
-                ]).map(opt => (
-                  <button
-                    key={opt.key}
-                    onClick={() => setViewMode(opt.key)}
-                    title={opt.label}
-                    className={cn(
-                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-display transition-all',
-                      viewMode === opt.key ? 'bg-secondary text-foreground' : 'text-muted-foreground/40 hover:text-foreground',
-                    )}
-                    data-testid={`view-${opt.key}`}
-                  >
-                    {opt.icon}
-                    <span className="hidden sm:inline text-[10px] tracking-wide">{opt.label}</span>
-                  </button>
-                ))}
+              <div className="flex items-end justify-between gap-6 flex-wrap">
+                <div className="min-w-0">
+                  <h2 className="text-3xl md:text-[42px] font-display font-bold text-foreground tracking-tight leading-[0.95] text-balance">
+                    The {activeWing.sub} Wing
+                  </h2>
+                  <p className="mt-2.5 text-xs md:text-[13px] text-muted-foreground/55 font-body leading-relaxed max-w-md text-pretty">
+                    {activeWing.blurb}
+                  </p>
+                  <div className="mt-4 flex items-center gap-3 text-[9px] font-mono uppercase tracking-[0.16em] text-muted-foreground/40">
+                    <span className="text-amber-400/55">{String(filteredDinos.length).padStart(2, '0')} specimens</span>
+                    <span className="h-2.5 w-px bg-border/40" />
+                    <span>{String(Object.keys(grouped).length).padStart(2, '0')} {isMarine ? 'clades' : 'periods'}</span>
+                  </div>
+                </div>
+
+                {/* Display-mode selector */}
+                <div className="flex-shrink-0">
+                  <div className="text-[7px] uppercase tracking-[0.26em] text-muted-foreground/30 font-display mb-1.5 text-right">
+                    Display Mode
+                  </div>
+                  <div className="flex items-center gap-1 bg-card/60 rounded-lg p-1 border border-border/25">
+                    {([
+                      { key: 'archive' as const, icon: <Layers className="h-3.5 w-3.5" />,    label: 'Vitrine' },
+                      { key: 'grid'    as const, icon: <LayoutGrid className="h-3.5 w-3.5" />, label: 'Grid' },
+                      { key: 'list'    as const, icon: <List className="h-3.5 w-3.5" />,       label: 'Ledger' },
+                    ]).map(opt => (
+                      <button
+                        key={opt.key}
+                        onClick={() => setViewMode(opt.key)}
+                        title={opt.label}
+                        className={cn(
+                          'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-display transition-all',
+                          viewMode === opt.key ? 'bg-secondary text-foreground' : 'text-muted-foreground/40 hover:text-foreground',
+                        )}
+                        data-testid={`view-${opt.key}`}
+                      >
+                        {opt.icon}
+                        <span className="hidden sm:inline text-[10px] tracking-wide">{opt.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -397,10 +445,11 @@ const Index = () => {
 
             {/* ── Diet filter chips ───────────────────────────────────── */}
             {uniqueDiets.length > 1 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 mb-5" style={{ scrollbarWidth: 'none' }}>
-                <span className="text-[7.5px] uppercase tracking-[0.22em] text-muted-foreground/28 font-display whitespace-nowrap flex-shrink-0">
-                  FILTER
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 mb-8" style={{ scrollbarWidth: 'none' }}>
+                <span className="text-[7.5px] uppercase tracking-[0.26em] text-amber-400/40 font-display whitespace-nowrap flex-shrink-0">
+                  Curate by Diet
                 </span>
+                <span className="h-3 w-px bg-border/40 flex-shrink-0" />
                 <button
                   onClick={() => setDietFilter(null)}
                   className={`text-[8px] font-display uppercase tracking-[0.1em] px-2.5 py-1.5 rounded-md border whitespace-nowrap flex-shrink-0 transition-all ${
@@ -443,7 +492,7 @@ const Index = () => {
                 animate={{ x: 0, opacity: 1 }}
                 exit={d => ({ x: d > 0 ? '-6%' : '6%', opacity: 0 })}
                 transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                className="space-y-10"
+                className="space-y-14"
               >
                 {Object.keys(grouped).length === 0 ? (
                   <div className="text-center py-24">
@@ -457,10 +506,16 @@ const Index = () => {
                   <>
                     {/* Featured exhibit — always shows from full collection */}
                     {featuredDino && !dietFilter && (
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <span className="text-[7.5px] uppercase tracking-[0.28em] text-amber-400/38 font-display">EXHIBIT HIGHLIGHT</span>
-                          <div className="h-px flex-1 bg-gradient-to-r from-amber-400/18 to-transparent" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-amber-400/50 flex-shrink-0" />
+                          <span className="text-[8px] uppercase tracking-[0.3em] text-amber-400/45 font-display whitespace-nowrap">
+                            Centre of the Gallery
+                          </span>
+                          <div className="h-px flex-1 bg-gradient-to-r from-amber-400/22 to-transparent" />
+                          <span className="text-[7.5px] uppercase tracking-[0.2em] text-muted-foreground/28 font-display whitespace-nowrap">
+                            Featured Exhibit
+                          </span>
                         </div>
                         <FeaturedExhibitCard dinosaur={featuredDino} />
                       </div>
