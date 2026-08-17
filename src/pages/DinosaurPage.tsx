@@ -172,7 +172,7 @@ export default function DinosaurPage() {
             </div>
 
             {/* Identity panel */}
-            <div className="relative border-t lg:border-t-0 lg:border-l border-border/40 bg-secondary/10 p-5 md:p-7 flex flex-col justify-center">
+            <div className="relative min-w-0 border-t lg:border-t-0 lg:border-l border-border/40 bg-secondary/10 p-5 md:p-7 flex flex-col justify-center">
               <p
                 className="text-[10px] uppercase tracking-[0.24em] text-amber-400/55 font-display mb-2"
                 data-testid="text-taxonomy-label"
@@ -180,12 +180,12 @@ export default function DinosaurPage() {
                 {getTaxonomyLabel(taxon)} · {dino.period}
               </p>
               <h1
-                className="text-3xl md:text-4xl xl:text-5xl font-display font-bold text-foreground tracking-tight leading-[1.05] text-balance"
+                className="min-w-0 break-words text-3xl md:text-4xl xl:text-5xl font-display font-bold text-foreground tracking-tight leading-[1.05] text-balance"
                 data-testid="text-dino-name"
               >
                 {dino.name}
               </h1>
-              <p className="text-base md:text-lg text-muted-foreground italic font-body mt-1.5">
+              <p className="min-w-0 break-words text-base md:text-lg text-muted-foreground italic font-body mt-1.5">
                 {dino.scientificName}
               </p>
 
@@ -229,14 +229,20 @@ export default function DinosaurPage() {
 
       {/* ── MUSEUM ARCHITECTURE — left rail · exhibit hall · evidence system ── */}
       <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-10 md:py-14">
-        <div className="grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)_330px] gap-6 2xl:gap-10 items-start">
-          {/* LEFT — persistent scientific support column (sticky, flanks the whole wall) */}
-          <aside className="hidden xl:block self-start sticky top-[100px]">
+        <div className="grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)_330px] gap-6 2xl:gap-10 items-start xl:h-[calc(100vh-7rem)] xl:min-h-0 xl:overflow-hidden">
+          {/* LEFT — scientific support column with its own desktop scroll region */}
+          <aside
+            className="hidden xl:block min-w-0 h-full overflow-y-auto overscroll-contain pr-1"
+            data-species-scroll-region="left"
+          >
             <SpeciesScientificRail dino={dino} />
           </aside>
 
           {/* CENTER — exhibit hall */}
-          <main className="min-w-0 space-y-16 md:space-y-24">
+          <main
+            className="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:overscroll-contain xl:pr-1 space-y-16 md:space-y-24"
+            data-species-scroll-region="center"
+          >
             {/* Condensed classification + location for < xl (rails hidden) */}
             <div className="grid md:grid-cols-2 gap-4 xl:hidden">
               <div className="info-panel">
@@ -381,8 +387,11 @@ export default function DinosaurPage() {
             </ExhibitBand>
           </main>
 
-          {/* RIGHT — persistent evidence support column (sticky, flanks the whole wall) */}
-          <aside className="hidden xl:block self-start sticky top-[100px]">
+          {/* RIGHT — evidence support column with its own desktop scroll region */}
+          <aside
+            className="hidden xl:block min-w-0 h-full overflow-y-auto overscroll-contain pr-1"
+            data-species-scroll-region="right"
+          >
             <SpeciesEvidenceRail dino={dino} />
           </aside>
         </div>

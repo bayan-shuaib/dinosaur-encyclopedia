@@ -36,12 +36,12 @@ function RailPanel({
   label, tag, children,
 }: { label: string; tag?: string; children: React.ReactNode }) {
   return (
-    <div className="relative rounded-lg border border-border/50 bg-card/60 backdrop-blur-sm overflow-hidden">
+    <div className="relative min-w-0 rounded-lg border border-border/50 bg-card/60 backdrop-blur-sm overflow-hidden">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
       <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 border-t border-r border-amber-400/25 pointer-events-none" />
-      <div className="flex items-center justify-between px-3.5 pt-3 pb-2">
-        <span className="text-[9px] uppercase tracking-[0.22em] font-display text-amber-400/60">{label}</span>
-        {tag && <span className="text-[8px] uppercase tracking-[0.14em] font-display text-muted-foreground/40">{tag}</span>}
+      <div className="flex min-w-0 items-center justify-between gap-2 px-3.5 pt-3 pb-2">
+        <span className="min-w-0 break-words text-[9px] uppercase tracking-[0.22em] font-display text-amber-400/60">{label}</span>
+        {tag && <span className="shrink-0 text-[8px] uppercase tracking-[0.14em] font-display text-muted-foreground/40">{tag}</span>}
       </div>
       <div className="px-3.5 pb-3.5">{children}</div>
     </div>
@@ -53,6 +53,7 @@ function useActiveSection(ids: string[]): string {
   const [active, setActive] = useState<string>(ids[0]);
   const key = ids.join(',');
   useEffect(() => {
+    const root = document.querySelector('[data-species-scroll-region="center"]');
     const obs = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -60,7 +61,7 @@ function useActiveSection(ids: string[]): string {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible[0]) setActive((visible[0].target as HTMLElement).id);
       },
-      { rootMargin: '-15% 0px -65% 0px', threshold: [0, 0.2, 0.5, 1] },
+      { root, rootMargin: '-15% 0px -65% 0px', threshold: [0, 0.2, 0.5, 1] },
     );
     ids.forEach((id) => {
       const el = document.getElementById(id);
@@ -75,6 +76,18 @@ function useActiveSection(ids: string[]): string {
 function goToSection(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
+  const scroller = document.querySelector<HTMLElement>(
+    '[data-species-scroll-region="center"]',
+  );
+  if (scroller?.contains(el)) {
+    const top =
+      el.getBoundingClientRect().top -
+      scroller.getBoundingClientRect().top +
+      scroller.scrollTop -
+      16;
+    scroller.scrollTo({ top, behavior: 'smooth' });
+    return;
+  }
   const y = el.getBoundingClientRect().top + window.scrollY - 100;
   window.scrollTo({ top: y, behavior: 'smooth' });
 }
@@ -89,17 +102,17 @@ export function SpeciesScientificRail({ dino }: { dino: Dinosaur }) {
   const rangeWidth = Math.max(pct(dino.periodRange.end) - rangeLeft, 2);
 
   return (
-    <div className="space-y-3">
+    <div className="min-w-0 space-y-3">
       {/* Specimen identifier */}
       <div className="relative rounded-lg border border-amber-500/25 bg-amber-500/[0.04] overflow-hidden px-3.5 py-3">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/50 to-transparent" />
         <p className="text-[8px] uppercase tracking-[0.24em] font-display text-amber-400/55">Specimen Identifier</p>
         <p className="mt-1 font-mono text-sm tabular-nums text-foreground tracking-wider">{code}</p>
-        <div className="mt-2 flex items-center gap-2">
-          <span className="text-[9px] uppercase tracking-[0.18em] font-display text-muted-foreground/60 bg-secondary/60 border border-border/40 rounded-sm px-1.5 py-0.5">
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <span className="max-w-full break-words text-[9px] uppercase tracking-[0.18em] font-display text-muted-foreground/60 bg-secondary/60 border border-border/40 rounded-sm px-1.5 py-0.5">
             {getTaxonomyLabel(taxon)}
           </span>
-          <span className="text-[9px] uppercase tracking-[0.18em] font-display text-muted-foreground/60 bg-secondary/60 border border-border/40 rounded-sm px-1.5 py-0.5">
+          <span className="max-w-full break-words text-[9px] uppercase tracking-[0.18em] font-display text-muted-foreground/60 bg-secondary/60 border border-border/40 rounded-sm px-1.5 py-0.5">
             {dino.period}
           </span>
         </div>
@@ -116,13 +129,13 @@ export function SpeciesScientificRail({ dino }: { dino: Dinosaur }) {
                 key={item.id}
                 onClick={() => goToSection(item.id)}
                 data-testid={`nav-${item.id}`}
-                className={`relative w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors group ${
+                className={`relative w-full min-w-0 flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors group ${
                   isActive ? 'bg-amber-500/10' : 'hover:bg-secondary/40'
                 }`}
               >
                 {isActive && <span className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full bg-amber-400" />}
                 <Icon className={`h-3.5 w-3.5 flex-shrink-0 transition-colors ${isActive ? 'text-amber-300' : 'text-muted-foreground/60 group-hover:text-foreground'}`} />
-                <span className={`text-xs font-display tracking-wide transition-colors flex-1 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <span className={`min-w-0 flex-1 break-words text-xs font-display tracking-wide transition-colors ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {item.label}
                 </span>
                 <ChevronRight className={`h-3 w-3 flex-shrink-0 transition-all ${isActive ? 'text-amber-400/70 translate-x-0' : 'text-transparent -translate-x-1 group-hover:text-muted-foreground/40 group-hover:translate-x-0'}`} />
@@ -136,10 +149,10 @@ export function SpeciesScientificRail({ dino }: { dino: Dinosaur }) {
       <RailPanel label="Classification" tag="Taxonomy">
         <div className="space-y-1.5">
           {Object.entries(dino.classification).map(([key, value], i) => (
-            <div key={key} className="flex items-baseline justify-between gap-2">
-              <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/45 font-display flex-shrink-0">{key}</span>
+            <div key={key} className="flex min-w-0 items-baseline justify-between gap-2">
+              <span className="max-w-[42%] shrink-0 break-words text-[10px] uppercase tracking-[0.1em] text-muted-foreground/45 font-display">{key}</span>
               <span
-                className="text-[11px] text-foreground/85 font-body text-right break-words"
+                className="min-w-0 max-w-[58%] break-words text-[11px] text-foreground/85 font-body text-right"
                 data-testid={`rail-classification-${key}`}
               >
                 {value}

@@ -501,7 +501,7 @@ function ParagraphList({
     .map((p) => p.trim())
     .filter(Boolean);
   return (
-    <div className="space-y-4 text-sm md:text-[15px] leading-relaxed text-foreground/85 font-body">
+    <div className="min-w-0 space-y-4 text-sm md:text-[15px] leading-relaxed text-foreground/85 font-body">
       {paragraphs.map((p, i) => (
         <motion.p
           key={i}
@@ -658,7 +658,7 @@ function ExhibitHeader({
         {String(index + 1).padStart(2, "0")}
       </div>
       {/* Exhibit counter + scan line + category */}
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         <span
           className={`font-display text-[9px] uppercase tracking-[0.3em] tabular-nums whitespace-nowrap transition-colors duration-500 ${
             isActive ? "text-amber-400" : "text-amber-400/45"
@@ -667,7 +667,7 @@ function ExhibitHeader({
           {String(index + 1).padStart(2, "0")} /{" "}
           {String(total).padStart(2, "0")}
         </span>
-        <div className="flex-1 h-px bg-gradient-to-r from-amber-400/35 to-transparent" />
+        <div className="min-w-0 flex-1 h-px bg-gradient-to-r from-amber-400/35 to-transparent" />
         <span className="text-[8px] font-display uppercase tracking-[0.22em] text-muted-foreground/35 bg-secondary/60 border border-border/30 px-2 py-0.5 rounded-sm whitespace-nowrap">
           {cat}
         </span>
@@ -931,12 +931,12 @@ function FloatingAnnotationCard({
         {data.rows.map(([label, value]) => (
           <div
             key={label}
-            className="flex items-baseline justify-between gap-2"
+            className="flex min-w-0 items-baseline justify-between gap-2"
           >
-            <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-display whitespace-nowrap flex-shrink-0">
+            <span className="max-w-[42%] break-words text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-display shrink-0">
               {label}
             </span>
-            <span className="text-[11px] text-foreground/70 font-body text-right min-w-0 truncate">
+            <span className="min-w-0 max-w-[60%] break-words text-[11px] text-foreground/70 font-body text-right">
               {value}
             </span>
           </div>
@@ -1098,9 +1098,9 @@ function SectionBlock({
           ratio="21/9"
           scanLabel={`${SECTION_CATEGORIES[section.id] ?? "SPECIMEN"} · VISUAL RECORD`}
         />
-        <div className="grid md:grid-cols-3 gap-6 items-start">
-          <div className="md:col-span-2">{body}</div>
-          <div className="space-y-3">
+        <div className="grid min-w-0 md:grid-cols-3 gap-6 items-start">
+          <div className="min-w-0 md:col-span-2">{body}</div>
+          <div className="min-w-0 space-y-3">
             <FloatingAnnotationCard
               sectionId={section.id}
               dino={dino}
@@ -1121,9 +1121,9 @@ function SectionBlock({
         data-section-id={section.id}
       >
         {header}
-        <div className="grid md:grid-cols-5 gap-6 items-start">
-          <div className="md:col-span-3 space-y-4">{body}</div>
-          <div className="md:col-span-2 space-y-3">
+        <div className="grid min-w-0 md:grid-cols-5 gap-6 items-start">
+          <div className="min-w-0 md:col-span-3 space-y-4">{body}</div>
+          <div className="min-w-0 md:col-span-2 space-y-3">
             <CinematicImage
               kind={section.placeholder}
               label={section.placeholderLabel}
@@ -1150,8 +1150,8 @@ function SectionBlock({
         data-section-id={section.id}
       >
         {header}
-        <div className="grid md:grid-cols-5 gap-6 items-start">
-          <div className="md:col-span-2 space-y-3 order-last md:order-first">
+        <div className="grid min-w-0 md:grid-cols-5 gap-6 items-start">
+          <div className="min-w-0 md:col-span-2 space-y-3 order-last md:order-first">
             <CinematicImage
               kind={section.placeholder}
               label={section.placeholderLabel}
@@ -1164,7 +1164,7 @@ function SectionBlock({
               mode={mode}
             />
           </div>
-          <div className="md:col-span-3 space-y-4">{body}</div>
+          <div className="min-w-0 md:col-span-3 space-y-4">{body}</div>
         </div>
       </article>
     );
@@ -1178,8 +1178,8 @@ function SectionBlock({
       data-section-id={section.id}
     >
       {header}
-      <div className="grid md:grid-cols-3 gap-4 items-start">
-        <div className="md:col-span-2">
+      <div className="grid min-w-0 md:grid-cols-3 gap-4 items-start">
+        <div className="min-w-0 md:col-span-2">
           <CinematicImage
             kind={section.placeholder}
             label={section.placeholderLabel}
@@ -1187,7 +1187,7 @@ function SectionBlock({
             scanLabel={`${SECTION_CATEGORIES[section.id] ?? "EXHIBIT"} · RECONSTRUCTION`}
           />
         </div>
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3">
           <FloatingAnnotationCard
             sectionId={section.id}
             dino={dino}
@@ -1196,7 +1196,7 @@ function SectionBlock({
           <SpecimenEvidenceCard dino={dino} mode={mode} />
         </div>
       </div>
-      <div className="md:columns-2 md:gap-8">{body}</div>
+      <div className="min-w-0 md:columns-2 md:gap-8">{body}</div>
     </article>
   );
 }
@@ -1211,16 +1211,16 @@ function FunFactsBlock({ facts, mode }: { facts: string[]; mode: Mode }) {
     <article className="space-y-6" data-testid="section-funfacts">
       {/* Header row — same exhibit number style */}
       <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <span className="font-display text-[9px] uppercase tracking-[0.3em] text-amber-400/45 whitespace-nowrap">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="shrink-0 font-display text-[9px] uppercase tracking-[0.3em] text-amber-400/45 whitespace-nowrap">
             FIELD NOTES
           </span>
-          <div className="flex-1 h-px bg-gradient-to-r from-amber-400/35 to-transparent" />
+          <div className="min-w-0 flex-1 h-px bg-gradient-to-r from-amber-400/35 to-transparent" />
           <span className="text-[8px] font-display uppercase tracking-[0.22em] text-muted-foreground/35 bg-secondary/60 border border-border/30 px-2 py-0.5 rounded-sm">
             {mode === "life" ? "NATURAL HISTORY" : "SCIENTIFIC RECORD"}
           </span>
         </div>
-        <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tight pl-4 border-l-2 border-amber-500/30 text-foreground flex items-center gap-3">
+       <h2 className="min-w-0 text-2xl md:text-3xl font-display font-bold tracking-tight pl-4 border-l-2 border-amber-500/30 text-foreground flex items-center gap-3">
           <Sparkles className="h-5 w-5 text-amber-300/70 flex-shrink-0" />
           {mode === "life"
             ? "Curiosities & Notable Facts"
@@ -1292,14 +1292,36 @@ export function SpeciesContent({ dino }: Props) {
         userScrolledRef.current = false;
       }, 3000);
     };
+    const centerScroller = document.querySelector<HTMLElement>(
+      '[data-species-scroll-region="center"]',
+    );
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    centerScroller?.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      centerScroller?.removeEventListener("scroll", onScroll);
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
   }, []);
 
   useEffect(() => {
     if (!activeSectionId || userScrolledRef.current) return;
     const el = document.querySelector(`[data-section-id="${activeSectionId}"]`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (!el) return;
+    const centerScroller = document.querySelector<HTMLElement>(
+      '[data-species-scroll-region="center"]',
+    );
+    if (centerScroller?.contains(el)) {
+      const top =
+        el.getBoundingClientRect().top -
+        centerScroller.getBoundingClientRect().top +
+        centerScroller.scrollTop -
+        centerScroller.clientHeight / 2 +
+        el.getBoundingClientRect().height / 2;
+      centerScroller.scrollTo({ top, behavior: "smooth" });
+    } else {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }, [activeSectionId]);
 
   // ── Reset active section when mode changes ────────────────────────────────
@@ -1310,7 +1332,7 @@ export function SpeciesContent({ dino }: Props) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <section className="space-y-8" data-testid="species-content">
+    <section className="min-w-0 space-y-8" data-testid="species-content">
       {/* ── Documentary mode bar ──────────────────────────────────────────── */}
       <div className="relative rounded-lg border border-border/40 bg-card/60 overflow-hidden">
         {/* Ambient amber strip */}
@@ -1320,7 +1342,7 @@ export function SpeciesContent({ dino }: Props) {
           <button
             onClick={() => handleModeChange("life")}
             data-testid="button-mode-life"
-            className={`relative flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+             className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
               mode === "life" ? "bg-secondary/60" : "hover:bg-secondary/20"
             }`}
           >
@@ -1364,7 +1386,7 @@ export function SpeciesContent({ dino }: Props) {
           <button
             onClick={() => handleModeChange("scientific")}
             data-testid="button-mode-scientific"
-            className={`relative flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+             className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
               mode === "scientific"
                 ? "bg-secondary/60"
                 : "hover:bg-secondary/20"
@@ -1423,7 +1445,7 @@ export function SpeciesContent({ dino }: Props) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-          className="space-y-16 md:space-y-24"
+           className="min-w-0 space-y-16 md:space-y-24"
         >
           {sections.map((s, i) => {
             const isActive = activeSectionId === s.id;

@@ -15,12 +15,12 @@ function EvidencePanel({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative rounded-lg border border-border/50 bg-card/60 backdrop-blur-sm overflow-hidden">
+    <div className="relative min-w-0 rounded-lg border border-border/50 bg-card/60 backdrop-blur-sm overflow-hidden">
       <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 border-b border-l border-amber-400/25 pointer-events-none" />
-      <div className="flex items-center gap-2 px-3.5 pt-3 pb-2 border-b border-border/30">
+      <div className="flex min-w-0 items-center gap-2 px-3.5 pt-3 pb-2 border-b border-border/30">
         <Icon className="h-3.5 w-3.5 text-amber-400/60 flex-shrink-0" />
-        <span className="text-[9px] uppercase tracking-[0.2em] font-display text-muted-foreground/55 flex-1">{label}</span>
-        {tag && <span className="text-[8px] font-mono tabular-nums text-amber-400/55">{tag}</span>}
+        <span className="min-w-0 flex-1 break-words text-[9px] uppercase tracking-[0.2em] font-display text-muted-foreground/55">{label}</span>
+        {tag && <span className="shrink-0 text-[8px] font-mono tabular-nums text-amber-400/55">{tag}</span>}
       </div>
       <div className="px-3.5 py-3">{children}</div>
     </div>
@@ -30,10 +30,10 @@ function EvidencePanel({
 function StatBar({ label, value, max = 10 }: { label: string; value: number; max?: number }) {
   const w = Math.max(0, Math.min(100, (value / max) * 100));
   return (
-    <div className="space-y-1">
-      <div className="flex items-baseline justify-between">
-        <span className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground/55 font-display">{label}</span>
-        <span className="text-[9px] font-mono tabular-nums text-foreground/65">{value}/{max}</span>
+    <div className="min-w-0 space-y-1">
+      <div className="flex min-w-0 items-baseline justify-between gap-2">
+        <span className="min-w-0 break-words text-[10px] uppercase tracking-[0.08em] text-muted-foreground/55 font-display">{label}</span>
+        <span className="shrink-0 text-[9px] font-mono tabular-nums text-foreground/65">{value}/{max}</span>
       </div>
       <div className="h-1 rounded-full bg-secondary overflow-hidden">
         <motion.div
@@ -60,7 +60,7 @@ export function SpeciesEvidenceRail({ dino }: { dino: Dinosaur }) {
   const cs = dino.combatStats;
 
   return (
-    <div className="space-y-3">
+    <div className="min-w-0 space-y-3">
       {/* Header tag */}
       <div className="flex items-center gap-2 px-1">
         <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
@@ -104,7 +104,7 @@ export function SpeciesEvidenceRail({ dino }: { dino: Dinosaur }) {
         </div>
         <div className="flex flex-wrap gap-1">
           {skel.recoveredBones.slice(0, 5).map((b) => (
-            <span key={b} className="text-[8px] font-body text-foreground/55 bg-secondary/40 border border-border/30 rounded-sm px-1.5 py-0.5">
+              <span key={b} className="max-w-full break-words text-[8px] font-body text-foreground/55 bg-secondary/40 border border-border/30 rounded-sm px-1.5 py-0.5">
               {b}
             </span>
           ))}
@@ -131,7 +131,7 @@ export function SpeciesEvidenceRail({ dino }: { dino: Dinosaur }) {
                 <span className="mt-0.5 font-mono text-[8px] tabular-nums text-amber-400/55 flex-shrink-0">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className="text-[10px] text-foreground/75 font-body leading-snug">{f}</span>
+                <span className="min-w-0 break-words text-[10px] text-foreground/75 font-body leading-snug">{f}</span>
               </li>
             ))}
           </ul>
