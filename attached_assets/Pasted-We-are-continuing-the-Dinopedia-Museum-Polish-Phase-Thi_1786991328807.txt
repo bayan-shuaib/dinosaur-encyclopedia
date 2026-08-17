@@ -1,0 +1,409 @@
+We are continuing the Dinopedia Museum Polish Phase.
+
+This task concerns ONLY the existing Individual Species Page.
+
+IMPORTANT:
+The current Individual Species Page already has the correct overall visual design and three-column museum layout. We are NOT redesigning it.
+
+The purpose of this task is to repair two specific structural/UI problems:
+
+1. Independent scrolling of the three-column layout
+2. Text wrapping and text overflow
+
+Do NOT modify unrelated pages or features.
+
+Do NOT redesign the visual identity.
+
+Do NOT replace existing components unless absolutely necessary to fix the underlying problem.
+
+Do NOT change the homepage, Compare page, navigation system, Dino Identifier, or other routes.
+
+Preserve the existing colors, typography, cards, exhibits, animations, reconstruction viewer, spacing style, icons, and overall museum aesthetic unless a change is directly necessary to solve one of the two problems below.
+
+--------------------------------------------------
+PROBLEM 1 — INDEPENDENT COLUMN SCROLLING
+--------------------------------------------------
+
+CURRENT BEHAVIOR:
+
+The Individual Species Page uses a three-column layout.
+
+The columns represent the major information regions of the Species Page:
+
+- Left column: supporting/species information
+- Center column: primary exhibit/reconstruction/content
+- Right column: analytical/exhibit information
+
+The problem is that the side columns do not behave independently from the center column.
+
+When the page contains a large amount of content, the user may need to scroll through a large portion or all of the central content before they can conveniently reach content located farther down in the left or right columns.
+
+This makes the page feel like one giant document rather than three coordinated museum information panels.
+
+TARGET BEHAVIOR:
+
+The three-column Species Page should behave as a coordinated three-panel interface.
+
+Conceptually:
+
+┌────────────────┬────────────────────────┬────────────────┐
+│                │                        │                │
+│  LEFT PANEL    │     CENTER PANEL       │  RIGHT PANEL   │
+│                │                        │                │
+│      ↕         │          ↕             │       ↕        │
+│ independent    │      independent       │   independent  │
+│ scrolling      │      scrolling         │   scrolling    │
+│                │                        │                │
+└────────────────┴────────────────────────┴────────────────┘
+
+Each column should be capable of reaching its own content without depending on the scroll position of the other columns.
+
+However, this must NOT create an ugly interface filled with unnecessary nested scrollbars.
+
+The scrolling behavior should feel intentional and museum-like.
+
+--------------------------------------------------
+SCROLLING IMPLEMENTATION REQUIREMENTS
+--------------------------------------------------
+
+Before modifying anything:
+
+1. Inspect the existing Individual Species Page component.
+2. Identify the parent layout that creates the three columns.
+3. Identify whether the columns are implemented using:
+   - CSS Grid
+   - Flexbox
+   - fixed positioning
+   - sticky positioning
+   - viewport-height containers
+   - nested containers
+   - or another layout mechanism.
+4. Identify which element currently controls page height and scrolling.
+5. Determine why the side columns are dependent on the central column's document height.
+
+Do NOT immediately add random overflow-y:auto rules.
+
+The underlying layout must be understood first.
+
+Then implement the smallest clean structural change necessary.
+
+The desired behavior is:
+
+- The page header/navigation remains usable.
+- The three-column structure remains visually intact.
+- Each content panel can reach its own full content.
+- Long content in one panel does not determine the scroll position of another panel.
+- Scrolling one panel should not unexpectedly move the other panels.
+- The center column remains the primary visual focus.
+- The side panels remain visually subordinate but fully usable.
+- The layout should not introduce unnecessary horizontal scrolling.
+- The layout should not produce multiple stacked scrollbars inside the same panel unless genuinely required by the component.
+- Existing sticky elements should remain functional where appropriate.
+- Existing animations should continue working.
+- Existing exhibit components should remain intact.
+
+IMPORTANT:
+
+Do not make every nested child element independently scrollable.
+
+Prefer a clean structure where the three major columns are the primary scrolling regions.
+
+Use appropriate viewport/available-height calculations where necessary.
+
+Account for the height of the existing navbar/header when determining the available vertical space.
+
+Do not use arbitrary fixed heights that break on different desktop screen sizes.
+
+Do not solve the problem by hiding content.
+
+Do not use overflow:hidden to conceal the issue.
+
+Do not remove content to make the columns appear shorter.
+
+--------------------------------------------------
+RESPONSIVE SAFETY
+--------------------------------------------------
+
+This fix is primarily for the desktop Species Page.
+
+DO NOT perform a complete mobile redesign in this task.
+
+However:
+
+The changes must not intentionally break the existing mobile layout.
+
+If the three-column layout collapses into a single-column mobile layout, preserve that existing behavior.
+
+Make sure desktop-specific scrolling rules do not accidentally create unusable scrolling behavior on mobile.
+
+Use appropriate responsive breakpoints if necessary.
+
+--------------------------------------------------
+PROBLEM 2 — TEXT WRAPPING
+--------------------------------------------------
+
+CURRENT BEHAVIOR:
+
+Some text within the Individual Species Page does not wrap correctly.
+
+This can cause:
+
+- text to extend outside its intended container
+- long words or labels to push columns wider
+- text to overlap adjacent elements
+- cards to expand unexpectedly
+- horizontal overflow
+- awkward single-line text
+- clipped text
+- content becoming unreadable
+- layout instability when longer species names or scientific terminology are used.
+
+This is particularly important for Dinopedia because scientific names, taxonomy, anatomical terminology, measurements, and scientific descriptions can naturally contain long strings.
+
+TARGET BEHAVIOR:
+
+Every piece of textual content should remain inside its intended visual container.
+
+Text should wrap naturally according to the available width.
+
+For example:
+
+A long scientific name should remain inside its card rather than forcing the card or column to expand.
+
+A long description should wrap onto additional lines rather than overflowing.
+
+A long label should remain readable rather than being clipped.
+
+No text should force the three-column layout to change width unexpectedly.
+
+--------------------------------------------------
+TEXT WRAPPING IMPLEMENTATION
+--------------------------------------------------
+
+Before modifying anything:
+
+1. Inspect the Species Page for existing text containers.
+2. Identify reusable typography components.
+3. Identify flex/grid children containing text.
+4. Look for missing min-width: 0 behavior in flex/grid children.
+5. Look for fixed-width elements that prevent wrapping.
+6. Look for nowrap rules.
+7. Look for overflow rules that clip text.
+8. Look for long unbroken strings such as:
+   - scientific names
+   - taxonomy
+   - measurements
+   - anatomical terms
+   - labels
+   - exhibit metadata.
+9. Determine whether the problem is caused by the parent container, the text element, or both.
+
+Do NOT simply apply:
+
+overflow-wrap: break-word;
+
+to everything.
+
+That may hide the underlying structural problem.
+
+Instead, use appropriate combinations of:
+
+- width constraints
+- max-width
+- min-width: 0
+- flex behavior
+- grid behavior
+- normal white-space behavior
+- overflow-wrap
+- word-break only where genuinely necessary
+- appropriate text container sizing.
+
+Preserve normal word boundaries whenever possible.
+
+Do NOT aggressively break normal words unless a genuinely unbreakable string requires it.
+
+--------------------------------------------------
+TEXT MUST NOT BECOME SMALLER
+--------------------------------------------------
+
+IMPORTANT:
+
+Do NOT reduce font size to solve text wrapping.
+
+Do NOT reduce padding excessively.
+
+Do NOT compress the interface simply to force everything onto one line.
+
+Readability is more important than fitting everything on one line.
+
+If text needs two or three lines, allow it to use two or three lines.
+
+The goal is:
+
+READABLE + STABLE
+
+not:
+
+SMALL + FORCED INTO ONE LINE.
+
+--------------------------------------------------
+LONG SCIENTIFIC CONTENT
+--------------------------------------------------
+
+Specifically test the Species Page with realistic long content.
+
+Test:
+
+- long scientific names
+- long common names
+- taxonomy labels
+- long anatomical terms
+- long exhibit descriptions
+- measurements
+- classification information
+- scientific evidence descriptions
+- metadata
+- buttons containing text
+- cards containing multiple text elements.
+
+The layout should remain stable even when content becomes significantly longer than the current examples.
+
+--------------------------------------------------
+HORIZONTAL OVERFLOW
+--------------------------------------------------
+
+After implementing the fix:
+
+Check the entire Species Page for unintended horizontal overflow.
+
+The following should NOT happen:
+
+- the browser gains a horizontal scrollbar because of a text element
+- one long word expands a column
+- a card becomes wider than its parent
+- text escapes outside a card
+- a button pushes another element outside its container
+- the central column expands because of content from a side column.
+
+Do not solve horizontal overflow by blindly applying:
+
+overflow-x: hidden;
+
+to the entire page.
+
+That can hide real layout problems.
+
+Find and fix the element responsible for the overflow.
+
+--------------------------------------------------
+PRESERVE THE EXISTING DESIGN
+--------------------------------------------------
+
+The current Species Page design is approved.
+
+Preserve:
+
+- existing three-column visual arrangement
+- existing museum aesthetic
+- existing colors
+- existing cards
+- existing exhibit components
+- existing reconstruction viewer
+- existing information sections
+- existing navigation
+- existing icons
+- existing animations
+- existing typography choices for now.
+
+Typography itself will be addressed in a separate Museum Polish task.
+
+Do not perform a typography redesign during this task.
+
+--------------------------------------------------
+CODE QUALITY
+--------------------------------------------------
+
+Keep the implementation clean.
+
+Do not duplicate components unnecessarily.
+
+Do not create arbitrary CSS hacks.
+
+Do not add large amounts of JavaScript when CSS/layout can solve the problem.
+
+Prefer the existing project's styling conventions.
+
+If the project uses Tailwind, use the existing Tailwind conventions where appropriate.
+
+If there are reusable layout components, modify those instead of creating duplicate versions.
+
+Avoid changing unrelated files.
+
+Before finishing, inspect the diff and remove any changes that are unrelated to these two tasks.
+
+--------------------------------------------------
+TESTING CHECKLIST
+--------------------------------------------------
+
+After implementation, test the Individual Species Page at normal desktop browser sizes.
+
+Verify:
+
+[ ] Left column can reach all of its content independently.
+
+[ ] Center column can reach all of its content independently.
+
+[ ] Right column can reach all of its content independently.
+
+[ ] Scrolling one column does not unexpectedly scroll another column.
+
+[ ] No unnecessary nested scrollbars have been introduced.
+
+[ ] Navbar/header remains usable.
+
+[ ] Three-column layout remains visually unchanged.
+
+[ ] No horizontal page overflow exists.
+
+[ ] Long scientific names wrap correctly.
+
+[ ] Long descriptions wrap correctly.
+
+[ ] Long labels wrap correctly.
+
+[ ] Long metadata does not expand the columns.
+
+[ ] Buttons do not overflow their containers.
+
+[ ] Cards remain inside their intended boundaries.
+
+[ ] Text is not clipped.
+
+[ ] Font sizes have NOT been reduced to hide the problem.
+
+[ ] Existing mobile layout has not been intentionally broken.
+
+[ ] Existing museum design has not been redesigned.
+
+--------------------------------------------------
+IMPORTANT FINAL RULE
+--------------------------------------------------
+
+This is a STRUCTURAL POLISH task, not a redesign task.
+
+Fix ONLY:
+
+1. Independent scrolling of the Species Page's three primary columns.
+2. Text wrapping and related text overflow.
+
+Do not add features.
+
+Do not redesign the page.
+
+Do not modify other routes.
+
+Do not change the visual identity.
+
+Do not "improve" unrelated components.
+
+Inspect first → identify the actual cause → make the smallest robust fix → test thoroughly.
