@@ -1,0 +1,900 @@
+I want to add a new scientific information layer to the existing Dinopedia species pages.
+
+IMPORTANT:
+This is NOT a request to redesign the entire species page.
+
+Dinopedia is already an established digital museum / encyclopedia focused primarily on dinosaurs. The current species page structure, visual identity, navigation, layouts, and existing content should be preserved.
+
+The goal is to expand the scientific depth of species pages by introducing a structured way to connect:
+
+Fossil Evidence
+→ Observable Traits
+→ Scientific Interpretation
+→ Confidence / Uncertainty
+→ Evolutionary Context
+→ Scientific Sources
+
+This should make Dinopedia more scientifically useful while keeping the experience understandable, visual, and museum-like.
+
+Do NOT turn Dinopedia into a university-level scientific database.
+
+Do NOT create a genome database.
+
+Do NOT fabricate dinosaur DNA or genetic sequences.
+
+Do NOT imply that dinosaur genomes are currently known when they are not.
+
+Do NOT add large amounts of complicated scientific terminology just for the sake of appearing advanced.
+
+The system should be understandable to a high-school student and a general museum visitor while still being scientifically responsible.
+
+==================================================
+1. WHY THIS FEATURE EXISTS
+==================================================
+
+Currently, Dinopedia provides information about things such as:
+
+- appearance
+- behavior
+- anatomy
+- size
+- locomotion
+- ecology
+- comparisons
+- scientific information
+
+The problem is that these sections primarily tell the visitor WHAT we think a dinosaur was like.
+
+The new system should additionally explain:
+
+"HOW DO WE KNOW?"
+
+This is important because many dinosaur characteristics are not directly observed. They are reconstructed from fossil evidence, anatomy, comparisons with living animals, biomechanics, trackways, geological evidence, phylogenetic relationships, and other scientific evidence.
+
+The new system should therefore help visitors distinguish between:
+
+1. Directly observed evidence
+2. Strong scientific inference
+3. Reasonable reconstruction
+4. Hypothesis / uncertainty
+5. Unknown information
+
+The system should make scientific uncertainty visible rather than hiding it.
+
+==================================================
+2. SPECIES PAGE STRUCTURE
+==================================================
+
+The current species page already has separate areas such as:
+
+- Life Appearance and Behavior
+- Anatomy and Scientific Evidence
+- Quick Information
+- other existing species information
+
+Preserve the current structure and styling.
+
+I recommend extending the scientific information into the following conceptual sections:
+
+A. LIFE & BEHAVIOR
+B. ANATOMY
+C. EVIDENCE & TRAITS
+D. EVOLUTIONARY CONTEXT
+E. SCIENTIFIC SOURCES
+
+Do NOT necessarily display all five as huge separate pages.
+
+Use the existing species-page architecture and determine the cleanest way to integrate them.
+
+The important thing is that the visitor can understand the relationship between these categories.
+
+The ideal conceptual flow is:
+
+WHAT WAS IT LIKE?
+→ Life & Behavior
+
+WHAT WAS ITS BODY LIKE?
+→ Anatomy
+
+HOW DO WE KNOW?
+→ Evidence & Traits
+
+HOW DOES IT FIT INTO EVOLUTION?
+→ Evolutionary Context
+
+WHERE DID THIS INFORMATION COME FROM?
+→ Scientific Sources
+
+==================================================
+3. NEW SECTION: EVIDENCE & TRAITS
+==================================================
+
+This is the most important new addition.
+
+Create a new "Evidence & Traits" area within the species experience.
+
+The purpose is to connect individual traits to the evidence supporting them.
+
+Do NOT simply create another block of paragraphs.
+
+Make this structured and visually scannable.
+
+Each trait should ideally have:
+
+TRAIT
+EVIDENCE
+INTERPRETATION
+CONFIDENCE
+SOURCE
+
+For example:
+
+--------------------------------
+TRAIT
+Large, robust skull
+
+EVIDENCE
+Preserved cranial fossils and skull morphology
+
+INTERPRETATION
+The skull morphology indicates a strongly built feeding apparatus.
+
+CONFIDENCE
+High
+
+SOURCE
+[scientific citation]
+--------------------------------
+
+Another example:
+
+--------------------------------
+TRAIT
+Possible integumentary covering
+
+EVIDENCE
+Evidence from related taxa and phylogenetic context
+
+INTERPRETATION
+A covering is scientifically plausible, but the exact appearance is uncertain.
+
+CONFIDENCE
+Moderate
+
+SOURCE
+[scientific citation]
+--------------------------------
+
+The examples above are STRUCTURAL examples only.
+
+Do not invent scientific claims or citations.
+
+The actual content must be based on reliable scientific sources.
+
+==================================================
+4. EVIDENCE CATEGORIES
+==================================================
+
+Create a simple evidence classification system.
+
+The system should distinguish between several levels of certainty.
+
+Suggested categories:
+
+DIRECT EVIDENCE
+Something physically preserved or directly observable in the fossil record.
+
+Examples may include:
+
+- bones
+- teeth
+- preserved impressions
+- trackways
+- nests
+- eggs
+- preserved integument
+- pathological features
+
+INFERRED
+A scientifically supported conclusion derived from physical evidence.
+
+Examples may include:
+
+- muscle arrangement
+- probable locomotion
+- feeding mechanics
+- body posture
+
+RECONSTRUCTED
+A scientifically informed reconstruction where the complete feature is not directly preserved.
+
+Examples may include:
+
+- external appearance
+- muscle reconstruction
+- soft-tissue arrangement
+
+HYPOTHESIS / UNCERTAIN
+A proposed interpretation where significant uncertainty remains.
+
+Examples may include:
+
+- uncertain behavior
+- uncertain coloration
+- debated ecological interpretation
+
+UNKNOWN
+There is currently insufficient evidence to make a reliable claim.
+
+IMPORTANT:
+
+Do not treat these categories as absolute mathematical measurements.
+
+They are communication tools for explaining scientific certainty.
+
+==================================================
+5. CONFIDENCE SYSTEM
+==================================================
+
+Introduce a simple confidence indicator where useful.
+
+Suggested levels:
+
+HIGH
+Evidence is strong and relatively well supported.
+
+MODERATE
+Evidence exists, but interpretation contains meaningful uncertainty.
+
+LOW
+Evidence is limited or competing interpretations exist.
+
+UNKNOWN
+There is insufficient evidence.
+
+Keep this visually simple.
+
+Do NOT create a complicated numerical probability system.
+
+Do NOT assign arbitrary percentages such as "87% confidence" unless such a value is actually supported by the source.
+
+The confidence label should communicate evidence strength, not pretend to calculate scientific certainty.
+
+==================================================
+6. IMPORTANT: DISTINGUISH EVIDENCE FROM RECONSTRUCTION
+==================================================
+
+This is a major principle of the new system.
+
+Dinopedia should clearly distinguish:
+
+WHAT WAS ACTUALLY PRESERVED
+
+from
+
+WHAT SCIENTISTS RECONSTRUCT
+
+from
+
+WHAT REMAINS UNKNOWN.
+
+For example, a visitor may see an image of a dinosaur with a particular appearance.
+
+The interface should make it clear that:
+
+The image is a scientific reconstruction.
+
+It is NOT a photograph.
+
+It may contain features supported by fossil evidence as well as scientifically informed interpretations.
+
+This principle should also work alongside the existing reconstruction / museum presentation.
+
+Do not make the interface overly warning-heavy.
+
+The goal is clarity, not constant disclaimers.
+
+==================================================
+7. NEW SECTION: EVOLUTIONARY CONTEXT
+==================================================
+
+Add a lightweight evolutionary context section.
+
+This does NOT need to become a full phylogenetics system.
+
+For each species, where appropriate, provide structured information such as:
+
+- clade
+- family
+- major evolutionary group
+- notable anatomical traits
+- evolutionary relationships
+- important evolutionary developments
+
+The purpose is to help visitors understand that traits did not appear in isolation.
+
+A trait can be understood in the context of evolutionary relationships.
+
+For example:
+
+Anatomical trait
+↓
+Related taxa
+↓
+Earlier / later evolutionary forms
+↓
+Evolutionary context
+
+Use existing taxonomy where possible.
+
+Do NOT invent evolutionary relationships.
+
+Do NOT create a complicated molecular phylogenetics visualization unless reliable data and a real scientific basis are available.
+
+A simple visual hierarchy or relationship tree is enough for the initial version.
+
+==================================================
+8. GENETIC CONTEXT — IMPORTANT
+==================================================
+
+Do NOT attempt to add dinosaur genomes.
+
+Do NOT generate fake DNA sequences.
+
+Do NOT imply that complete dinosaur DNA has been recovered.
+
+Instead, introduce a lightweight "Genetic Context" subsection.
+
+This section should explain what is and is not known.
+
+For example, the structure could contain:
+
+GENETIC EVIDENCE
+
+Direct dinosaur genome:
+Not currently available
+
+What researchers can study:
+- living evolutionary relatives
+- comparative genomics
+- developmental biology
+- evolutionary relationships
+- genetic mechanisms in living animals
+
+Why this matters:
+Modern genetics can help scientists investigate how traits develop and evolve, even when the original dinosaur genome is unavailable.
+
+IMPORTANT:
+
+These are structural examples.
+
+Do not hardcode scientific claims without verification.
+
+The purpose of this section is to show visitors the difference between:
+
+Fossil evidence
+and
+Genetic evidence.
+
+If genetic information is unavailable for a species, explicitly saying so is scientifically preferable to inventing data.
+
+==================================================
+9. TRAIT-BASED DATA
+==================================================
+
+Where possible, begin structuring species information around TRAITS rather than only paragraphs.
+
+Examples of possible trait categories:
+
+ANATOMICAL TRAITS
+- skull structure
+- dentition
+- limbs
+- claws
+- vertebral structure
+- body proportions
+- armor
+- horns
+- crests
+- tail morphology
+
+LOCOMOTORY TRAITS
+- limb proportions
+- probable locomotion
+- trackway evidence
+- estimated speed where scientifically supported
+
+ECOLOGICAL TRAITS
+- habitat
+- diet
+- trophic role
+- environmental adaptations
+
+BEHAVIORAL TRAITS
+- social behavior
+- nesting
+- feeding behavior
+- defensive behavior
+
+INTEGUMENTARY TRAITS
+- feathers
+- scales
+- skin impressions
+- other preserved coverings
+
+Each trait should eventually be capable of being linked to:
+
+Evidence
+→ Interpretation
+→ Confidence
+→ Citation
+
+Do not require every species to have every category.
+
+Only display information where evidence exists.
+
+==================================================
+10. COMPARISON SYSTEM INTEGRATION
+==================================================
+
+The existing Dinopedia Comparison system should eventually make use of this structured trait information.
+
+Do NOT redesign Comparison right now.
+
+Instead, make the underlying data architecture capable of supporting future trait comparison.
+
+For example:
+
+T. rex
+- skull morphology
+- dentition
+- forelimb morphology
+- hindlimb morphology
+- body size
+- locomotion evidence
+
+Allosaurus
+- skull morphology
+- dentition
+- forelimb morphology
+- hindlimb morphology
+- body size
+- locomotion evidence
+
+This could eventually allow:
+
+"Compare Traits"
+
+rather than only:
+
+"Compare Statistics"
+
+This should be designed as future-ready architecture.
+
+Do not build an enormous trait comparison interface unless the existing application architecture makes it easy and useful.
+
+==================================================
+11. CONSERVATION CONNECTION
+==================================================
+
+Do NOT turn Dinopedia into a conservation website.
+
+Instead, use existing extinct organisms as educational case studies.
+
+Where appropriate, species or geological-period information can eventually include a small:
+
+"Extinction & Conservation Context"
+
+area.
+
+Potential topics:
+
+- extinction events
+- biodiversity change
+- ecosystem disruption
+- environmental change
+- what the fossil record can teach us about biodiversity
+
+The purpose is to connect prehistoric extinction with modern conservation biology without pretending that Dinopedia itself is conducting conservation research.
+
+Keep this optional and lightweight.
+
+==================================================
+12. AI-READINESS
+==================================================
+
+This feature should be designed so that structured scientific information can eventually be used by Digby.
+
+The long-term concept is:
+
+SPECIES
+↓
+TRAITS
+↓
+EVIDENCE
+↓
+CONFIDENCE
+↓
+CITATIONS
+↓
+EVOLUTIONARY CONTEXT
+
+This creates structured information that a future dinosaur-specialized AI can retrieve and explain.
+
+For example, eventually Digby could answer:
+
+"Why do we think this dinosaur had this trait?"
+
+and retrieve:
+
+- the trait
+- supporting evidence
+- confidence
+- scientific source
+- species page
+
+Do NOT build Digby into this task.
+
+Do NOT add an AI chatbot.
+
+Only make the underlying information architecture reasonably structured and future-ready.
+
+==================================================
+13. SCIENTIFIC CITATIONS
+==================================================
+
+This feature should connect directly with Dinopedia's planned Scientific Citations system.
+
+Every evidence-backed trait should eventually be capable of having one or more sources.
+
+Sources should preferably include:
+
+- peer-reviewed scientific papers
+- reputable scientific databases
+- museum / university resources
+- established paleontology references
+- other authoritative scientific sources
+
+Do NOT fabricate citations.
+
+Do NOT use random websites simply because they mention the dinosaur.
+
+If a trait cannot currently be supported by a reliable source, it should not be presented as established fact.
+
+==================================================
+14. FUTURE EVIDENCE SYSTEM COMPATIBILITY
+==================================================
+
+Design the data structure so that a future evidence/update system could eventually detect:
+
+Existing claim
+↓
+New scientific evidence
+↓
+Evidence review
+↓
+Potential change
+↓
+Proposed Dinopedia update
+
+For example:
+
+CURRENT TRAIT:
+"Trait X"
+
+CURRENT EVIDENCE:
+Source A
+
+NEW EVIDENCE:
+Source B
+
+STATUS:
+Under review
+
+This does NOT need to be implemented now.
+
+The important thing is to avoid hardcoding scientific claims in a way that would make future updates difficult.
+
+==================================================
+15. UI / UX
+==================================================
+
+The new system must feel like it belongs to Dinopedia.
+
+Do NOT create a generic scientific dashboard.
+
+Do NOT make the species page look like a spreadsheet.
+
+Use the existing Dinopedia museum aesthetic.
+
+The interface should feel like a museum exhibit explaining scientific evidence.
+
+Potential visual concepts:
+
+- evidence cards
+- trait cards
+- subtle evidence indicators
+- expandable details
+- source chips
+- "How do we know?" expandable sections
+- small confidence indicators
+- timeline / evolutionary relationship visuals where appropriate
+
+Keep the primary experience visual and approachable.
+
+The visitor should be able to skim the information without reading a scientific paper.
+
+Advanced information can be progressively disclosed through expandable sections.
+
+==================================================
+16. SPECIES PAGE INFORMATION ARCHITECTURE
+==================================================
+
+Use the following conceptual structure as the target:
+
+SPECIES PAGE
+
+├── Quick Information
+│
+├── Life & Behavior
+│   ├── Appearance
+│   ├── Behavior
+│   ├── Ecology
+│   └── Lifestyle
+│
+├── Anatomy
+│   ├── Skeletal Anatomy
+│   ├── Major Anatomical Features
+│   └── Functional Anatomy
+│
+├── Evidence & Traits
+│   ├── Trait
+│   ├── Evidence
+│   ├── Interpretation
+│   ├── Confidence
+│   └── Source
+│
+├── Evolutionary Context
+│   ├── Classification
+│   ├── Relationships
+│   └── Evolutionary Traits
+│
+├── Genetic Context
+│   ├── What is known
+│   ├── What is unavailable
+│   └── Modern comparative context
+│
+└── Scientific Sources
+    ├── Papers
+    ├── Databases
+    ├── Museums / Universities
+    └── Other authoritative sources
+
+IMPORTANT:
+
+This is an INFORMATION ARCHITECTURE concept, not a requirement to make every item a giant visible section.
+
+Use tabs, accordions, expandable cards, or the existing species-page interaction patterns where appropriate.
+
+Avoid making the page excessively long.
+
+==================================================
+17. DO NOT OVERBUILD THIS
+==================================================
+
+This is extremely important.
+
+This project is being developed by a high-school student with essentially no project budget.
+
+Therefore:
+
+DO NOT attempt to build:
+
+- genome sequencing tools
+- genetic engineering simulators
+- de-extinction simulations
+- molecular biology databases
+- advanced phylogenetic computation
+- automated scientific literature analysis
+- autonomous scientific updating
+- complex AI systems
+- massive scientific datasets
+
+Those are future possibilities, not current requirements.
+
+The immediate goal is simply:
+
+Make Dinopedia better at explaining how scientists know what they know.
+
+==================================================
+18. DATA ARCHITECTURE
+==================================================
+
+If the current application stores species information in structured objects / JSON / database records, consider introducing a structure similar to:
+
+species
+├── basicInfo
+├── appearance
+├── behavior
+├── anatomy
+├── ecology
+├── traits
+│   ├── traitName
+│   ├── category
+│   ├── evidence
+│   ├── interpretation
+│   ├── confidence
+│   └── sources
+├── evolutionaryContext
+├── geneticContext
+└── sources
+
+Do NOT blindly rewrite the existing data architecture.
+
+Inspect the current implementation first.
+
+If a simpler extension to the existing structure is better, use it.
+
+Preserve backward compatibility with existing species pages.
+
+Existing species information must continue to work.
+
+==================================================
+19. INITIAL IMPLEMENTATION PRIORITY
+==================================================
+
+Prioritize implementation in this order:
+
+PHASE 1 — Evidence & Traits
+- trait cards
+- evidence
+- interpretation
+- confidence
+- citations
+
+PHASE 2 — Evolutionary Context
+- classification
+- evolutionary relationships
+- notable evolutionary traits
+
+PHASE 3 — Genetic Context
+- clearly explain the availability / limitations of genetic evidence
+- distinguish fossil evidence from genetic evidence
+
+PHASE 4 — Future-ready data structure
+- make information structured enough for future Digby / evidence systems
+
+PHASE 5 — Optional future features
+- conservation context
+- trait comparison
+- advanced evidence visualization
+
+Do not attempt all future phases at once if that would make the project unstable.
+
+==================================================
+20. CONTENT RULES
+==================================================
+
+Scientific accuracy is more important than visual complexity.
+
+Do not:
+
+- invent fossil evidence
+- invent scientific studies
+- invent DNA sequences
+- invent genetic information
+- present speculation as fact
+- assign arbitrary confidence percentages
+- claim scientific consensus where there is active disagreement
+- create fake citations
+- imply that reconstructions are photographs
+- imply that every dinosaur trait is genetically known
+
+When scientific uncertainty exists, communicate it clearly.
+
+Use wording such as:
+
+- "Evidence suggests..."
+- "Researchers have proposed..."
+- "This interpretation is supported by..."
+- "The available evidence is limited..."
+- "This remains uncertain..."
+- "No direct evidence is currently available..."
+
+when scientifically appropriate.
+
+==================================================
+21. EXISTING DINOPEDIA FUNCTIONALITY MUST REMAIN INTACT
+==================================================
+
+Do not break:
+
+- species pages
+- appearance sections
+- behavior sections
+- anatomy sections
+- comparisons
+- search
+- navigation
+- museum exhibits
+- 3D functionality
+- responsive layouts
+- existing scientific content
+- existing citations
+- existing UI interactions
+
+Do not perform a broad redesign.
+
+Do not modify unrelated parts of the application.
+
+Reuse the existing Dinopedia design system.
+
+==================================================
+22. IMPLEMENTATION PROCESS
+==================================================
+
+Before changing anything:
+
+1. Inspect the existing species-page implementation.
+2. Inspect how species data is currently structured.
+3. Identify where anatomy, behavior, appearance, and scientific information currently live.
+4. Identify the existing citation architecture.
+5. Identify the existing species-page tabs / toggles / accordions.
+6. Determine the smallest architectural change required.
+
+Then propose the implementation approach.
+
+Do NOT immediately rewrite the species pages.
+
+After implementation:
+
+1. Test existing species pages.
+2. Test a species with the new Evidence & Traits information.
+3. Test a species without complete evidence information.
+4. Confirm missing fields do not break the page.
+5. Confirm existing species content still appears.
+6. Test desktop.
+7. Test mobile.
+8. Check responsive layout.
+9. Check console errors.
+10. Verify that the new system does not create excessive page length or clutter.
+
+==================================================
+23. SUCCESS CRITERIA
+==================================================
+
+The feature is successful if:
+
+1. Visitors can understand WHAT a dinosaur was like.
+2. Visitors can understand HOW scientists know important traits.
+3. Visitors can distinguish evidence from reconstruction.
+4. Visitors can see uncertainty without being overwhelmed.
+5. Species information remains visually approachable.
+6. Existing Dinopedia functionality remains intact.
+7. The data is structured enough for future scientific citations, Digby, and evidence-update systems.
+8. The feature creates a meaningful bridge between paleontology and modern scientific thinking without pretending Dinopedia currently has unavailable genetic data.
+
+==================================================
+24. FINAL DESIGN PRINCIPLE
+
+The central question behind this feature should be:
+
+"How do we know?"
+
+Not:
+
+"How much scientific information can we cram into the page?"
+
+Dinopedia should feel like a museum that doesn't merely tell visitors facts.
+
+It should show them:
+
+WHAT WE KNOW
+HOW WE KNOW IT
+WHAT WE INFER
+WHAT REMAINS UNCERTAIN
+AND WHERE THE EVIDENCE COMES FROM.
+
+Begin by inspecting the existing species-page architecture and data model.
+
+Do not start by rewriting the UI.
