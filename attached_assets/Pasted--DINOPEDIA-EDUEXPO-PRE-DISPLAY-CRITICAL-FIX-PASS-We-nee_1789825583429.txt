@@ -1,0 +1,459 @@
+## DINOPEDIA — EDUEXPO PRE-DISPLAY CRITICAL FIX PASS
+
+We need to make a focused, careful bug-fixing pass on the existing Dinopedia application.
+
+### IMPORTANT CONTEXT
+
+Dinopedia is a digital museum / encyclopedia for prehistoric life, currently focused primarily on dinosaurs.
+
+The current production UI and visual identity are already established.
+
+**DO NOT redesign the entire application.**
+**DO NOT change the overall visual identity.**
+**DO NOT replace existing layouts unnecessarily.**
+**DO NOT remove working functionality.**
+**DO NOT make broad architectural changes unless they are genuinely required to fix the three issues below.**
+
+This is an urgent pre-display fix because the application will be demonstrated at a school exhibition tomorrow.
+
+The priority is:
+
+1. Search dropdown layering
+2. Column scrolling / scrolling regression
+3. Comparison tab visual consistency
+
+Fix these carefully and verify that the fixes do not introduce new responsive or layout problems.
+
+---
+
+# 1. SEARCH DROPDOWN OVERLAPPING / LAYERING BUG
+
+## Problem
+
+The search functionality currently has a visual layering problem.
+
+When the user types into the search field and the search suggestions / results dropdown appears, the dropdown does not properly sit above the surrounding interface.
+
+Some surrounding elements visually overlap it or appear in front of it.
+
+The dropdown must behave like a proper overlay.
+
+## Desired behavior
+
+When the search dropdown opens:
+
+* it must appear above surrounding content
+* it must not be clipped by an unrelated parent container
+* it must not disappear behind cards, sections, headers, or other UI
+* it must remain visually attached to the search field
+* it must remain correctly positioned when the page is scrolled
+* it must work at desktop and mobile widths
+* it must not cause the surrounding layout to shift unexpectedly
+* it must close appropriately when search interaction ends, according to the existing application behavior
+
+## IMPORTANT
+
+Do NOT simply increase z-index randomly.
+
+First inspect the DOM hierarchy and identify:
+
+* stacking contexts
+* positioned ancestors
+* overflow properties
+* clipping containers
+* z-index relationships
+* transforms that may create stacking contexts
+* sticky/fixed elements
+* parent containers using overflow-hidden / overflow-auto
+
+If the dropdown is being clipped by an ancestor, fix the actual structural cause rather than endlessly increasing z-index.
+
+The final implementation should use a sensible stacking hierarchy.
+
+The dropdown should visually sit above the content without causing unrelated elements to gain excessive z-index values.
+
+## Responsive requirement
+
+Check:
+
+* normal desktop width
+* narrower desktop width
+* tablet width
+* mobile width
+
+The search dropdown must remain usable and correctly positioned at all of these sizes.
+
+---
+
+# 2. CRITICAL COLUMN SCROLLING BUG / REGRESSION
+
+This is the most important issue to handle carefully because a previous attempt to fix scrolling caused a regression.
+
+## Existing behavior / history
+
+Dinopedia uses a multi-column museum-style layout.
+
+The application has areas where the center/main content and side sections have their own intended scrolling behavior.
+
+Previously there were problems where:
+
+* side sections would not scroll independently
+* scrolling one area affected another area
+* the center section did not behave correctly
+
+A previous attempted fix made the situation worse:
+
+**The center column now stops scrolling before reaching the actual bottom of its content.**
+
+In other words, the user can scroll down the center content, but the center scroll area ends prematurely and some content below it becomes inaccessible.
+
+This must be investigated rather than patched blindly.
+
+## FIRST STEP — INSPECT THE EXISTING IMPLEMENTATION
+
+Before changing anything:
+
+Identify exactly how scrolling currently works.
+
+Inspect:
+
+* body/html height
+* page-level overflow
+* main application container height
+* grid/flex containers
+* center column height
+* left column height
+* right column height
+* overflow-y values
+* min-height
+* max-height
+* height: 100vh / 100dvh / etc.
+* nested scroll containers
+* sticky elements
+* position: sticky/fixed
+* flex children with min-height: 0
+* grid row sizing
+* scrollbar containers
+* mobile media queries
+* desktop media queries
+
+Determine which element is actually responsible for scrolling in each column.
+
+DO NOT immediately rewrite the layout.
+
+---
+
+## DESKTOP SCROLLING GOAL
+
+At normal desktop zoom and normal desktop viewport sizes:
+
+The museum's three-column layout should behave naturally.
+
+The center content must be able to scroll **all the way to the actual bottom of its content**.
+
+No content should become inaccessible because a parent container has an incorrectly constrained height.
+
+If the side columns are intended to scroll independently, they should do so.
+
+If a side column's content is shorter than the center content, it should not create strange empty scrolling behavior.
+
+Do not force every column to have identical content height.
+
+---
+
+## IMPORTANT: DO NOT BREAK THE EXISTING THREE-COLUMN LAYOUT
+
+The three-column museum layout is intentional.
+
+Do NOT:
+
+* remove the columns
+* redesign the page
+* collapse everything into one column on desktop
+* introduce arbitrary fixed heights
+* introduce giant blank spaces
+* make the center column artificially short
+* make the side columns consume the entire page unnecessarily
+
+The objective is correct scrolling, not a new layout.
+
+---
+
+# MOBILE SCROLLING
+
+The mobile version should not inherit desktop nested-scroll behavior in a way that makes the page difficult to use.
+
+Inspect the mobile CSS carefully.
+
+On mobile:
+
+* the page should scroll naturally
+* content must remain reachable
+* no section should be trapped inside an unnecessarily short scroll container
+* no content should be cut off
+* nested scrolling should only exist where it is genuinely necessary
+
+Do not sacrifice mobile usability in order to fix desktop scrolling.
+
+---
+
+# 3. COMPARISON TAB VISUAL CONSISTENCY
+
+The Comparison tab currently does not visually match the rest of Dinopedia.
+
+This is a **visual consistency problem**, not a request to completely redesign the Comparison functionality.
+
+## Goal
+
+Make the Comparison section feel like it belongs to the same museum as the Encyclopedia and Species pages.
+
+It should use the existing Dinopedia design language.
+
+Inspect the current application for the established:
+
+* background treatment
+* typography
+* font hierarchy
+* border treatment
+* corner radius
+* spacing system
+* card design
+* shadows
+* accent colors
+* section headers
+* buttons
+* icons
+* dividers
+* data presentation
+* overall visual density
+
+Then bring the Comparison tab into alignment with those existing conventions.
+
+---
+
+## VERY IMPORTANT
+
+Do NOT make the entire application conform to the current Comparison tab.
+
+Instead:
+
+**The Comparison tab should conform to the already-established Dinopedia visual language.**
+
+The rest of the application is the reference.
+
+The Comparison tab should feel like another room/exhibit inside the same digital museum.
+
+---
+
+# COMPARISON TAB SPECIFICALLY
+
+Review all major Comparison UI elements, including:
+
+* page background
+* title/header
+* dinosaur selection controls
+* comparison cards
+* statistics
+* charts
+* labels
+* buttons
+* analysis sections
+* ecological information
+* combat/comparison analysis
+* spacing
+* typography
+* visual hierarchy
+
+Do not remove existing comparison functionality.
+
+Do not alter scientific data.
+
+Do not invent new data.
+
+Only adjust the presentation where necessary to achieve visual consistency.
+
+---
+
+# TYPOGRAPHY
+
+Use the existing application typography system where possible.
+
+Do not introduce a completely unrelated font just for Comparison.
+
+The typography should feel consistent across:
+
+* Encyclopedia
+* Species pages
+* Comparison
+* Home
+
+If the project already contains design tokens / CSS variables for typography, use them instead of hardcoding new values.
+
+---
+
+# COLORS
+
+Reuse the existing Dinopedia palette.
+
+Do not introduce random new colors.
+
+If the Comparison tab currently has colors that clash with the museum aesthetic, replace them with the application's established design tokens.
+
+Charts may retain necessary semantic distinctions, but they should still feel visually integrated with the application.
+
+---
+
+# SPACING
+
+Use the same spacing rhythm as the rest of the application.
+
+Avoid:
+
+* excessive empty space
+* cramped elements
+* inconsistent padding
+* randomly different card margins
+
+The Comparison page should feel intentionally designed rather than like a separate application embedded inside Dinopedia.
+
+---
+
+# RESPONSIVE CHECK
+
+After making all three fixes, test:
+
+## Desktop
+
+* 1366px-class viewport
+* normal 100% browser zoom
+* narrower desktop width
+* three-column layout
+* center scrolling
+* side scrolling
+* search dropdown
+* Comparison page
+
+## Mobile
+
+Test a representative narrow phone viewport.
+
+Check:
+
+* search dropdown
+* page scrolling
+* no clipped content
+* no horizontal overflow
+* Comparison layout
+* readable text
+* buttons/touch targets
+* no broken column behavior
+
+---
+
+# DO NOT TOUCH THESE THINGS UNLESS REQUIRED
+
+Do not use this task to modify:
+
+* species information
+* scientific content
+* taxonomy
+* existing 3D models
+* museum feature architecture
+* AI functionality
+* citations
+* Future Evidence System
+* navigation structure
+* unrelated animations
+* unrelated loading behavior
+* unrelated accessibility work
+* unrelated mobile redesign
+* unrelated typography overhaul
+
+Those belong to later polishing phases.
+
+This task is specifically the three critical pre-EduExpo fixes.
+
+---
+
+# IMPLEMENTATION RULES
+
+Before editing:
+
+1. Inspect the relevant components.
+2. Identify the actual source of each problem.
+3. Make the smallest reasonable changes.
+4. Reuse existing CSS/design tokens.
+5. Avoid duplicated styles.
+6. Avoid unnecessary dependencies.
+7. Preserve existing functionality.
+
+After editing:
+
+1. Run the application.
+2. Test the search dropdown.
+3. Test center-column scrolling from top to absolute bottom.
+4. Test side-column scrolling.
+5. Test the Comparison tab.
+6. Test desktop.
+7. Test mobile.
+8. Check for horizontal overflow.
+9. Check the browser console for errors.
+10. Verify that no existing page has been unintentionally altered.
+
+---
+
+# REGRESSION CHECK
+
+This is extremely important.
+
+The previous scrolling fix introduced a regression where the center column could no longer scroll all the way to the bottom.
+
+Therefore:
+
+**DO NOT declare the scrolling issue fixed merely because the scrollbar moves.**
+
+Actually scroll from the very top of the center content to the very bottom and confirm that the final content is reachable.
+
+Test with the longest currently existing page/content.
+
+The same applies to mobile.
+
+---
+
+# SUCCESS CRITERIA
+
+The task is complete only when all three conditions are true:
+
+### SEARCH
+
+The search dropdown appears above surrounding content, is not clipped, and remains correctly positioned across desktop and mobile.
+
+### SCROLLING
+
+The center column reaches the true bottom of its content, side columns behave correctly, and mobile scrolling remains natural.
+
+### COMPARISON
+
+The Comparison tab visually belongs to the same Dinopedia design system as the rest of the application without losing its existing functionality.
+
+---
+
+# FINAL REPORT
+
+After completing the work, provide a concise report containing:
+
+1. What caused the search dropdown problem.
+2. What caused the scrolling problem.
+3. What caused the Comparison tab inconsistency.
+4. What files/components were changed.
+5. What was intentionally left untouched.
+6. Desktop test results.
+7. Mobile test results.
+8. Any remaining known issue.
+
+Do not claim a bug is fixed unless you actually verified it.
+
+This is a production-facing pre-EduExpo fix, so prioritize stability and regression prevention over ambitious redesign.
+
+BEGIN BY INSPECTING THE EXISTING IMPLEMENTATION.
+DO NOT START BY REWRITING THE UI.

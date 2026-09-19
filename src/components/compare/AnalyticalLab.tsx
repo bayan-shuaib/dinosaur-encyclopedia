@@ -516,13 +516,16 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
 
   return (
     <div>
-      <h2 className="text-2xl font-medium uppercase tracking-[0.12em] text-foreground mb-8">Analytical Lab</h2>
+      <div className="flex items-center gap-4 mb-7">
+        <h2 className="text-lg md:text-xl font-display font-bold tracking-tight text-foreground">Analytical Lab</h2>
+        <div className="h-px flex-1 bg-gradient-to-r from-amber-500/25 via-border/40 to-transparent" />
+      </div>
 
       {/* ROW 1: Combat Analysis (40%) + Geological Timeline (60%) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6 mb-6">
+      <div className="grid min-w-0 grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6 mb-6">
         {/* Combat Analysis Chart */}
         <section className="info-panel flex flex-col overflow-hidden" style={{ height: 380 }}>
-          <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-2 font-medium text-center flex-shrink-0">Combat Analysis</p>
+          <p className="text-[9px] uppercase tracking-[0.2em] text-amber-400/60 mb-2 font-display text-center flex-shrink-0">Combat Analysis</p>
           <div className="flex-1 min-h-0 flex items-center justify-center">
             <CombatRadar dinosaurs={dinosaurs} />
           </div>
@@ -530,7 +533,7 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
 
         {/* Geological Timeline - Museum Style Horizontal */}
         <section className="info-panel flex flex-col overflow-hidden" style={{ height: 380 }}>
-          <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-3 font-medium flex-shrink-0">Geological Timeline</p>
+          <p className="text-[9px] uppercase tracking-[0.2em] text-amber-400/60 mb-3 font-display flex-shrink-0">Geological Timeline</p>
           <div className="flex-1 min-h-0">
             <InteractiveTimeline dinosaurs={dinosaurs} />
           </div>
@@ -538,10 +541,10 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
       </div>
 
       {/* ROW 2: Discovery Locations (60%) + Ecological Dominance (40%) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 mb-6">
+      <div className="grid min-w-0 grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 mb-6">
         {/* Discovery Locations */}
         <section className="info-panel overflow-hidden flex flex-col" style={{ minHeight: 420 }}>
-          <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-3 font-medium flex-shrink-0">Discovery Locations</p>
+          <p className="text-[9px] uppercase tracking-[0.2em] text-amber-400/60 mb-3 font-display flex-shrink-0">Discovery Locations</p>
           <div className="flex-1 min-h-0 overflow-hidden">
             <LocationMap dinosaurs={dinosaurs} />
           </div>
@@ -550,7 +553,7 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
         {/* Ecological Dominance Profile - NEW */}
         <section className="info-panel flex items-center justify-center" style={{ minHeight: 420 }}>
           <div className="w-full">
-            <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-4 font-medium text-center">Ecological Dominance Profile</p>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-amber-400/60 mb-4 font-display text-center">Ecological Dominance Profile</p>
             <EcologicalRadar dinosaurs={dinosaurs} />
           </div>
         </section>
@@ -559,10 +562,10 @@ export default function AnalyticalLab({ dinosaurs }: Props) {
       {/* ROW 3: Skeleton Data - Full Width */}
       <section className="info-panel">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium">Skeleton Data</p>
+          <p className="text-[9px] uppercase tracking-[0.2em] text-amber-400/60 font-display">Skeleton Data</p>
           <button
             onClick={() => setSkeletonMode(!skeletonMode)}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1 rounded-md bg-secondary"
+             className="text-[9px] uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground transition-colors px-3 py-1 rounded-md bg-secondary/60 border border-border/30 font-display"
           >
             {skeletonMode ? 'Hide Details' : 'Show Skeleton Mode'}
           </button>

@@ -1,5 +1,6 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dinosaurs } from '@/data/dinosaurs';
@@ -68,6 +69,12 @@ export function GlobalSearch({ variant = 'nav' }: { variant?: 'nav' | 'hero' }) 
   const navigate   = useNavigate();
   const inputRef   = useRef<HTMLInputElement>(null);
   const wrapRef    = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
 
   const results = useMemo(() => {
     if (query.trim().length < 2) return [];
@@ -82,7 +89,12 @@ export function GlobalSearch({ variant = 'nav' }: { variant?: 'nav' | 'hero' }) 
   // Close when clicking outside
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        wrapRef.current &&
+        !wrapRef.current.contains(target) &&
+        !dropdownRef.current?.contains(target)
+      ) {
         setOpen(false);
       }
     }
@@ -108,6 +120,52 @@ export function GlobalSearch({ variant = 'nav' }: { variant?: 'nav' | 'hero' }) 
   };
 
   const showDropdown = open && query.trim().length >= 2;
+
+  const updateDropdownPosition = useCallback(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const rect = wrap.getBoundingClientRect();
+    setDropdownPosition({
+      top: rect.bottom + (isHero ? 8 : 6),
+      left: rect.left,
+      width: rect.width,
+    });
+  }, [isHero]);
+
+  useLayoutEffect(() => {
+    if (!showDropdown) {
+      setDropdownPosition(null);
+      return;
+    }
+
+    updateDropdownPosition();
+    const handleViewportChange = () => updateDropdownPosition();
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, true);
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [showDropdown, updateDropdownPosition]);
+
+  const renderDropdownLayer = (dropdown: React.ReactNode) => {
+    if (!dropdownPosition) return null;
+    return createPortal(
+      <div
+        ref={dropdownRef}
+        className="fixed"
+        style={{
+          top: dropdownPosition.top,
+          left: dropdownPosition.left,
+          width: dropdownPosition.width,
+          zIndex: 1000,
+        }}
+      >
+        {dropdown}
+      </div>,
+      document.body,
+    );
+  };
 
   if (isHero) {
     return (
@@ -147,15 +205,16 @@ export function GlobalSearch({ variant = 'nav' }: { variant?: 'nav' | 'hero' }) 
         </div>
 
         {/* Dropdown */}
-        <AnimatePresence>
-          {showDropdown && (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.14 }}
-              className="absolute top-full left-0 right-0 mt-2 z-[300] bg-card/95 backdrop-blur-md border border-border/45 rounded-lg overflow-hidden shadow-2xl shadow-black/60"
-            >
+        {renderDropdownLayer(
+          <AnimatePresence>
+            {showDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.14 }}
+                className="w-full bg-card/95 backdrop-blur-md border border-border/45 rounded-lg overflow-hidden shadow-2xl shadow-black/60"
+              >
               <div className="flex items-center justify-between px-4 py-2 border-b border-border/20">
                 <span className="text-[8px] uppercase tracking-[0.26em] text-amber-400/45 font-display">
                   ARCHIVE SEARCH
@@ -202,9 +261,10 @@ export function GlobalSearch({ variant = 'nav' }: { variant?: 'nav' | 'hero' }) 
                   </p>
                 </div>
               )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+        )}
       </div>
     );
   }
@@ -239,15 +299,16 @@ export function GlobalSearch({ variant = 'nav' }: { variant?: 'nav' | 'hero' }) 
       </div>
 
       {/* Dropdown */}
-      <AnimatePresence>
-        {showDropdown && (
-          <motion.div
-            initial={{ opacity: 0, y: -4, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.98 }}
-            transition={{ duration: 0.12 }}
-            className="absolute top-full left-0 right-0 mt-1.5 z-[300] bg-card border border-border/40 rounded-lg overflow-hidden shadow-2xl shadow-black/40"
-          >
+        {renderDropdownLayer(
+          <AnimatePresence>
+            {showDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: -4, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                transition={{ duration: 0.12 }}
+                className="w-full bg-card border border-border/40 rounded-lg overflow-hidden shadow-2xl shadow-black/40"
+              >
             {/* Header */}
             <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/20">
               <span className="text-[7.5px] uppercase tracking-[0.24em] text-amber-400/40 font-display">
@@ -305,9 +366,10 @@ export function GlobalSearch({ variant = 'nav' }: { variant?: 'nav' | 'hero' }) 
                 </p>
               </div>
             )}
-          </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
         )}
-      </AnimatePresence>
     </div>
   );
 }

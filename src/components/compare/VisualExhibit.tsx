@@ -20,7 +20,10 @@ export default function VisualExhibit({ dinosaurs }: Props) {
 
   return (
     <div>
-      <h2 className="text-2xl font-medium uppercase tracking-[0.12em] text-foreground mb-8">Visual Exhibit</h2>
+      <div className="flex items-center gap-4 mb-7">
+        <h2 className="text-lg md:text-xl font-display font-bold tracking-tight text-foreground">Visual Exhibit</h2>
+        <div className="h-px flex-1 bg-gradient-to-r from-amber-500/25 via-border/40 to-transparent" />
+      </div>
 
       {/* Toggle bar */}
       <div className="flex items-center gap-2 mb-8">
@@ -30,8 +33,8 @@ export default function VisualExhibit({ dinosaurs }: Props) {
             onClick={() => setMode(m)}
             className={`px-5 py-2.5 rounded-lg text-xs uppercase tracking-[0.15em] font-medium transition-all border ${
               mode === m
-                ? 'bg-card border-border text-foreground shadow-sm'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
+                 ? 'bg-amber-500/10 border-amber-500/30 text-foreground shadow-sm'
+                 : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/30'
             }`}
           >
             {m === 'true-scale' ? 'True Scale Comparison' : 'Skeleton Visualization'}
@@ -60,8 +63,8 @@ export default function VisualExhibit({ dinosaurs }: Props) {
                   onClick={() => setViewAngle(v)}
                   className={`px-4 py-2 rounded-md text-xs uppercase tracking-[0.12em] transition-all ${
                     viewAngle === v
-                      ? 'bg-secondary text-foreground'
-                      : 'text-muted-foreground hover:text-foreground'
+                       ? 'bg-amber-500/10 text-foreground border border-amber-500/25'
+                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/30'
                   }`}
                 >
                   {v === 'side' ? 'Side View' : v === 'dorsal' ? 'Dorsal View' : 'Face-to-Face View'}

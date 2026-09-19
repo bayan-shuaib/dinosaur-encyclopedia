@@ -229,10 +229,10 @@ export default function DinosaurPage() {
 
       {/* ── MUSEUM ARCHITECTURE — left rail · exhibit hall · evidence system ── */}
       <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-10 md:py-14">
-        <div className="grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)_330px] gap-6 2xl:gap-10 items-start xl:h-[calc(100vh-7rem)] xl:min-h-0 xl:overflow-hidden">
-          {/* LEFT — scientific support column with its own desktop scroll region */}
+        <div className="grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)_330px] gap-6 2xl:gap-10 items-start">
+          {/* LEFT — scientific support column with bounded sticky scroll */}
           <aside
-            className="hidden xl:block min-w-0 h-full overflow-y-auto overscroll-contain pr-1"
+            className="hidden xl:block min-w-0 sticky top-[100px] max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain pr-1"
             data-species-scroll-region="left"
           >
             <SpeciesScientificRail dino={dino} />
@@ -240,7 +240,7 @@ export default function DinosaurPage() {
 
           {/* CENTER — exhibit hall */}
           <main
-            className="min-w-0 xl:min-h-0 xl:overflow-y-auto xl:overscroll-contain xl:pr-1 space-y-16 md:space-y-24"
+            className="min-w-0 space-y-16 md:space-y-24"
             data-species-scroll-region="center"
           >
             {/* Condensed classification + location for < xl (rails hidden) */}
@@ -387,9 +387,9 @@ export default function DinosaurPage() {
             </ExhibitBand>
           </main>
 
-          {/* RIGHT — evidence support column with its own desktop scroll region */}
+          {/* RIGHT — evidence support column with bounded sticky scroll */}
           <aside
-            className="hidden xl:block min-w-0 h-full overflow-y-auto overscroll-contain pr-1"
+            className="hidden xl:block min-w-0 sticky top-[100px] max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain pr-1"
             data-species-scroll-region="right"
           >
             <SpeciesEvidenceRail dino={dino} />

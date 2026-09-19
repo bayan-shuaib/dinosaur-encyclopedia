@@ -115,42 +115,53 @@ export default function ComparePage() {
         {loading && <CompareLoading onComplete={handleLoadComplete} />}
       </AnimatePresence>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-8">
+      <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-10 md:py-14">
         {/* Header */}
         <div className="mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-body text-sm mb-5">
             <ArrowLeft className="h-4 w-4" /> Back to encyclopedia
           </Link>
-          <h1 className="text-3xl md:text-4xl font-medium text-foreground uppercase tracking-[0.06em]">
-            Compare Dinosaurs
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-[9px] uppercase tracking-[0.3em] text-amber-400/55 font-display">
+              Hall II · Comparative Archive
+            </span>
+            <span className="h-px flex-1 max-w-40 bg-gradient-to-r from-amber-400/30 to-transparent" />
+          </div>
+          <h1 className="text-3xl md:text-5xl font-display font-bold text-foreground tracking-tight">
+            Comparison Hall
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">Select 2–4 species to compare side-by-side</p>
+          <p className="text-muted-foreground/75 text-sm mt-2 font-body">Select 2–4 species to compare side-by-side</p>
         </div>
 
         {/* Selection bar */}
-        <div className="flex items-center gap-3 mb-8 flex-wrap">
-          {selected.map((dino, i) => (
-            <div key={dino.id} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border">
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i] }} />
-              <span className="text-sm text-foreground">{dino.name}</span>
-              <button onClick={() => removeDino(dino.id)} className="text-muted-foreground hover:text-foreground ml-1">
-                <X className="h-3.5 w-3.5" />
+        <div className="relative rounded-xl border border-border/40 bg-card/40 p-4 md:p-5 mb-8">
+          <div className="text-[9px] uppercase tracking-[0.24em] text-amber-400/55 font-display mb-3">
+            Selected Taxa
+          </div>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            {selected.map((dino, i) => (
+              <div key={dino.id} className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-card/80 border border-border/50">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: COLORS[i] }} />
+                <span className="text-sm text-foreground font-display">{dino.name}</span>
+                <button onClick={() => removeDino(dino.id)} className="text-muted-foreground/60 hover:text-foreground ml-1 transition-colors" aria-label={`Remove ${dino.name}`}>
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+            {selectedIds.length < 4 && (
+              <button
+                onClick={() => setShowSearch(true)}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-dashed border-amber-500/25 text-muted-foreground hover:text-foreground hover:border-amber-400/45 hover:bg-amber-500/[0.04] transition-colors text-sm font-display"
+              >
+                <Plus className="h-4 w-4 text-amber-400/65" /> Add species
               </button>
-            </div>
-          ))}
-          {selectedIds.length < 4 && (
-            <button
-              onClick={() => setShowSearch(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors text-sm"
-            >
-              <Plus className="h-4 w-4" /> Add species
-            </button>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Search dropdown */}
         {showSearch && (
-          <div className="mb-8 info-panel max-w-md">
+          <div className="relative z-20 mb-8 info-panel max-w-md">
             <div className="flex items-center gap-2 mb-3">
               <Search className="h-4 w-4 text-muted-foreground" />
               <input
@@ -189,7 +200,7 @@ export default function ComparePage() {
           <div className="flex justify-center py-20">
             <motion.button
               onClick={handleStartComparison}
-              className="group relative flex items-center gap-3 px-10 py-5 rounded-xl border border-border bg-card text-foreground uppercase tracking-[0.2em] text-sm font-medium transition-all hover:border-accent hover:shadow-lg"
+              className="group relative flex items-center gap-3 px-10 py-5 rounded-xl border border-amber-500/30 bg-amber-500/[0.05] text-foreground uppercase tracking-[0.2em] text-sm font-display font-medium transition-all hover:border-amber-400/60 hover:bg-amber-500/[0.09] hover:shadow-lg"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -203,7 +214,7 @@ export default function ComparePage() {
               <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                 style={{ boxShadow: '0 0 20px hsl(var(--accent) / 0.15), inset 0 0 20px hsl(var(--accent) / 0.05)' }}
               />
-              <Play className="h-5 w-5 text-accent" />
+               <Play className="h-5 w-5 text-amber-300/80" />
               <span>Start Comparison</span>
             </motion.button>
           </div>
@@ -212,7 +223,7 @@ export default function ComparePage() {
         {showResults && (
           <>
             {/* Page navigation tabs */}
-            <div className="flex items-center gap-1 mb-8 border-b border-border pb-3">
+            <div className="flex items-center gap-1 mb-8 border-b border-border/40 pb-3">
               <button
                 onClick={() => goToPage(pageIndex - 1)}
                 disabled={pageIndex === 0}
@@ -225,10 +236,10 @@ export default function ComparePage() {
                 <button
                   key={page.key}
                   onClick={() => goToPage(i)}
-                  className={`px-5 py-2 rounded-md text-xs uppercase tracking-[0.18em] font-medium transition-all ${
+                    className={`px-4 py-2 rounded-md text-xs uppercase tracking-[0.18em] font-display transition-all border ${
                     i === pageIndex
-                      ? 'bg-card border border-border text-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
+                       ? 'bg-amber-500/10 border-amber-500/30 text-foreground shadow-sm'
+                       : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/30'
                   }`}
                 >
                   {page.label}

@@ -53,7 +53,6 @@ function useActiveSection(ids: string[]): string {
   const [active, setActive] = useState<string>(ids[0]);
   const key = ids.join(',');
   useEffect(() => {
-    const root = document.querySelector('[data-species-scroll-region="center"]');
     const obs = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -61,7 +60,7 @@ function useActiveSection(ids: string[]): string {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible[0]) setActive((visible[0].target as HTMLElement).id);
       },
-      { root, rootMargin: '-15% 0px -65% 0px', threshold: [0, 0.2, 0.5, 1] },
+      { rootMargin: '-15% 0px -65% 0px', threshold: [0, 0.2, 0.5, 1] },
     );
     ids.forEach((id) => {
       const el = document.getElementById(id);
@@ -76,20 +75,7 @@ function useActiveSection(ids: string[]): string {
 function goToSection(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
-  const scroller = document.querySelector<HTMLElement>(
-    '[data-species-scroll-region="center"]',
-  );
-  if (scroller?.contains(el)) {
-    const top =
-      el.getBoundingClientRect().top -
-      scroller.getBoundingClientRect().top +
-      scroller.scrollTop -
-      16;
-    scroller.scrollTo({ top, behavior: 'smooth' });
-    return;
-  }
-  const y = el.getBoundingClientRect().top + window.scrollY - 100;
-  window.scrollTo({ top: y, behavior: 'smooth' });
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 export function SpeciesScientificRail({ dino }: { dino: Dinosaur }) {

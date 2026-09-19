@@ -1292,14 +1292,9 @@ export function SpeciesContent({ dino }: Props) {
         userScrolledRef.current = false;
       }, 3000);
     };
-    const centerScroller = document.querySelector<HTMLElement>(
-      '[data-species-scroll-region="center"]',
-    );
     window.addEventListener("scroll", onScroll, { passive: true });
-    centerScroller?.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      centerScroller?.removeEventListener("scroll", onScroll);
       if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
     };
   }, []);
@@ -1308,20 +1303,7 @@ export function SpeciesContent({ dino }: Props) {
     if (!activeSectionId || userScrolledRef.current) return;
     const el = document.querySelector(`[data-section-id="${activeSectionId}"]`);
     if (!el) return;
-    const centerScroller = document.querySelector<HTMLElement>(
-      '[data-species-scroll-region="center"]',
-    );
-    if (centerScroller?.contains(el)) {
-      const top =
-        el.getBoundingClientRect().top -
-        centerScroller.getBoundingClientRect().top +
-        centerScroller.scrollTop -
-        centerScroller.clientHeight / 2 +
-        el.getBoundingClientRect().height / 2;
-      centerScroller.scrollTo({ top, behavior: "smooth" });
-    } else {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [activeSectionId]);
 
   // ── Reset active section when mode changes ────────────────────────────────

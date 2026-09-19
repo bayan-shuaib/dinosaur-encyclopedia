@@ -77,9 +77,12 @@ export default function FieldReport({ dinosaurs }: Props) {
 
   return (
     <div>
-      <h2 className="text-2xl font-medium uppercase tracking-[0.12em] text-foreground mb-8">Field Report</h2>
+      <div className="flex items-center gap-4 mb-7">
+        <h2 className="text-lg md:text-xl font-display font-bold tracking-tight text-foreground">Field Report</h2>
+        <div className="h-px flex-1 bg-gradient-to-r from-amber-500/25 via-border/40 to-transparent" />
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-8">
+      <div className="grid min-w-0 grid-cols-1 lg:grid-cols-[3fr_1fr] gap-6">
         {/* Left — Comparison Table */}
         <section className="info-panel overflow-x-auto">
           <table className="w-full text-sm">
@@ -117,11 +120,7 @@ export default function FieldReport({ dinosaurs }: Props) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 * i, duration: 0.4, ease: 'easeOut' }}
-              className="relative rounded-xl p-5 border border-border/40 overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--secondary)) 100%)',
-                boxShadow: '0 0 20px hsl(var(--accent) / 0.06), inset 0 1px 0 hsl(0 0% 100% / 0.04)',
-              }}
+               className="relative min-w-0 rounded-xl p-4 border border-amber-500/18 bg-amber-500/[0.03] overflow-hidden"
             >
               {/* Glassmorphism shine */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent pointer-events-none" />
@@ -130,17 +129,17 @@ export default function FieldReport({ dinosaurs }: Props) {
               <div
                 className="absolute inset-0 rounded-xl pointer-events-none"
                 style={{
-                  boxShadow: `inset 0 0 0 1px hsl(var(--accent) / 0.1), 0 0 15px hsl(var(--accent) / 0.04)`,
+                 boxShadow: 'inset 0 0 0 1px hsl(38 92% 60% / 0.08)',
                 }}
               />
 
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-3">
-                  <award.icon className="h-4 w-4 text-accent" />
-                  <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-medium">{award.label}</span>
-                </div>
-                <p className="text-lg font-semibold text-foreground">{award.dino.name}</p>
-                <p className="text-2xl font-bold text-accent mt-1">{award.stat}</p>
+                   <award.icon className="h-4 w-4 text-amber-300/75" />
+                   <span className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/65 font-display">{award.label}</span>
+                 </div>
+                 <p className="text-base font-display font-semibold text-foreground">{award.dino.name}</p>
+                 <p className="text-2xl font-display font-bold text-amber-200/90 mt-1">{award.stat}</p>
               </div>
             </motion.div>
           ))}
