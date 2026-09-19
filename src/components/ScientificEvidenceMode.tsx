@@ -193,8 +193,9 @@ function EvidenceEntryCard({
   onSelectSource: (source: ScientificSource) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const evidenceMeta = evidenceTypeMeta[entry.evidenceType];
-  const confidence = confidenceMeta[entry.confidence];
+  const evidenceMeta = evidenceTypeMeta[entry.evidenceType] ?? evidenceTypeMeta.unknown;
+  const confidence = confidenceMeta[entry.confidence] ?? confidenceMeta.unknown;
+  const categoryLabel = entry.category?.replace("_", " ") ?? "other";
 
   return (
     <article
@@ -212,7 +213,7 @@ function EvidenceEntryCard({
         </span>
         <span className="min-w-0 flex-1 space-y-2">
           <span className="block text-[9px] uppercase tracking-[0.2em] text-amber-400/55 font-display">
-            {entry.category.replace("_", " ")}
+            {categoryLabel}
           </span>
           <span className="block text-base font-display font-semibold leading-snug text-foreground">
             {entry.claim}
