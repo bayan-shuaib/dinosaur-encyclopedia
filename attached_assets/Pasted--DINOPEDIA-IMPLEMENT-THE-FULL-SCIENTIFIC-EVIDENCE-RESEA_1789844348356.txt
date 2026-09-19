@@ -1,0 +1,1328 @@
+# DINOPEDIA — IMPLEMENT THE FULL SCIENTIFIC EVIDENCE & RESEARCH MODE
+
+## THIS IS AN IMPLEMENTATION TASK
+
+You are working on the existing Dinopedia application.
+
+Do **not** stop at inspection, architecture recommendations, or a written plan.
+
+**Actually implement the system described below in the existing codebase.**
+
+Before changing anything, inspect the current species-page architecture and understand how species data, modes, components, styling, routing, and responsive layouts currently work.
+
+Then implement the new system while preserving all existing functionality.
+
+---
+
+# 1. CORE REQUIREMENT
+
+Dinopedia species pages currently have two major experiences:
+
+1. **Life Appearance & Behavior**
+2. **Anatomy & Scientific Evidence**
+
+We are now adding a **THIRD FULL SPECIES MODE**:
+
+# 3. EVIDENCE & RESEARCH
+
+This is NOT a subsection inside the existing Anatomy & Scientific Evidence mode.
+
+This is NOT a collapsible "How Do We Know?" panel.
+
+This is NOT a small addition to the existing Scientific mode.
+
+It must be implemented as a **full independent species-page mode**, at the same level as the existing modes.
+
+The species-page navigation should conceptually become:
+
+```text
+LIFE
+Life Appearance & Behavior
+
+ANATOMY
+Anatomy & Scientific Evidence
+
+EVIDENCE
+Evidence & Research
+```
+
+The user should be able to switch between these experiences just as they currently switch between the existing species modes.
+
+---
+
+# 2. PURPOSE OF THE NEW MODE
+
+The new Evidence & Research mode should answer a fundamentally different question:
+
+> "What evidence supports what we know about this dinosaur, how was that evidence interpreted, how confident are scientists, and what remains uncertain?"
+
+The existing Life mode answers:
+
+> "What was this animal probably like when alive?"
+
+The existing Anatomy mode answers:
+
+> "What was this animal physically built like?"
+
+The new Evidence & Research mode answers:
+
+> "How do we know what we think we know?"
+
+These three experiences must remain conceptually distinct.
+
+---
+
+# 3. EVERY DINOSAUR MUST HAVE AN EVIDENCE PROFILE
+
+This is a major architectural requirement.
+
+The system should be designed around the assumption that:
+
+> EVERY dinosaur species in Dinopedia has a Scientific Evidence Profile.
+
+Do NOT make the entire feature optional in the data architecture.
+
+Do NOT design this as:
+
+```ts
+scientificProfile?: ScientificProfile
+```
+
+where most species simply have no profile.
+
+Instead, make the evidence profile a required part of the species data architecture, either directly:
+
+```ts
+scientificProfile: ScientificProfile
+```
+
+or through a required profile reference:
+
+```ts
+scientificProfileId: string
+```
+
+with a corresponding profile registry.
+
+Every existing dinosaur in the database must have a valid profile entry.
+
+However:
+
+**Do not fabricate scientific information just to populate profiles.**
+
+If a dinosaur has limited evidence, its profile should explicitly communicate:
+
+* Limited evidence
+* Unknown
+* Insufficient fossil material
+* No direct evidence
+* Hypothesis
+* Unresolved
+
+etc.
+
+A species having limited evidence is scientifically valid.
+
+---
+
+# 4. CREATE A DEDICATED DATA ARCHITECTURE
+
+Create a dedicated scientific evidence data system rather than stuffing dozens of fields into the existing dinosaur objects.
+
+Preferred architecture:
+
+```text
+src/data/scientificEvidence.ts
+```
+
+or an equivalent location consistent with the existing project architecture.
+
+Create strongly typed structures similar to:
+
+```ts
+type EvidenceType =
+  | "direct"
+  | "inferred"
+  | "reconstructed"
+  | "hypothesis"
+  | "unknown";
+
+type ConfidenceLevel =
+  | "strong"
+  | "moderate"
+  | "limited"
+  | "hypothesis"
+  | "unknown";
+
+type EvidenceCategory =
+  | "anatomical"
+  | "locomotion"
+  | "ecological"
+  | "behavioral"
+  | "feeding"
+  | "sensory"
+  | "growth"
+  | "integumentary"
+  | "reproductive"
+  | "physiological"
+  | "evolutionary"
+  | "genetic"
+  | "trace_fossil"
+  | "pathology"
+  | "other";
+```
+
+Then create structures for:
+
+### ScientificSource
+
+```ts
+interface ScientificSource {
+  id: string;
+  title: string;
+  authors?: string;
+  year?: number;
+  publisher?: string;
+  journal?: string;
+  url?: string;
+  doi?: string;
+  kind:
+    | "paper"
+    | "book"
+    | "museum"
+    | "university"
+    | "database"
+    | "reference";
+}
+```
+
+### EvidenceEntry
+
+```ts
+interface EvidenceEntry {
+  id: string;
+  claim: string;
+  category: EvidenceCategory;
+  evidenceType: EvidenceType;
+
+  evidence: string;
+  interpretation: string;
+
+  confidence: ConfidenceLevel;
+
+  sourceIds: string[];
+
+  competingInterpretations?: string[];
+  limitations?: string[];
+}
+```
+
+### DirectEvidence
+
+Represent physical evidence such as:
+
+* bones
+* teeth
+* skin impressions
+* feathers
+* scales
+* soft tissue
+* stomach contents
+* coprolites
+* eggs
+* nests
+* embryos
+* trackways
+* bite marks
+* injuries
+* pathology
+* other trace fossils
+
+```ts
+interface DirectEvidence {
+  id: string;
+  type: string;
+  description: string;
+  significance: string;
+  sourceIds: string[];
+}
+```
+
+### EvolutionaryContext
+
+```ts
+interface EvolutionaryContext {
+  clade?: string;
+  classification?: string;
+  relationships?: string[];
+  derivedTraits?: string[];
+  ancestralTraits?: string[];
+  evolutionarySignificance?: string;
+  sourceIds?: string[];
+}
+```
+
+### GeneticContext
+
+```ts
+interface GeneticContext {
+  directEvidenceStatus: string;
+  comparativeEvidence?: string[];
+  developmentalContext?: string[];
+  limitations?: string[];
+  sourceIds?: string[];
+}
+```
+
+### ResearchHistory
+
+```ts
+interface ResearchHistoryEntry {
+  year?: number;
+  title: string;
+  description: string;
+  sourceIds: string[];
+}
+```
+
+### OpenQuestion
+
+```ts
+interface OpenQuestion {
+  question: string;
+  currentUnderstanding: string;
+  uncertainty: string;
+  sourceIds: string[];
+}
+```
+
+### ScientificEvidenceProfile
+
+Combine these into the main profile:
+
+```ts
+interface ScientificEvidenceProfile {
+  speciesId: string;
+
+  evidenceOverview: {
+    summary: string;
+    fossilCompleteness?: string;
+    preservation?: string;
+    importantMaterial?: string[];
+    geologicalContext?: string;
+    limitations?: string[];
+  };
+
+  directEvidence: DirectEvidence[];
+
+  traitEvidence: EvidenceEntry[];
+
+  evolutionaryContext: EvolutionaryContext;
+
+  geneticContext: GeneticContext;
+
+  researchHistory: ResearchHistoryEntry[];
+
+  openQuestions: OpenQuestion[];
+
+  sources: ScientificSource[];
+
+  scientificDebates?: {
+    topic: string;
+    interpretations: {
+      position: string;
+      supportingEvidence: string[];
+      sourceIds: string[];
+    }[];
+    currentStatus: string;
+  }[];
+}
+```
+
+Adapt the exact TypeScript structure if the existing architecture suggests a better implementation, but preserve these concepts.
+
+---
+
+# 5. EVIDENCE & RESEARCH MODE UI
+
+Create a complete dedicated page/mode.
+
+It should feel like entering a **scientific research archive / museum evidence wing**.
+
+It must still visually belong to Dinopedia.
+
+Do NOT make it look like a generic dashboard, spreadsheet, SaaS admin panel, or Wikipedia page.
+
+Reuse the existing Dinopedia visual language:
+
+* museum aesthetic
+* existing typography system
+* existing cards
+* existing borders
+* existing amber/museum HUD elements where appropriate
+* existing animations
+* existing responsive behavior
+* existing species-page navigation
+
+But the mode should have its own visual character that communicates:
+
+**research / evidence / scientific documentation**
+
+---
+
+# 6. MODE STRUCTURE
+
+The Evidence & Research mode should contain these major sections:
+
+## A. Evidence Overview
+
+Display:
+
+* evidence summary
+* fossil completeness
+* preservation quality
+* important fossil material
+* geological context
+* evidence limitations
+
+This should immediately communicate how well the dinosaur is actually known.
+
+Do NOT invent a numerical "scientific certainty score."
+
+Do NOT turn scientific uncertainty into fake percentages.
+
+Use meaningful descriptive classifications.
+
+---
+
+# 7. B. DIRECT FOSSIL EVIDENCE
+
+Create a dedicated section showing what has actually been preserved.
+
+Possible categories:
+
+* Bones
+* Teeth
+* Skin
+* Feathers
+* Soft tissue
+* Stomach contents
+* Coprolites
+* Eggs
+* Nests
+* Embryos
+* Trackways
+* Bite marks
+* Pathology
+* Other trace fossils
+
+Only show categories that actually apply to that species.
+
+If there is no known direct evidence for something, do not pretend there is.
+
+The UI should distinguish:
+
+**DIRECTLY PRESERVED**
+
+from:
+
+**SCIENTIFICALLY INFERRED**
+
+This distinction is extremely important.
+
+---
+
+# 8. C. TRAIT EVIDENCE
+
+This is one of the most important parts of the system.
+
+Every major scientific claim about the dinosaur should eventually be representable as an evidence entry.
+
+Examples:
+
+* locomotion
+* feeding
+* posture
+* sensory abilities
+* growth
+* integument
+* behavior
+* ecology
+* physiology
+* reproductive biology
+* social behavior
+* other scientifically relevant traits
+
+Each evidence card should communicate:
+
+### CLAIM
+
+What are we saying?
+
+### EVIDENCE
+
+What physical/scientific evidence supports it?
+
+### INTERPRETATION
+
+How do scientists interpret that evidence?
+
+### EVIDENCE TYPE
+
+For example:
+
+* Direct Evidence
+* Inferred
+* Reconstructed
+* Hypothesis
+* Unknown
+
+### CONFIDENCE
+
+For example:
+
+* Strong Evidence
+* Moderate Evidence
+* Limited Evidence
+* Hypothesis
+* Unknown
+
+### SOURCES
+
+Clickable source references.
+
+---
+
+# 9. D. EVOLUTIONARY CONTEXT
+
+Create a full section covering:
+
+* taxonomic placement
+* clade
+* evolutionary relationships
+* notable derived traits
+* ancestral traits where meaningful
+* relationship to close relatives
+* evolutionary significance
+
+Do not present uncertain phylogenetic relationships as absolute facts.
+
+Where the scientific literature disagrees, represent the disagreement.
+
+---
+
+# 10. E. GENETIC & DEVELOPMENTAL CONTEXT
+
+This section must be scientifically responsible.
+
+Dinopedia must NEVER imply that we possess usable dinosaur genomes when we do not.
+
+Clearly distinguish:
+
+### Direct Genetic Evidence
+
+Usually:
+
+**Unavailable / No direct evidence**
+
+where appropriate.
+
+### Comparative Evidence
+
+Potentially:
+
+* birds
+* crocodilians
+* other living relatives
+* developmental biology
+* comparative anatomy
+
+Only when scientifically supported.
+
+### Developmental Context
+
+Explain relevant developmental insights where appropriate.
+
+### Limitations
+
+Explicitly explain what cannot currently be determined genetically.
+
+This section exists partly because Dinopedia will eventually support the project's broader discussions around:
+
+* genetics
+* de-extinction
+* developmental biology
+
+But do NOT build a de-extinction simulator.
+
+Do NOT build a genome database.
+
+Do NOT fabricate dinosaur DNA.
+
+---
+
+# 11. F. SCIENTIFIC DEBATES
+
+This section should allow Dinopedia to represent legitimate scientific disagreement.
+
+For example:
+
+```text
+QUESTION
+
+Was X characteristic present?
+
+Interpretation A
+Evidence supporting it...
+
+Interpretation B
+Evidence supporting it...
+
+Current Scientific Status
+...
+
+Why the disagreement exists
+...
+```
+
+Do not arbitrarily choose a winner.
+
+Do not present disputed hypotheses as established fact.
+
+This section should be optional at the data level because not every dinosaur has major scientific controversies.
+
+---
+
+# 12. G. RESEARCH HISTORY
+
+Show important developments in scientific understanding.
+
+Examples:
+
+* original discovery
+* original description
+* important specimens
+* major taxonomic revisions
+* major reinterpretations
+* major discoveries
+* significant anatomical discoveries
+
+This should tell the story of how our understanding of the species changed.
+
+---
+
+# 13. H. OPEN QUESTIONS
+
+Create a dedicated:
+
+# WHAT WE STILL DON'T KNOW
+
+section.
+
+This should contain scientifically meaningful unresolved questions.
+
+Examples:
+
+* incomplete anatomy
+* uncertain behavior
+* uncertain coloration
+* disputed taxonomy
+* uncertain growth
+* incomplete fossil record
+* uncertain locomotion
+* unknown soft tissues
+
+Each open question should explain:
+
+* what is unknown
+* what is currently understood
+* why it remains uncertain
+* relevant sources
+
+This is an important part of Dinopedia's scientific transparency philosophy.
+
+---
+
+# 14. I. SCIENTIFIC SOURCES
+
+Create a proper source section.
+
+Sources must be structured objects with stable IDs.
+
+Evidence entries should reference source IDs rather than duplicating citation information everywhere.
+
+For example:
+
+```text
+Evidence Entry
+     ↓
+sourceIds
+     ↓
+Scientific Sources
+```
+
+A source should therefore be reusable across multiple claims.
+
+Display appropriate information such as:
+
+* title
+* authors
+* year
+* journal/publisher
+* DOI where available
+* link where available
+
+Do not fabricate citations.
+
+If a source has not been verified, do not represent it as verified.
+
+---
+
+# 15. DO NOT FABRICATE SCIENTIFIC CONTENT
+
+This is extremely important.
+
+Do not fill evidence profiles with made-up facts simply to make the UI look complete.
+
+For initial implementation:
+
+### PRIORITY 1
+
+Build the complete architecture and UI.
+
+### PRIORITY 2
+
+Populate profiles using information already reliably available in the existing project where appropriate.
+
+### PRIORITY 3
+
+For species-specific scientific claims requiring verification, use properly sourced information.
+
+If the current environment does not have verified source information for a particular claim:
+
+**Represent the field as unknown / limited / awaiting research.**
+
+Do not hallucinate papers, DOI numbers, fossil discoveries, specimen numbers, or scientific conclusions.
+
+---
+
+# 16. EVERY EXISTING DINOSAUR NEEDS A PROFILE
+
+After creating the architecture:
+
+Find every dinosaur/species currently represented in the Dinopedia database.
+
+Create a corresponding Evidence Profile for each one.
+
+The profiles do NOT need identical amounts of evidence.
+
+A species with extensive fossil material can have a rich profile.
+
+A poorly known species can have:
+
+```text
+Evidence Overview
+Limited fossil material
+
+Direct Evidence
+Limited
+
+Trait Evidence
+Several entries marked limited/unknown
+
+Evolutionary Context
+Available information
+
+Genetic Context
+No direct dinosaur genetic evidence
+
+Open Questions
+Several unresolved areas
+
+Scientific Sources
+Verified sources where available
+```
+
+That is completely acceptable.
+
+What is NOT acceptable is silently omitting the species from the Evidence mode.
+
+---
+
+# 17. PROFILE COVERAGE VALIDATION
+
+Implement a development-time validation mechanism.
+
+The application should be able to detect:
+
+```text
+Total dinosaur species: X
+
+Evidence profiles: X
+
+Missing profiles: 0
+```
+
+If a dinosaur is added later without a profile, the developer should be able to identify that immediately.
+
+For example, create a validation utility such as:
+
+```text
+validateScientificEvidenceCoverage()
+```
+
+It should:
+
+1. collect every dinosaur species ID
+2. collect every evidence profile ID
+3. compare them
+4. report missing profiles
+5. report orphan profiles
+6. optionally report duplicate IDs
+
+Do not expose ugly developer diagnostics to normal users.
+
+---
+
+# 18. SPECIES PAGE INTEGRATION
+
+Find the existing species-page architecture.
+
+Do NOT replace the existing species page.
+
+Do NOT rewrite the existing Life mode.
+
+Do NOT rewrite the existing Anatomy mode.
+
+Instead:
+
+### Add the third mode.
+
+The architecture should become conceptually:
+
+```text
+Species Page
+│
+├── Life Appearance & Behavior
+│
+├── Anatomy & Scientific Evidence
+│
+└── Evidence & Research
+```
+
+The existing two modes must continue working exactly as before.
+
+---
+
+# 19. NAVIGATION
+
+The mode selector should make all three modes clearly discoverable.
+
+Do not hide Evidence & Research behind a tiny link.
+
+Do not make it subordinate to Anatomy.
+
+It is a peer mode.
+
+The user should be able to switch:
+
+```text
+LIFE ↔ ANATOMY ↔ EVIDENCE
+```
+
+without leaving the species page.
+
+Preserve the existing species-page transition/animation style.
+
+---
+
+# 20. CROSS-LINKING
+
+The architecture should allow future connections between existing scientific information and evidence entries.
+
+For example:
+
+```text
+Life Mode
+"Likely bipedal"
+        ↓
+View Evidence
+        ↓
+Evidence & Research
+"Locomotion"
+```
+
+Similarly:
+
+```text
+Anatomy
+"Specialized jaw morphology"
+        ↓
+Supporting Evidence
+        ↓
+Evidence & Research
+"Feeding Mechanics"
+```
+
+You do NOT need to build every cross-link immediately if the existing architecture makes that too invasive.
+
+However, structure the data IDs so this is possible later.
+
+---
+
+# 21. DO NOT CHANGE COMPARISON YET
+
+Do NOT redesign or modify the Comparison tab as part of this task.
+
+However, structure evidence traits so that a future Comparison system could eventually compare:
+
+```text
+Species A
+Trait
+Evidence
+Confidence
+
+vs.
+
+Species B
+Trait
+Evidence
+Confidence
+```
+
+That is future architecture only.
+
+Do not implement it now.
+
+---
+
+# 22. DO NOT BUILD DIGBY YET
+
+The Evidence & Research system should be **Digby-ready**, but Digby is NOT part of this implementation.
+
+Do not:
+
+* create Digby
+* connect an AI API
+* create automatic AI updates
+* build web research agents
+* build automatic scientific correction
+* build automated evidence discovery
+
+Simply make the data structured enough that Digby can eventually read:
+
+```text
+Species
+→ Trait
+→ Evidence
+→ Interpretation
+→ Confidence
+→ Source
+→ Uncertainty
+```
+
+---
+
+# 23. FUTURE EVIDENCE SYSTEM COMPATIBILITY
+
+The architecture should also be ready for the future **Future Evidence System**.
+
+That future system may eventually:
+
+```text
+New scientific publication
+        ↓
+New evidence
+        ↓
+Evidence review
+        ↓
+Proposed change
+        ↓
+Human approval
+        ↓
+Dinopedia update
+```
+
+Do NOT implement this pipeline now.
+
+Just make sure the evidence architecture uses stable IDs and structured entries so it can eventually support:
+
+* revisions
+* source additions
+* evidence updates
+* changing interpretations
+* historical records
+* human review
+
+---
+
+# 24. UI/UX REQUIREMENTS
+
+The mode must NOT feel like a giant spreadsheet.
+
+Use:
+
+* evidence cards
+* expandable research entries
+* source drawers/panels
+* clear hierarchy
+* visual grouping
+* concise summaries
+* expandable details
+* evidence badges
+* confidence indicators
+* timeline elements for research history
+* subtle museum-style data visualization where genuinely useful
+
+Avoid:
+
+* enormous walls of text
+* tiny unreadable fonts
+* excessive nested accordions
+* generic dashboard styling
+* excessive empty space
+* overly dense scientific tables
+* fake statistics
+
+The user should be able to scan the page and then progressively explore deeper evidence.
+
+---
+
+# 25. ACCESSIBILITY & TYPOGRAPHY
+
+Follow the existing typography overhaul direction.
+
+The Evidence mode must not introduce tiny scientific text.
+
+Minimum readability is important.
+
+Make sure:
+
+* body text is readable
+* evidence labels are readable
+* source information is readable
+* confidence labels have both text and visual indication
+* color is NOT the only way evidence types are distinguished
+* interactive controls have clear states
+* keyboard interaction works where applicable
+* mobile text remains readable
+
+---
+
+# 26. MOBILE RESPONSIVENESS
+
+The new mode must work properly on mobile.
+
+Do NOT simply shrink the desktop version.
+
+Use an appropriate responsive hierarchy.
+
+For example:
+
+Desktop:
+
+```text
+Evidence Overview
+     ↓
+Direct Evidence / Trait Evidence
+     ↓
+Evolutionary / Genetic
+     ↓
+Debates / History
+     ↓
+Open Questions / Sources
+```
+
+Mobile should stack naturally.
+
+Avoid:
+
+* horizontal overflow
+* microscopic cards
+* broken accordions
+* inaccessible bottom content
+* nested scroll traps
+* fixed-height sections that cut off content
+
+The entire Evidence mode must be reachable from top to bottom.
+
+---
+
+# 27. EXISTING BUG SAFETY
+
+Do NOT regress the fixes already made to:
+
+* search dropdown layering
+* species-page scrolling
+* center-column scrolling
+* side-column behavior
+* mobile scrolling
+* comparison tab consistency
+* existing species-page navigation
+
+The existing species page must remain stable.
+
+Do not change unrelated systems.
+
+---
+
+# 28. IMPLEMENTATION ORDER
+
+Follow this order:
+
+### PHASE 1 — INSPECT
+
+Understand:
+
+* species data structure
+* species page
+* existing mode selector
+* Life mode
+* Anatomy mode
+* species IDs
+* styling system
+* responsive architecture
+
+### PHASE 2 — DATA ARCHITECTURE
+
+Create:
+
+* EvidenceType
+* ConfidenceLevel
+* EvidenceCategory
+* ScientificSource
+* EvidenceEntry
+* DirectEvidence
+* EvolutionaryContext
+* GeneticContext
+* ResearchHistoryEntry
+* OpenQuestion
+* ScientificDebate
+* ScientificEvidenceProfile
+
+### PHASE 3 — PROFILE REGISTRY
+
+Create the evidence profile registry.
+
+Every existing dinosaur must map to one.
+
+### PHASE 4 — EVIDENCE MODE UI
+
+Build the complete Evidence & Research experience.
+
+### PHASE 5 — SPECIES PAGE INTEGRATION
+
+Add Evidence & Research as the third peer mode.
+
+### PHASE 6 — POPULATE PROFILES
+
+Populate every existing dinosaur profile.
+
+Use real/verified information where available.
+
+Explicitly mark unknown/limited areas instead of inventing information.
+
+### PHASE 7 — COVERAGE VALIDATION
+
+Implement profile coverage validation.
+
+### PHASE 8 — RESPONSIVE / ACCESSIBILITY PASS
+
+Test desktop and mobile.
+
+### PHASE 9 — REGRESSION TEST
+
+Verify existing species modes and existing bug fixes.
+
+---
+
+# 29. IMPORTANT: DO NOT STOP AFTER PHASE 1
+
+This is where previous implementation attempts failed.
+
+Do NOT respond with:
+
+> "I inspected the architecture and recommend..."
+
+Do NOT stop after creating a plan.
+
+Do NOT merely create TypeScript interfaces and say implementation is ready for later.
+
+Actually implement the feature.
+
+If a blocker appears, solve it using the existing architecture where possible.
+
+Only ask for clarification if there is a genuine blocker that cannot reasonably be resolved from the codebase.
+
+---
+
+# 30. TESTING
+
+After implementation:
+
+### Desktop
+
+Test approximately:
+
+* 1366×768
+* normal desktop width
+* narrower desktop
+
+Verify:
+
+* all three modes open
+* mode switching works
+* Evidence mode scrolls completely
+* no content is cut off
+* no overlapping UI
+* no broken animations
+* no console errors
+
+### Mobile
+
+Test a narrow mobile viewport.
+
+Verify:
+
+* mode selector works
+* cards stack correctly
+* text remains readable
+* no horizontal overflow
+* no nested scroll traps
+* entire page reaches the bottom
+* expandable sections work
+
+### Data
+
+Verify:
+
+```text
+Every dinosaur ID
+        ↓
+has exactly one evidence profile
+```
+
+Check:
+
+* missing profiles
+* orphan profiles
+* duplicate IDs
+* invalid source references
+
+### Existing Functionality
+
+Verify:
+
+* Life mode still works
+* Anatomy mode still works
+* existing species evidence rail still works
+* existing nomenclature features still work
+* existing narration/navigation still works
+* Comparison remains unchanged
+* Search remains unchanged
+* previous scrolling fixes remain intact
+
+---
+
+# 31. DO NOT OVERWRITE EXISTING SCIENTIFIC CONTENT
+
+There is already scientific information in Dinopedia.
+
+Do not blindly replace existing scientific prose with the new evidence system.
+
+The Evidence & Research mode is an additional scientific layer.
+
+The existing Anatomy mode can continue explaining anatomy.
+
+The Evidence mode explains the **evidence behind those interpretations**.
+
+Keep these roles separate.
+
+---
+
+# 32. VISUAL DESIGN PRINCIPLE
+
+This should feel like:
+
+**Dinopedia's scientific research archive**
+
+—not:
+
+* Wikipedia
+* a school worksheet
+* a database admin panel
+* a generic AI dashboard
+* a spreadsheet
+* a medical application
+
+It should still feel like a premium digital natural-history museum.
+
+Scientific accuracy takes priority over visual spectacle.
+
+---
+
+# 33. FINAL REPORT
+
+After actually implementing everything, give me a concise but specific report containing:
+
+### DATA
+
+* files created/modified
+* evidence types
+* profile architecture
+* number of dinosaur profiles created
+
+### UI
+
+* components created
+* where the third mode was integrated
+* major sections implemented
+
+### SCIENTIFIC CONTENT
+
+* how existing data was handled
+* what information was populated
+* what was marked unknown/limited
+* sources used, if any
+
+### VALIDATION
+
+* total dinosaur species
+* total evidence profiles
+* missing profiles
+* orphan profiles
+* duplicate IDs
+
+### TESTING
+
+* desktop results
+* mobile results
+* console result
+* regression results
+
+### REMAINING WORK
+
+Only list genuinely unfinished work.
+
+Do not claim something is implemented if it is only planned.
+
+---
+
+# MOST IMPORTANT REQUIREMENT
+
+When finished, Dinopedia should have a species page with THREE genuine peer experiences:
+
+**LIFE**
+→ Life Appearance & Behavior
+
+**ANATOMY**
+→ Anatomy & Scientific Evidence
+
+**EVIDENCE**
+→ Evidence & Research
+
+And **every dinosaur in the database must have a corresponding structured Scientific Evidence Profile.**
+
+This is a foundational Dinopedia system, not a temporary prototype or optional exhibit.
+
+Implement it accordingly.

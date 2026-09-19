@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Leaf,
   FlaskConical,
+  FileSearch,
   Lightbulb,
   Sparkles,
 } from "lucide-react";
@@ -23,8 +24,11 @@ import { getTaxonomyType } from "@/lib/taxonomy";
 import { NarrationPlayer } from "@/components/NarrationPlayer";
 import { SectionExhibit } from "@/components/exhibits/MuseumExhibits";
 import { NomenclatureDictionary } from "@/components/NomenclatureDictionary";
+import { ScientificEvidenceMode } from "@/components/ScientificEvidenceMode";
+import { getScientificEvidenceProfile } from "@/data/scientificEvidence";
 
-type Mode = "life" | "scientific";
+export type SpeciesMode = "life" | "scientific" | "evidence";
+type NarrativeMode = "life" | "scientific";
 
 // Exported so NarrationPlayer can reference if needed
 export interface Section {
@@ -1040,7 +1044,7 @@ interface SectionBlockProps {
   index: number;
   total: number;
   dino: Dinosaur;
-  mode: Mode;
+  mode: NarrativeMode;
   controlledOpen?: boolean;
   activeParagraphIndex?: number;
   isNarrationActive?: boolean;
@@ -1205,7 +1209,7 @@ function SectionBlock({
 // FUN FACTS BLOCK — CINEMATIC GRID
 // ============================================================================
 
-function FunFactsBlock({ facts, mode }: { facts: string[]; mode: Mode }) {
+function FunFactsBlock({ facts, mode }: { facts: string[]; mode: NarrativeMode }) {
   if (!facts.length) return null;
   return (
     <article className="space-y-6" data-testid="section-funfacts">
@@ -1266,17 +1270,29 @@ function FunFactsBlock({ facts, mode }: { facts: string[]; mode: Mode }) {
 // ============================================================================
 
 export function SpeciesContent({ dino }: Props) {
-  const [mode, setMode] = useState<Mode>("life");
+  const [mode, setMode] = useState<SpeciesMode>("life");
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
+  const evidenceProfile = useMemo(
+    () => getScientificEvidenceProfile(dino.id),
+    [dino.id],
+  );
 
   const sections = useMemo(
     () =>
-      mode === "life" ? buildLifeSections(dino) : buildScientificSections(dino),
+      mode === "life"
+        ? buildLifeSections(dino)
+        : mode === "scientific"
+          ? buildScientificSections(dino)
+          : [],
     [dino, mode],
   );
   const funFacts = useMemo(
     () =>
-      mode === "life" ? buildLifeFunFacts(dino) : buildScientificFunFacts(dino),
+      mode === "life"
+        ? buildLifeFunFacts(dino)
+        : mode === "scientific"
+          ? buildScientificFunFacts(dino)
+          : [],
     [dino, mode],
   );
 
@@ -1307,7 +1323,7 @@ export function SpeciesContent({ dino }: Props) {
   }, [activeSectionId]);
 
   // ── Reset active section when mode changes ────────────────────────────────
-  const handleModeChange = useCallback((newMode: Mode) => {
+  const handleModeChange = useCallback((newMode: SpeciesMode) => {
     setMode(newMode);
     setActiveSectionId(null);
   }, []);
@@ -1406,72 +1422,120 @@ export function SpeciesContent({ dino }: Props) {
               </div>
             )}
           </button>
+
+          <div className="hidden sm:block w-px bg-border/30 self-stretch" />
+          <div className="block sm:hidden h-px bg-border/30" />
+
+          {/* Evidence & Research mode */}
+          <button
+            onClick={() => handleModeChange("evidence")}
+            data-testid="button-mode-evidence"
+            className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+              mode === "evidence" ? "bg-secondary/60" : "hover:bg-secondary/20"
+            }`}
+          >
+            {mode === "evidence" && (
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber-400" />
+            )}
+            <div
+              className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
+                mode === "evidence"
+                  ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
+                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
+              }`}
+            >
+              <FileSearch className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
+                MODE C — RESEARCH ARCHIVE
+              </div>
+              <div
+                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
+                  mode === "evidence" ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                Evidence &amp; Research
+              </div>
+            </div>
+            {mode === "evidence" && (
+              <div className="ml-auto flex-shrink-0">
+                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+              </div>
+            )}
+          </button>
         </div>
         {/* Bottom ambient strip */}
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
       </div>
 
-      {/* ── Narration player ─────────────────────────────────────────────── */}
-      <NarrationPlayer
-        key={`${dino.id}-${mode}`}
-        speciesId={dino.id}
-        mode={mode}
-        onActiveSectionId={setActiveSectionId}
-      />
+      {mode === "evidence" ? (
+        <ScientificEvidenceMode dino={dino} profile={evidenceProfile} />
+      ) : (
+        <>
+          {/* ── Narration player ─────────────────────────────────────────── */}
+          <NarrationPlayer
+            key={`${dino.id}-${mode}`}
+            speciesId={dino.id}
+            mode={mode}
+            onActiveSectionId={setActiveSectionId}
+          />
 
-      {/* ── Sections ─────────────────────────────────────────────────────── */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={mode}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-           className="min-w-0 space-y-16 md:space-y-24"
-        >
-          {sections.map((s, i) => {
-            const isActive = activeSectionId === s.id;
-            const controlledOpen =
-              activeSectionId !== null ? isActive : undefined;
+          {/* ── Sections ─────────────────────────────────────────────────── */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={mode}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+              className="min-w-0 space-y-16 md:space-y-24"
+            >
+              {sections.map((s, i) => {
+                const isActive = activeSectionId === s.id;
+                const controlledOpen =
+                  activeSectionId !== null ? isActive : undefined;
 
-            return (
-              <Fragment key={s.id}>
-                {/* Inter-section amber scan divider */}
-                {i > 0 && (
-                  <div className="flex items-center gap-4 -mt-6 md:-mt-10">
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/12 to-transparent" />
-                    <div className="h-1 w-1 rounded-full bg-amber-400/20" />
-                    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/12 to-transparent" />
-                  </div>
-                )}
-                <SectionBlock
-                  section={s}
-                  index={i}
-                  total={sections.length}
-                  dino={dino}
-                  mode={mode}
-                  controlledOpen={controlledOpen}
-                  isNarrationActive={isActive && activeSectionId !== null}
-                />
-                <SectionExhibit sectionId={s.id} dino={dino} mode={mode} />
-              </Fragment>
-            );
-          })}
+                return (
+                  <Fragment key={s.id}>
+                    {/* Inter-section amber scan divider */}
+                    {i > 0 && (
+                      <div className="flex items-center gap-4 -mt-6 md:-mt-10">
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/12 to-transparent" />
+                        <div className="h-1 w-1 rounded-full bg-amber-400/20" />
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/12 to-transparent" />
+                      </div>
+                    )}
+                    <SectionBlock
+                      section={s}
+                      index={i}
+                      total={sections.length}
+                      dino={dino}
+                      mode={mode}
+                      controlledOpen={controlledOpen}
+                      isNarrationActive={isActive && activeSectionId !== null}
+                    />
+                    <SectionExhibit sectionId={s.id} dino={dino} mode={mode} />
+                  </Fragment>
+                );
+              })}
 
-          {/* Field notes divider */}
-          <div className="flex items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
-            <span className="text-[8px] font-display uppercase tracking-[0.25em] text-amber-400/35 px-2">
-              END OF EXHIBIT RECORD
-            </span>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
-          </div>
+              {/* Field notes divider */}
+              <div className="flex items-center gap-4">
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+                <span className="text-[8px] font-display uppercase tracking-[0.25em] text-amber-400/35 px-2">
+                  END OF EXHIBIT RECORD
+                </span>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+              </div>
 
-          <FunFactsBlock facts={funFacts} mode={mode} />
+              <FunFactsBlock facts={funFacts} mode={mode} />
 
-          <NomenclatureDictionary dino={dino} mode={mode} sections={sections} />
-        </motion.div>
-      </AnimatePresence>
+              <NomenclatureDictionary dino={dino} mode={mode} sections={sections} />
+            </motion.div>
+          </AnimatePresence>
+        </>
+      )}
     </section>
   );
 }
