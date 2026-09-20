@@ -1,0 +1,1192 @@
+
+# DINOPEDIA — IMPLEMENT FULL EVIDENCE & RESEARCH MODE + SPECIMEN MODE
+
+## IMPORTANT: THIS IS AN IMPLEMENTATION TASK
+
+Do not stop after inspecting the codebase, giving recommendations, creating a plan, or defining TypeScript interfaces.
+
+You must ACTUALLY IMPLEMENT the features described below in the existing Dinopedia application.
+
+Inspect the existing architecture first, then build the features using the current codebase. Preserve existing functionality and do not rewrite unrelated systems.
+
+---
+
+# 1. PROJECT CONTEXT
+
+Dinopedia is a digital museum and scientific exploration platform focused on dinosaurs.
+
+Its purpose is to help users understand:
+
+- Extinct organisms
+- Their anatomy and adaptations
+- Ancient environments and ecosystems
+- Fossil evidence
+- Scientific interpretation
+- Individual fossil specimens
+- Scientific research and uncertainty
+- What studying the past can teach us about biodiversity and conservation
+
+Dinopedia must distinguish between:
+
+- Directly preserved evidence
+- Scientific inference
+- Reconstruction
+- Hypothesis
+- Unknown information
+
+Do not fabricate scientific information, scientific papers, specimens, DOI numbers, or genetic evidence.
+
+Do not claim that dinosaur de-extinction is currently possible.
+
+---
+
+# 2. NEW SPECIES-PAGE ARCHITECTURE
+
+The species page currently contains:
+
+1. Life Appearance & Behavior
+2. Anatomy & Scientific Evidence
+
+We are adding TWO FULL, INDEPENDENT SPECIES MODES.
+
+The final structure must be:
+
+LIFE
+- Life Appearance & Behavior
+
+ANATOMY
+- Anatomy & Scientific Evidence
+
+EVIDENCE
+- Evidence & Research
+
+SPECIMENS
+- Specimen Archive
+
+The four modes must be peers.
+
+Evidence must NOT be a subsection inside Anatomy.
+
+Specimens must NOT be a small card inside Evidence.
+
+Both must be complete species-page experiences integrated into the existing mode selector.
+
+The modes answer different questions:
+
+LIFE:
+"What was this animal probably like when alive?"
+
+ANATOMY:
+"What was this animal physically built like?"
+
+EVIDENCE:
+"What evidence supports our understanding, and how confident are we?"
+
+SPECIMENS:
+"What individual fossil specimens exist, and what have scientists learned from them?"
+
+The final navigation should support:
+
+LIFE ↔ ANATOMY ↔ EVIDENCE ↔ SPECIMENS
+
+Make all four modes discoverable and usable on desktop and mobile.
+
+---
+
+# 3. FIRST INSPECT THE EXISTING CODEBASE
+
+Before implementation, inspect and understand:
+
+- Species data structures
+- Species IDs
+- Species page components
+- Existing mode selector
+- Life mode
+- Anatomy mode
+- Existing SpeciesEvidenceRail
+- Existing scientific terminology system
+- Existing exhibits
+- Existing narration system
+- Existing animations
+- Existing styling system
+- Existing scrolling architecture
+- Existing responsive breakpoints
+- Existing citation/source structures, if any
+
+Use the existing architecture wherever practical.
+
+Do not redesign the entire species page.
+
+Do not replace Life mode.
+
+Do not replace Anatomy mode.
+
+Do not change the Comparison tab as part of this task.
+
+---
+
+# 4. EVIDENCE & RESEARCH MODE
+
+Build a complete independent Evidence & Research mode.
+
+This mode should feel like Dinopedia's scientific research archive within a premium natural-history museum.
+
+It must not look like:
+
+- A generic admin dashboard
+- A spreadsheet
+- A Wikipedia clone
+- A school worksheet
+- A generic AI interface
+
+Reuse Dinopedia's existing visual design language while giving this mode a clear research identity.
+
+The mode must contain the following sections:
+
+## 4.1 Evidence Overview
+
+Display, where available:
+
+- Evidence summary
+- Fossil completeness
+- Preservation quality
+- Important fossil material
+- Geological context
+- Important localities or formations
+- Evidence limitations
+- Overall evidence status
+
+Use descriptive classifications such as:
+
+- Extensive evidence
+- Moderate evidence
+- Limited evidence
+- Fragmentary evidence
+- Unknown
+- Requires further research
+
+Do not create fake numerical certainty scores.
+
+---
+
+## 4.2 Direct Fossil Evidence
+
+Display evidence that has actually been preserved.
+
+Potential categories:
+
+- Bones
+- Teeth
+- Skin impressions
+- Feathers
+- Scales
+- Soft tissue
+- Stomach contents
+- Coprolites
+- Eggs
+- Nests
+- Embryos
+- Trackways
+- Bite marks
+- Injuries
+- Pathology
+- Other trace fossils
+
+Clearly distinguish:
+
+DIRECTLY PRESERVED
+
+from:
+
+INFERRED / RECONSTRUCTED
+
+Each entry should support:
+
+- Evidence type
+- Description
+- Scientific significance
+- Related specimen IDs
+- Source IDs
+- Limitations
+
+Only display information supported by reliable evidence.
+
+---
+
+## 4.3 Trait Evidence
+
+Create structured evidence entries for scientific claims.
+
+Potential categories:
+
+- Anatomy
+- Locomotion
+- Feeding
+- Ecology
+- Behavior
+- Sensory biology
+- Growth
+- Integument
+- Reproduction
+- Physiology
+- Evolution
+- Trace fossils
+- Pathology
+- Other
+
+Each evidence entry should contain:
+
+- Claim
+- Category
+- Evidence
+- Interpretation
+- Evidence type
+- Confidence level
+- Limitations
+- Competing interpretations, if applicable
+- Related specimen IDs
+- Related paper IDs
+- Source IDs
+
+Evidence types:
+
+- Direct
+- Inferred
+- Reconstructed
+- Hypothesis
+- Unknown
+
+Confidence classifications:
+
+- Strong
+- Moderate
+- Limited
+- Hypothesis
+- Unknown
+
+Use readable evidence cards with expandable details.
+
+Do not create enormous walls of text or unreadable tables.
+
+---
+
+## 4.4 Evolutionary Context
+
+Include:
+
+- Taxonomic placement
+- Clade
+- Evolutionary relationships
+- Derived traits
+- Ancestral traits where appropriate
+- Relationships with close relatives
+- Evolutionary significance
+- Phylogenetic uncertainty
+
+Do not present disputed relationships as established facts.
+
+---
+
+## 4.5 Genetic & Developmental Context
+
+Implement a scientifically responsible section.
+
+Clearly distinguish:
+
+- Direct genetic evidence
+- Comparative evidence
+- Developmental context
+- Scientific limitations
+
+The system must not imply that usable dinosaur genomes are available.
+
+Do not fabricate:
+
+- Dinosaur DNA
+- Genome sequences
+- Genetic experiments
+- Gene sequences
+- Successful dinosaur resurrection
+- Genetic engineering results
+
+Comparative context involving birds, crocodilians, or other living relatives may be included only when properly supported.
+
+---
+
+## 4.6 Scientific Debates
+
+Support documented scientific disagreements.
+
+Each debate may include:
+
+- Question
+- Interpretation A
+- Evidence supporting A
+- Interpretation B
+- Evidence supporting B
+- Current scientific status
+- Reason for disagreement
+- Source IDs
+
+Do not arbitrarily select a winner.
+
+Do not present hypotheses as confirmed facts.
+
+---
+
+## 4.7 Research History
+
+Create a chronological research-history section supporting:
+
+- Discovery
+- Original description
+- Important specimen discoveries
+- Major taxonomic revisions
+- Major anatomical discoveries
+- Significant reinterpretations
+- Important new evidence
+
+Each entry should support:
+
+- Year, if verified
+- Title
+- Description
+- Source IDs
+- Related specimen IDs
+- Related evidence IDs
+
+---
+
+## 4.8 Open Questions
+
+Create a dedicated section:
+
+WHAT WE STILL DON'T KNOW
+
+Each entry should contain:
+
+- Question
+- Current understanding
+- Why it remains uncertain
+- Evidence limitations
+- Related specimen IDs
+- Source IDs
+
+Examples:
+
+- Incomplete anatomy
+- Uncertain behavior
+- Uncertain coloration
+- Disputed taxonomy
+- Unknown soft tissue
+- Uncertain growth
+- Uncertain locomotion
+- Incomplete fossil record
+
+---
+
+## 4.9 Scientific Sources
+
+Create a structured source section.
+
+Display, where available:
+
+- Title
+- Authors
+- Year
+- Journal or publisher
+- DOI
+- Official URL
+- Repository URL
+- Source type
+- Access status
+- Verification status
+
+Use stable source IDs.
+
+Evidence entries should reference source IDs instead of duplicating citation information.
+
+Do not fabricate source metadata.
+
+---
+
+# 5. EVERY DINOSAUR MUST HAVE AN EVIDENCE PROFILE
+
+This is mandatory.
+
+Every dinosaur species currently in the Dinopedia database must have a corresponding Evidence Profile.
+
+The architecture should treat the Evidence Profile as required, not an optional feature.
+
+Use a structure similar to:
+
+interface ScientificEvidenceProfile {
+  speciesId: string;
+  evidenceOverview: ...;
+  directEvidence: ...;
+  traitEvidence: ...;
+  evolutionaryContext: ...;
+  geneticContext: ...;
+  scientificDebates: ...;
+  researchHistory: ...;
+  openQuestions: ...;
+  sourceIds: ...;
+}
+
+Adapt the exact structure to the existing project.
+
+Every species must have a profile, even if its information is limited.
+
+Do not fabricate information to make a profile appear complete.
+
+Use honest states such as:
+
+- Limited evidence
+- Unknown
+- Insufficient information
+- Not yet documented in the current database
+- Requires further research
+
+Do not confuse "not entered into Dinopedia yet" with "scientifically unknown."
+
+---
+
+# 6. SPECIMEN MODE
+
+Build a complete fourth species mode called:
+
+SPECIMEN ARCHIVE
+
+This mode documents individual fossil specimens associated with a dinosaur species.
+
+For example, Tyrannosaurus rex may include well-documented specimens such as:
+
+- Sue — FMNH PR 2081
+- Stan — BHI 3033
+- Scotty — RSM P2523.8
+
+Use specimen names and catalog numbers only after verification.
+
+Do not claim that these are the only specimens.
+
+Do not claim that the archive contains every specimen ever discovered unless the database actually supports that claim.
+
+Describe it as a curated and expanding archive where appropriate.
+
+---
+
+# 7. SPECIMEN DATA ARCHITECTURE
+
+Create a dedicated specimen registry using the existing project structure.
+
+A specimen record should support:
+
+- Unique specimen ID
+- Species ID
+- Specimen name
+- Catalog number
+- Institution
+- Country
+- Locality
+- Geological formation
+- Geological age
+- Discovery year
+- Discovery description
+- Discoverer or collector, if verified
+- Preservation status
+- Completeness
+- Preserved elements
+- Evidence categories
+- Specimen summary
+- Scientific significance
+- Limitations
+- Associated evidence IDs
+- Associated paper IDs
+- Source IDs
+- Official links
+- Image credits
+
+Potential preservation classifications:
+
+- Extensive
+- Partial
+- Fragmentary
+- Isolated
+- Unknown
+
+Potential evidence categories:
+
+- Skeletal
+- Dental
+- Integumentary
+- Trace fossil
+- Pathology
+- Reproductive
+- Soft tissue
+- Other
+
+Do not invent missing specimen information.
+
+Use unknown or unavailable states when appropriate.
+
+---
+
+# 8. SPECIMEN MODE UI
+
+Implement the following sections.
+
+## 8.1 Specimen Overview
+
+Display:
+
+- Important documented specimens
+- General specimen evidence status
+- Important institutions
+- Explanation of what specimen-level research contributes
+
+Do not invent specimen counts.
+
+---
+
+## 8.2 Specimen Directory
+
+Create a museum-style directory of individual specimens.
+
+Each specimen card should display:
+
+- Specimen name
+- Catalog number
+- Institution
+- Preservation status
+- Short summary
+- Scientific significance
+- Link to the full specimen profile
+
+Use cards or another readable layout, not a dense spreadsheet.
+
+---
+
+## 8.3 Individual Specimen Profile
+
+When the user selects a specimen, show:
+
+### Identity
+- Name
+- Catalog number
+- Institution
+- Associated species
+
+### Discovery
+- Discovery year
+- Locality
+- Formation
+- Geological age
+- Discovery history
+
+### Preservation
+- Completeness
+- Preserved elements
+- Preservation quality
+- Missing or uncertain material
+
+### Scientific Significance
+- What the specimen has contributed to scientific knowledge
+- Relevant anatomical or biological findings
+- Limitations
+
+### Evidence Connections
+- Related evidence entries
+- Related scientific claims
+
+### Research Papers
+- Associated literature records
+
+### Open Questions
+- Specimen-specific uncertainties
+
+### Sources
+- Related source records
+
+---
+
+# 9. SPECIMEN ↔ EVIDENCE CONNECTION
+
+This is a core requirement.
+
+The system must connect:
+
+Species → Specimen → Evidence Entry → Scientific Source
+
+It must also support:
+
+Species → Specimen → Research Paper → Scientific Claim
+
+Each Evidence Entry should be able to reference:
+
+- Related specimen IDs
+- Related paper IDs
+- Source IDs
+
+Each Specimen should be able to reference:
+
+- Related evidence IDs
+- Related paper IDs
+- Source IDs
+
+Use stable IDs.
+
+Do not duplicate the same information unnecessarily across components.
+
+---
+
+# 10. SCIENTIFIC LITERATURE ARCHITECTURE
+
+Create a structured literature registry.
+
+This is a metadata and research-navigation system.
+
+It is NOT permission to copy or redistribute every paper.
+
+Each paper record should support:
+
+- Unique paper ID
+- Title
+- Authors
+- Year
+- Journal
+- Publisher
+- DOI
+- Official URL
+- Repository URL
+- Literature type
+- Access status
+- Abstract summary
+- Research questions
+- Species IDs
+- Specimen IDs
+- Evidence entry IDs
+- Source IDs
+- Verification status
+- Notes
+
+Literature types may include:
+
+- Research article
+- Review
+- Book
+- Book chapter
+- Conference paper
+- Thesis
+- Database
+- Other
+
+Access statuses may include:
+
+- Open access
+- Free to read
+- Paywalled
+- Repository available
+- Unknown
+
+Verification statuses:
+
+- Verified
+- Partially verified
+- Needs review
+
+---
+
+# 11. COPYRIGHT AND PAPER ACCESS
+
+Scientific papers are not automatically free to reproduce.
+
+Do not copy or rehost copyrighted:
+
+- Full papers
+- Publisher PDFs
+- Figures
+- Tables
+- Large portions of text
+
+unless appropriate permission or licensing has been verified.
+
+For each paper:
+
+- Store metadata
+- Store an official URL
+- Store a legitimate repository URL where available
+- Store access status
+- Provide concise original summaries where properly reviewed
+- Respect the paper's license
+
+For paywalled papers, link to the publisher or legitimate repository.
+
+Do not implement unauthorized paper redistribution.
+
+Do not implement paid access or subscriptions in this task.
+
+The current feature should focus on:
+
+- Literature metadata
+- Evidence connections
+- Specimen connections
+- Legitimate source links
+- Scientific summaries
+
+---
+
+# 12. LITERATURE ↔ EVIDENCE CONNECTION
+
+A paper may support multiple evidence entries.
+
+An evidence entry may be supported by multiple papers.
+
+A specimen may be discussed in multiple papers.
+
+Support this relationship:
+
+Scientific Paper → Evidence Entry → Scientific Claim → Species / Specimen
+
+Do not hardcode these relationships only inside UI components.
+
+Use structured IDs in the data layer.
+
+---
+
+# 13. PROFILE AND DATA VALIDATION
+
+Implement development-time validation.
+
+## Evidence validation
+
+Check:
+
+- Every dinosaur has exactly one Evidence Profile
+- No duplicate profile IDs
+- No orphan profiles
+- All species IDs are valid
+
+## Specimen validation
+
+Check:
+
+- Every specimen ID is unique
+- Every specimen has a valid species ID
+- Evidence references are valid
+- Paper references are valid
+- Source references are valid
+- Orphan specimens are reported
+
+## Literature validation
+
+Check:
+
+- Every paper ID is unique
+- Species references are valid
+- Specimen references are valid
+- Evidence references are valid
+- Source references are valid
+- Records requiring review are reported
+
+Example output:
+
+Species count: X
+Evidence profiles: X
+Missing profiles: 0
+Orphan profiles: 0
+
+Specimen records: X
+Invalid specimen references: 0
+
+Literature records: X
+Records requiring review: X
+
+Do not display developer diagnostics to normal users.
+
+---
+
+# 14. INITIAL CONTENT STRATEGY
+
+Implement the complete architecture, but do not fabricate a massive scientific database.
+
+For initial content:
+
+- Add verified specimen records where reliable information is available.
+- Use important Tyrannosaurus rex specimens as an initial example where appropriate.
+- Add verified literature metadata only.
+- Ensure every dinosaur has an Evidence Profile.
+- Use limited/unknown states where detailed information has not been entered.
+- Do not claim the archive contains every specimen or paper ever published.
+- Make the architecture easy to expand later.
+
+If there are no specimen records for a species, show an honest state such as:
+
+"No specimen records have been added to the current Dinopedia archive."
+
+Do not say that no specimens exist.
+
+---
+
+# 15. FUTURE COMPATIBILITY
+
+Make the data architecture compatible with future:
+
+- Digby integration
+- Scientific Citations
+- Future Evidence System
+- Literature discovery
+- Human-reviewed evidence updates
+- Research history
+- Advanced specimen comparisons
+
+Do not implement:
+
+- Digby
+- AI APIs
+- Automatic paper discovery
+- Automatic evidence extraction
+- Automatic scientific updates
+- Autonomous web scraping
+- Automatic database modification
+- Genome database
+- De-extinction simulator
+- Genetic engineering simulator
+- Payment systems
+- Subscription features
+
+The future workflow may eventually be:
+
+Scientific Source
+→ Paper
+→ Specimen
+→ Evidence Entry
+→ Scientific Interpretation
+→ Human Review
+→ Proposed Dinopedia Update
+
+Do not build this automated workflow now.
+
+---
+
+# 16. UI AND UX REQUIREMENTS
+
+Both new modes must feel like part of Dinopedia's premium digital museum.
+
+Use:
+
+- Existing typography
+- Existing cards
+- Existing borders
+- Museum-inspired layouts
+- Clear hierarchy
+- Evidence badges
+- Specimen cards
+- Research cards
+- Expandable details
+- Source panels
+- Research timelines
+- Consistent spacing
+- Existing animations
+
+Avoid:
+
+- Tiny text
+- Giant walls of text
+- Excessive nested accordions
+- Dense spreadsheet layouts
+- Generic admin-dashboard styling
+- Fake scientific statistics
+- Excessive empty space
+- Unnecessary decorative elements
+
+Support progressive exploration:
+
+Quick Summary → Details → Evidence → Source
+
+---
+
+# 17. MOBILE RESPONSIVENESS
+
+Test both modes on mobile.
+
+Requirements:
+
+- No horizontal overflow
+- No nested scroll traps
+- No inaccessible bottom content
+- No broken accordions
+- No tiny scientific text
+- No cards extending beyond the viewport
+- Mode selector remains usable
+- Source links remain accessible
+- Entire page reaches the actual bottom
+- Content stacks naturally
+
+Do not simply shrink the desktop version.
+
+---
+
+# 18. ACCESSIBILITY
+
+Ensure:
+
+- Readable body text
+- Readable source metadata
+- Readable evidence labels
+- Readable specimen labels
+- Clear interactive states
+- Visible focus states
+- Usable touch targets
+- Color is not the only way to communicate evidence type
+- Expandable content is accessible
+- Typography remains readable for older visitors
+
+Scientific clarity takes priority over visual decoration.
+
+---
+
+# 19. REGRESSION SAFETY
+
+Do not break:
+
+- Life mode
+- Anatomy mode
+- Existing species navigation
+- Existing SpeciesEvidenceRail
+- Nomenclature Dictionary
+- Narration system
+- Existing exhibits
+- Existing search
+- Existing Comparison tab
+- Existing scrolling fixes
+- Existing responsive behavior
+- Existing animations
+
+Do not modify the Comparison tab during this task.
+
+Verify that previous fixes remain intact:
+
+- Search dropdown layering
+- Center-column scrolling
+- Side-column scrolling
+- Mobile scrolling
+- Species page reaching the bottom
+- Comparison tab consistency
+- Typography improvements
+
+---
+
+# 20. IMPLEMENTATION ORDER
+
+Follow this order, but do not stop after inspection.
+
+PHASE 1:
+Inspect the existing architecture.
+
+PHASE 2:
+Create the structured data types for:
+
+- Evidence profiles
+- Evidence entries
+- Direct fossil evidence
+- Scientific sources
+- Evolutionary context
+- Genetic context
+- Scientific debates
+- Research history
+- Open questions
+- Specimens
+- Scientific papers
+
+PHASE 3:
+Create the Evidence Profile registry and validation.
+
+PHASE 4:
+Create the Scientific Literature registry and relationships.
+
+PHASE 5:
+Create the Specimen registry and validation.
+
+PHASE 6:
+Build the complete Evidence & Research mode.
+
+PHASE 7:
+Build the complete Specimen Archive mode.
+
+PHASE 8:
+Integrate both modes into the species page.
+
+PHASE 9:
+Add specimen ↔ evidence ↔ paper cross-linking.
+
+PHASE 10:
+Test responsive behavior and accessibility.
+
+PHASE 11:
+Perform regression testing.
+
+Do not stop after creating interfaces or placeholders. Implement the actual UI and integrate it into the application.
+
+---
+
+# 21. TESTING REQUIREMENTS
+
+## Desktop
+
+Test approximately:
+
+- 1366×768
+- Standard desktop width
+- Narrower desktop width
+
+Verify:
+
+- All four modes open
+- Mode switching works
+- Evidence sections render
+- Specimen directory renders
+- Individual specimen profiles open
+- Literature records render
+- Cross-links work
+- No content is cut off
+- No overlapping UI
+- No console errors
+
+## Mobile
+
+Verify:
+
+- Four-mode navigation works
+- Cards stack correctly
+- Text remains readable
+- No horizontal overflow
+- No nested scroll traps
+- Entire page reaches the bottom
+- Expandable sections work
+- Existing mobile behavior is preserved
+
+## Data
+
+Verify:
+
+- Every dinosaur has exactly one Evidence Profile
+- No duplicate IDs
+- No orphan profiles
+- No invalid specimen references
+- No invalid paper references
+- No invalid evidence references
+- No invalid source references
+- Records requiring review are identified
+
+## Existing Functionality
+
+Verify:
+
+- Life mode works
+- Anatomy mode works
+- Existing evidence rail works
+- Nomenclature features work
+- Narration works
+- Search works
+- Comparison remains unchanged
+- Existing scrolling fixes remain intact
+
+---
+
+# 22. FINAL REPORT
+
+After implementation, provide a specific report containing:
+
+## Files
+- Files created
+- Files modified
+- Components created
+- Components reused
+
+## Evidence Mode
+- Sections implemented
+- Evidence classifications
+- Source relationships
+- Number of evidence profiles
+
+## Specimen Mode
+- Sections implemented
+- Number of specimen records
+- Species represented
+- Specimen-to-evidence relationships
+
+## Literature
+- Number of paper records
+- Metadata fields
+- Access-status handling
+- Verification status
+- Official source links
+
+## Validation
+- Total dinosaur species
+- Total evidence profiles
+- Missing profiles
+- Orphan profiles
+- Total specimens
+- Invalid references
+- Total literature records
+- Records requiring review
+
+## Testing
+- Desktop results
+- Mobile results
+- Console results
+- Regression results
+
+## Remaining Work
+Clearly distinguish:
+
+- Implemented
+- Partially implemented
+- Placeholder
+- Not implemented
+
+Do not claim that something is implemented if it is only planned.
+
+---
+
+# FINAL NON-NEGOTIABLE REQUIREMENTS
+
+1. Evidence & Research is a complete third species mode.
+2. Specimen Archive is a complete fourth species mode.
+3. Both are peers of Life and Anatomy.
+4. Every dinosaur has a required Evidence Profile.
+5. Specimen records are separate from species-level evidence profiles.
+6. Specimens connect to evidence entries and scientific literature.
+7. Scientific papers are represented through structured metadata and legitimate links.
+8. Do not redistribute copyrighted papers without appropriate permission.
+9. Do not fabricate scientific content or research records.
+10. Unknown and limited evidence must be represented honestly.
+11. Do not implement subscriptions or paid features.
+12. Do not implement Digby or automatic scientific updates.
+13. Preserve existing modes and previous bug fixes.
+14. Actually implement the feature instead of stopping at recommendations.
+
+The intended final structure is:
+
+DINOPEDIA SPECIES PAGE
+
+LIFE
+Life Appearance & Behavior
+
+ANATOMY
+Anatomy & Scientific Evidence
+
+EVIDENCE
+Evidence & Research
+
+SPECIMENS
+Specimen Archive
+    ↓
+Scientific Literature
+    ↓
+Evidence Connections
+    ↓
+Sources
+
+Implement this as a scalable, scientifically responsible, museum-quality system.

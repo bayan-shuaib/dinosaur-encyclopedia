@@ -32,6 +32,18 @@ export type EvidenceCategory =
   | "pathology"
   | "other";
 
+export type SourceAccessStatus =
+  | "open_access"
+  | "free_to_read"
+  | "paywalled"
+  | "repository_available"
+  | "unknown";
+
+export type SourceVerificationStatus =
+  | "verified"
+  | "partially_verified"
+  | "needs_review";
+
 export interface ScientificSource {
   id: string;
   title: string;
@@ -41,6 +53,9 @@ export interface ScientificSource {
   journal?: string;
   url?: string;
   doi?: string;
+  repositoryUrl?: string;
+  accessStatus?: SourceAccessStatus;
+  verificationStatus?: SourceVerificationStatus;
   kind:
     | "paper"
     | "book"
@@ -59,6 +74,8 @@ export interface EvidenceEntry {
   interpretation: string;
   confidence: ConfidenceLevel;
   sourceIds: string[];
+  relatedSpecimenIds?: string[];
+  relatedPaperIds?: string[];
   competingInterpretations?: string[];
   limitations?: string[];
 }
@@ -69,6 +86,8 @@ export interface DirectEvidence {
   description: string;
   significance: string;
   sourceIds: string[];
+  relatedSpecimenIds?: string[];
+  relatedPaperIds?: string[];
 }
 
 export interface EvolutionaryContext {
@@ -94,6 +113,8 @@ export interface ResearchHistoryEntry {
   title: string;
   description: string;
   sourceIds: string[];
+  relatedSpecimenIds?: string[];
+  relatedEvidenceIds?: string[];
 }
 
 export interface OpenQuestion {
@@ -101,6 +122,7 @@ export interface OpenQuestion {
   currentUnderstanding: string;
   uncertainty: string;
   sourceIds: string[];
+  relatedSpecimenIds?: string[];
 }
 
 export interface ScientificDebate {
@@ -109,6 +131,8 @@ export interface ScientificDebate {
     position: string;
     supportingEvidence: string[];
     sourceIds: string[];
+    relatedSpecimenIds?: string[];
+    relatedPaperIds?: string[];
   }[];
   currentStatus: string;
 }
@@ -121,6 +145,8 @@ export interface ScientificEvidenceProfile {
     preservation?: string;
     importantMaterial?: string[];
     geologicalContext?: string;
+    importantLocalities?: string[];
+    overallStatus?: string;
     limitations?: string[];
   };
   directEvidence: DirectEvidence[];
@@ -174,6 +200,13 @@ function createBaselineProfile(dino: Dinosaur): ScientificEvidenceProfile {
       preservation: preservationLabel(skeleton.completeness),
       importantMaterial: skeleton.recoveredBones.slice(0, 6),
       geologicalContext: `${dino.discovery.location} · ${dino.period} (${dino.periodRange.end}–${dino.periodRange.start} Mya)`,
+      importantLocalities: [dino.discovery.location],
+      overallStatus:
+        skeleton.completeness >= 75
+          ? "Extensive catalogue representation; source review still required"
+          : skeleton.completeness >= 40
+            ? "Moderate catalogue representation; source review still required"
+            : "Limited or fragmentary catalogue representation",
       limitations: [
         "This baseline profile does not contain specimen-level citations yet.",
         "Soft tissues, exact coloration, detailed behavior, and many physiological traits remain unresolved here.",

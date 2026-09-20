@@ -288,6 +288,22 @@ function EvidenceEntryCard({
                   onSelect={onSelectSource}
                 />
               </div>
+              {(entry.relatedSpecimenIds?.length || entry.relatedPaperIds?.length) && (
+                <div className="space-y-2 md:col-span-2">
+                  <p className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/55 font-display">
+                    Archive connections
+                  </p>
+                  <p className="text-xs leading-relaxed text-muted-foreground/70 font-mono">
+                    {entry.relatedSpecimenIds?.length
+                      ? `Specimens: ${entry.relatedSpecimenIds.join(", ")}`
+                      : "No specimen IDs linked yet."}
+                    {" · "}
+                    {entry.relatedPaperIds?.length
+                      ? `Papers: ${entry.relatedPaperIds.join(", ")}`
+                      : "No paper IDs linked yet."}
+                  </p>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -451,9 +467,10 @@ export function ScientificEvidenceMode({ dino, profile }: Props) {
             ["Archive coverage", overview.fossilCompleteness],
             ["Preservation", overview.preservation],
             ["Geological context", overview.geologicalContext],
+            ["Overall evidence status", overview.overallStatus],
             ["Source status", sourceCount > 0 ? "Sources linked" : "Source review pending"],
           ].map(([label, value]) => (
-            <div key={label} className="min-w-0 rounded-lg border border-border/45 bg-card/55 p-4">
+            <div key={label} className="min-w-0 rounded-lg border border-border/45 bg-card/55 p-4 sm:last:col-span-2 lg:last:col-span-1">
               <p className="text-[9px] uppercase tracking-[0.16em] text-amber-400/60 font-display">
                 {label}
               </p>
@@ -471,6 +488,18 @@ export function ScientificEvidenceMode({ dino, profile }: Props) {
             <div className="mt-3 flex flex-wrap gap-2">
               {overview.importantMaterial.map((material) => (
                 <StatusBadge key={material}>{material}</StatusBadge>
+              ))}
+            </div>
+          </div>
+        )}
+        {!!overview.importantLocalities?.length && (
+          <div className="rounded-xl border border-border/40 bg-card/45 p-4 md:p-5">
+            <p className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/55 font-display">
+              Important localities or formations
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {overview.importantLocalities.map((locality) => (
+                <StatusBadge key={locality}>{locality}</StatusBadge>
               ))}
             </div>
           </div>

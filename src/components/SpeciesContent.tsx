@@ -12,6 +12,7 @@ import {
   Leaf,
   FlaskConical,
   FileSearch,
+  Skull,
   Lightbulb,
   Sparkles,
 } from "lucide-react";
@@ -25,9 +26,15 @@ import { NarrationPlayer } from "@/components/NarrationPlayer";
 import { SectionExhibit } from "@/components/exhibits/MuseumExhibits";
 import { NomenclatureDictionary } from "@/components/NomenclatureDictionary";
 import { ScientificEvidenceMode } from "@/components/ScientificEvidenceMode";
+import { SpecimenArchiveMode } from "@/components/SpecimenArchiveMode";
 import { getScientificEvidenceProfile } from "@/data/scientificEvidence";
+import {
+  getSpecimensForSpecies,
+  scientificPapers,
+  specimenSources,
+} from "@/data/specimenArchive";
 
-export type SpeciesMode = "life" | "scientific" | "evidence";
+export type SpeciesMode = "life" | "scientific" | "evidence" | "specimens";
 type NarrativeMode = "life" | "scientific";
 
 // Exported so NarrationPlayer can reference if needed
@@ -1276,6 +1283,10 @@ export function SpeciesContent({ dino }: Props) {
     () => getScientificEvidenceProfile(dino.id),
     [dino.id],
   );
+  const specimenRecords = useMemo(
+    () => getSpecimensForSpecies(dino.id),
+    [dino.id],
+  );
 
   const sections = useMemo(
     () =>
@@ -1464,6 +1475,48 @@ export function SpeciesContent({ dino }: Props) {
               </div>
             )}
           </button>
+
+          <div className="hidden sm:block w-px bg-border/30 self-stretch" />
+          <div className="block sm:hidden h-px bg-border/30" />
+
+          {/* Specimen Archive mode */}
+          <button
+            onClick={() => handleModeChange("specimens")}
+            data-testid="button-mode-specimens"
+            className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+              mode === "specimens" ? "bg-secondary/60" : "hover:bg-secondary/20"
+            }`}
+          >
+            {mode === "specimens" && (
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber-400" />
+            )}
+            <div
+              className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
+                mode === "specimens"
+                  ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
+                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
+              }`}
+            >
+              <Skull className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
+                MODE D — SPECIMEN ARCHIVE
+              </div>
+              <div
+                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
+                  mode === "specimens" ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                Specimen Archive
+              </div>
+            </div>
+            {mode === "specimens" && (
+              <div className="ml-auto flex-shrink-0">
+                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+              </div>
+            )}
+          </button>
         </div>
         {/* Bottom ambient strip */}
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
@@ -1471,6 +1524,13 @@ export function SpeciesContent({ dino }: Props) {
 
       {mode === "evidence" ? (
         <ScientificEvidenceMode dino={dino} profile={evidenceProfile} />
+      ) : mode === "specimens" ? (
+        <SpecimenArchiveMode
+          dino={dino}
+          specimens={specimenRecords}
+          papers={scientificPapers}
+          sources={specimenSources}
+        />
       ) : (
         <>
           {/* ── Narration player ─────────────────────────────────────────── */}
