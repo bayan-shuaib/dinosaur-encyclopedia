@@ -7,6 +7,7 @@ import { getTaxonomyType } from '@/lib/taxonomy';
 import { NarrationPlayer } from '@/components/NarrationPlayer';
 import { SectionExhibit } from '@/components/exhibits/MuseumExhibits';
 import { NomenclatureDictionary } from '@/components/NomenclatureDictionary';
+import { withGlossaryTerms } from '@/components/GlossaryTerm';
 
 type Mode = 'life' | 'scientific';
 
@@ -335,7 +336,7 @@ function ParagraphList({
               : ''
           }`}
         >
-          {p}
+          {withGlossaryTerms(p)}
         </motion.p>
       ))}
     </div>

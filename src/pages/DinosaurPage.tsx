@@ -8,6 +8,8 @@ import InteractiveTimeline from '@/components/InteractiveTimeline';
 import { SpeciesContent } from '@/components/SpeciesContent';
 import { SpeciesScientificRail } from '@/components/species/SpeciesScientificRail';
 import { SpeciesEvidenceRail } from '@/components/species/SpeciesEvidenceRail';
+import { ScientificSources } from '@/components/scientific/ScientificSources';
+import { AmbienceControl } from '@/components/AmbienceControl';
 import {
   ArrowLeft, Calendar, Ruler, Weight,
   GitCompareArrows, MoveHorizontal, MoveVertical, Wind, Waves,
@@ -84,8 +86,14 @@ export default function DinosaurPage() {
   const stats = getDisplayStats(dino);
   const specimenCode = `SPC-${dino.id.replace(/[^a-z0-9]/gi, '').slice(0, 6).toUpperCase().padEnd(4, 'X')}`;
 
+  const atmosphere = dino.habitat.toLowerCase().includes('water') || dino.habitat.toLowerCase().includes('river') || dino.habitat.toLowerCase().includes('marine')
+    ? 'species-atmosphere-water'
+    : dino.group === 'Pterosaurs'
+      ? 'species-atmosphere-sky'
+      : 'species-atmosphere-terrestrial';
+
   return (
-    <div className="min-h-screen pt-[90px]">
+    <div className={`min-h-screen pt-[90px] species-page ${atmosphere}`}>
       {/* ── Command bar ──────────────────────────────────────────────────── */}
       <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-4 flex items-center justify-between">
         <Link
@@ -95,14 +103,17 @@ export default function DinosaurPage() {
         >
           <ArrowLeft className="h-4 w-4" /> Back to encyclopedia
         </Link>
-        <Link
+        <div className="flex items-center gap-2">
+          <AmbienceControl />
+          <Link
           to={`/compare?ids=${dino.id}`}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border text-sm font-display text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"
           data-testid="link-compare-this"
         >
           <GitCompareArrows className="h-4 w-4" />
           Compare with another
-        </Link>
+          </Link>
+        </div>
       </div>
 
       {/* ── CINEMATIC HERO — full-bleed exhibit frame ───────────────────────── */}
@@ -219,6 +230,8 @@ export default function DinosaurPage() {
             <div id="exhibit-encyclopedia" className="scroll-mt-24">
               <SpeciesContent dino={dino} />
             </div>
+
+            <ScientificSources recordId={`species:${dino.id}`} />
 
             {/* Geological Timeline */}
             <ExhibitBand id="exhibit-timeline" index="06" kicker="Deep Time" label="Geological Timeline" icon={Clock}>

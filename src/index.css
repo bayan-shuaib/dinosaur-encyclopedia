@@ -103,6 +103,45 @@
   .section-label {
     @apply text-xs font-display uppercase tracking-[0.15em] text-muted-foreground mb-2;
   }
+
+  .species-page {
+    isolation: isolate;
+    background-image: radial-gradient(circle at 15% 18%, hsl(42 40% 24% / 0.12), transparent 24rem), radial-gradient(circle at 88% 42%, hsl(190 42% 24% / 0.08), transparent 30rem);
+  }
+
+  .species-atmosphere-water {
+    --atmosphere-accent: 190 70% 64%;
+    background-image: radial-gradient(circle at 15% 15%, hsl(var(--atmosphere-accent) / 0.12), transparent 26rem), linear-gradient(180deg, hsl(190 30% 8% / 0.4), transparent 45%);
+  }
+
+  .species-atmosphere-sky {
+    --atmosphere-accent: 42 80% 70%;
+    background-image: radial-gradient(circle at 78% 10%, hsl(var(--atmosphere-accent) / 0.11), transparent 26rem), linear-gradient(180deg, hsl(220 25% 11% / 0.45), transparent 45%);
+  }
+
+  .species-atmosphere-terrestrial {
+    --atmosphere-accent: 38 65% 58%;
+  }
+
+  .museum-icon-box {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-200;
+  }
+
+  .museum-icon-box svg {
+    @apply size-4;
+  }
+
+  .scientific-sources {
+    @apply border-t border-border/40 pt-10;
+  }
+
+  .glossary-term {
+    @apply border-b border-dotted border-amber-300/60 text-foreground transition-colors hover:border-amber-200 hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .glossary-popover {
+    @apply absolute bottom-[calc(100%+0.5rem)] left-1/2 z-20 block w-64 -translate-x-1/2 rounded-lg border border-amber-400/25 bg-card p-3 text-left shadow-2xl;
+  }
 }
 
 /* Scrollbar */
