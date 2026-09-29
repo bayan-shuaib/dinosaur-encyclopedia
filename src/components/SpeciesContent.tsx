@@ -1522,6 +1522,18 @@ export function SpeciesContent({ dino }: Props) {
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
       </div>
 
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border/30 bg-secondary/20 px-4 py-2.5 text-[9px] font-display uppercase tracking-[0.16em] text-muted-foreground/55" data-testid="archive-status-strip">
+        <div className="flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80" aria-hidden="true" />
+          <span>Archive record active</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span><strong className="font-semibold text-foreground/75">{evidenceProfile.directEvidence.length}</strong> direct evidence entries</span>
+          <span><strong className="font-semibold text-foreground/75">{evidenceProfile.sources.length}</strong> verified sources</span>
+          <span><strong className="font-semibold text-foreground/75">{specimenRecords.length}</strong> specimen records</span>
+        </div>
+      </div>
+
       {mode === "evidence" ? (
         <ScientificEvidenceMode dino={dino} profile={evidenceProfile} />
       ) : mode === "specimens" ? (
