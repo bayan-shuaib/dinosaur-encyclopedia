@@ -700,7 +700,7 @@ function ExhibitHeader({
   );
 }
 
-// ── Floating annotation card ───────────────────────────────────────────────
+// ��─ Floating annotation card ───────────────────────────────────────────────
 
 function getAnnotationData(
   sectionId: string,
@@ -1346,12 +1346,12 @@ export function SpeciesContent({ dino }: Props) {
       <div className="relative rounded-lg border border-border/40 bg-card/60 overflow-hidden">
         {/* Ambient amber strip */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
-        <div className="flex flex-col sm:flex-row">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
           {/* Life mode */}
           <button
             onClick={() => handleModeChange("life")}
             data-testid="button-mode-life"
-             className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+             className={`relative min-w-0 flex min-h-[108px] items-start gap-3 border-b border-border/25 px-4 py-5 text-left transition-all duration-200 group sm:min-h-[122px] sm:px-5 xl:border-b-0 ${
               mode === "life" ? "bg-secondary/60" : "hover:bg-secondary/20"
             }`}
           >
@@ -1363,18 +1363,18 @@ export function SpeciesContent({ dino }: Props) {
               className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
                 mode === "life"
                   ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
-                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
+                  : "bg-secondary/50 border-border/30 text-foreground/55 group-hover:border-border/60 group-hover:text-foreground/80"
               }`}
             >
               <Leaf className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground/75 mb-1 leading-tight">
                 MODE A — NATURAL HISTORY
               </div>
               <div
-                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
-                  mode === "life" ? "text-foreground" : "text-muted-foreground"
+                className={`text-base leading-snug font-display font-semibold tracking-wide transition-colors ${
+                  mode === "life" ? "text-foreground" : "text-foreground/70"
                 }`}
               >
                 Life Appearance & Behavior
@@ -1389,13 +1389,13 @@ export function SpeciesContent({ dino }: Props) {
 
           {/* Divider */}
           <div className="hidden sm:block w-px bg-border/30 self-stretch" />
-          <div className="block sm:hidden h-px bg-border/30" />
+          <div className="hidden" />
 
           {/* Scientific mode */}
           <button
             onClick={() => handleModeChange("scientific")}
             data-testid="button-mode-scientific"
-             className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+             className={`relative min-w-0 flex min-h-[108px] items-start gap-3 border-b border-border/25 px-4 py-5 text-left transition-all duration-200 group sm:min-h-[122px] sm:px-5 xl:border-b-0 ${
               mode === "scientific"
                 ? "bg-secondary/60"
                 : "hover:bg-secondary/20"
@@ -1408,20 +1408,20 @@ export function SpeciesContent({ dino }: Props) {
               className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
                 mode === "scientific"
                   ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
-                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
+                  : "bg-secondary/50 border-border/30 text-foreground/55 group-hover:border-border/60 group-hover:text-foreground/80"
               }`}
             >
               <FlaskConical className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground/75 mb-1 leading-tight">
                 MODE B — SCIENTIFIC ARCHIVE
               </div>
               <div
-                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
+                className={`text-base leading-snug font-display font-semibold tracking-wide transition-colors ${
                   mode === "scientific"
                     ? "text-foreground"
-                    : "text-muted-foreground"
+                    : "text-foreground/70"
                 }`}
               >
                 Anatomy & Scientific Evidence
@@ -1435,13 +1435,13 @@ export function SpeciesContent({ dino }: Props) {
           </button>
 
           <div className="hidden sm:block w-px bg-border/30 self-stretch" />
-          <div className="block sm:hidden h-px bg-border/30" />
+          <div className="hidden" />
 
           {/* Evidence & Research mode */}
           <button
             onClick={() => handleModeChange("evidence")}
             data-testid="button-mode-evidence"
-            className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+            className={`relative min-w-0 flex min-h-[108px] items-start gap-3 border-b border-border/25 px-4 py-5 text-left transition-all duration-200 group sm:min-h-[122px] sm:px-5 xl:border-b-0 ${
               mode === "evidence" ? "bg-secondary/60" : "hover:bg-secondary/20"
             }`}
           >
@@ -1452,18 +1452,18 @@ export function SpeciesContent({ dino }: Props) {
               className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
                 mode === "evidence"
                   ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
-                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
+                  : "bg-secondary/50 border-border/30 text-foreground/55 group-hover:border-border/60 group-hover:text-foreground/80"
               }`}
             >
               <FileSearch className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground/75 mb-1 leading-tight">
                 MODE C — RESEARCH ARCHIVE
               </div>
               <div
-                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
-                  mode === "evidence" ? "text-foreground" : "text-muted-foreground"
+                className={`text-base leading-snug font-display font-semibold tracking-wide transition-colors ${
+                  mode === "evidence" ? "text-foreground" : "text-foreground/70"
                 }`}
               >
                 Evidence &amp; Research
@@ -1477,13 +1477,13 @@ export function SpeciesContent({ dino }: Props) {
           </button>
 
           <div className="hidden sm:block w-px bg-border/30 self-stretch" />
-          <div className="block sm:hidden h-px bg-border/30" />
+          <div className="hidden" />
 
           {/* Specimen Archive mode */}
           <button
             onClick={() => handleModeChange("specimens")}
             data-testid="button-mode-specimens"
-            className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
+            className={`relative min-w-0 flex min-h-[108px] items-start gap-3 border-b border-border/25 px-4 py-5 text-left transition-all duration-200 group sm:min-h-[122px] sm:px-5 xl:border-b-0 ${
               mode === "specimens" ? "bg-secondary/60" : "hover:bg-secondary/20"
             }`}
           >
@@ -1494,18 +1494,18 @@ export function SpeciesContent({ dino }: Props) {
               className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
                 mode === "specimens"
                   ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
-                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
+                  : "bg-secondary/50 border-border/30 text-foreground/55 group-hover:border-border/60 group-hover:text-foreground/80"
               }`}
             >
               <Skull className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] font-display text-muted-foreground/75 mb-1 leading-tight">
                 MODE D — SPECIMEN ARCHIVE
               </div>
               <div
-                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
-                  mode === "specimens" ? "text-foreground" : "text-muted-foreground"
+                className={`text-base leading-snug font-display font-semibold tracking-wide transition-colors ${
+                  mode === "specimens" ? "text-foreground" : "text-foreground/70"
                 }`}
               >
                 Specimen Archive
@@ -1545,7 +1545,7 @@ export function SpeciesContent({ dino }: Props) {
         />
       ) : (
         <>
-          {/* ── Narration player ─────────────────────────────────────────── */}
+          {/* ── Narration player ──���──────────────────────────────────────── */}
           <NarrationPlayer
             key={`${dino.id}-${mode}`}
             speciesId={dino.id}
@@ -1587,7 +1587,14 @@ export function SpeciesContent({ dino }: Props) {
                       controlledOpen={controlledOpen}
                       isNarrationActive={isActive && activeSectionId !== null}
                     />
-                    <SectionExhibit sectionId={s.id} dino={dino} mode={mode} />
+                    <div
+                      className="exhibit-atmosphere"
+                      data-period={dino.period.toLowerCase()}
+                      data-taxon={getTaxonomyType(dino)}
+                      data-diet={dino.diet.toLowerCase()}
+                    >
+                      <SectionExhibit sectionId={s.id} dino={dino} mode={mode} />
+                    </div>
                   </Fragment>
                 );
               })}
