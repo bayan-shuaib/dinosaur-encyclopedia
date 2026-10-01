@@ -1342,185 +1342,63 @@ export function SpeciesContent({ dino }: Props) {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <section className="min-w-0 space-y-8" data-testid="species-content">
-      {/* ── Documentary mode bar ──────────────────────────────────────────── */}
-      <div className="relative rounded-lg border border-border/40 bg-card/60 overflow-hidden">
-        {/* Ambient amber strip */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
-        <div className="flex flex-col sm:flex-row">
-          {/* Life mode */}
-          <button
-            onClick={() => handleModeChange("life")}
-            data-testid="button-mode-life"
-             className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
-              mode === "life" ? "bg-secondary/60" : "hover:bg-secondary/20"
-            }`}
-          >
-            {/* Active indicator */}
-            {mode === "life" && (
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber-400" />
-            )}
-            <div
-              className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
-                mode === "life"
-                  ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
-                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
-              }`}
-            >
-              <Leaf className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
-                MODE A — NATURAL HISTORY
-              </div>
-              <div
-                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
-                  mode === "life" ? "text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                Life Appearance & Behavior
-              </div>
-            </div>
-            {mode === "life" && (
-              <div className="ml-auto flex-shrink-0">
-                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-              </div>
-            )}
-          </button>
-
-          {/* Divider */}
-          <div className="hidden sm:block w-px bg-border/30 self-stretch" />
-          <div className="block sm:hidden h-px bg-border/30" />
-
-          {/* Scientific mode */}
-          <button
-            onClick={() => handleModeChange("scientific")}
-            data-testid="button-mode-scientific"
-             className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
-              mode === "scientific"
-                ? "bg-secondary/60"
-                : "hover:bg-secondary/20"
-            }`}
-          >
-            {mode === "scientific" && (
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber-400 sm:left-0" />
-            )}
-            <div
-              className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
-                mode === "scientific"
-                  ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
-                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
-              }`}
-            >
-              <FlaskConical className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
-                MODE B — SCIENTIFIC ARCHIVE
-              </div>
-              <div
-                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
-                  mode === "scientific"
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                }`}
-              >
-                Anatomy & Scientific Evidence
-              </div>
-            </div>
-            {mode === "scientific" && (
-              <div className="ml-auto flex-shrink-0">
-                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-              </div>
-            )}
-          </button>
-
-          <div className="hidden sm:block w-px bg-border/30 self-stretch" />
-          <div className="block sm:hidden h-px bg-border/30" />
-
-          {/* Evidence & Research mode */}
-          <button
-            onClick={() => handleModeChange("evidence")}
-            data-testid="button-mode-evidence"
-            className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
-              mode === "evidence" ? "bg-secondary/60" : "hover:bg-secondary/20"
-            }`}
-          >
-            {mode === "evidence" && (
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber-400" />
-            )}
-            <div
-              className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
-                mode === "evidence"
-                  ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
-                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
-              }`}
-            >
-              <FileSearch className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
-                MODE C — RESEARCH ARCHIVE
-              </div>
-              <div
-                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
-                  mode === "evidence" ? "text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                Evidence &amp; Research
-              </div>
-            </div>
-            {mode === "evidence" && (
-              <div className="ml-auto flex-shrink-0">
-                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-              </div>
-            )}
-          </button>
-
-          <div className="hidden sm:block w-px bg-border/30 self-stretch" />
-          <div className="block sm:hidden h-px bg-border/30" />
-
-          {/* Specimen Archive mode */}
-          <button
-            onClick={() => handleModeChange("specimens")}
-            data-testid="button-mode-specimens"
-            className={`relative min-w-0 flex-1 flex items-center gap-4 px-6 py-4 transition-all text-left group ${
-              mode === "specimens" ? "bg-secondary/60" : "hover:bg-secondary/20"
-            }`}
-          >
-            {mode === "specimens" && (
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-amber-400" />
-            )}
-            <div
-              className={`h-9 w-9 flex-shrink-0 rounded-md flex items-center justify-center border transition-colors ${
-                mode === "specimens"
-                  ? "bg-amber-500/15 border-amber-500/35 text-amber-300"
-                  : "bg-secondary/50 border-border/30 text-muted-foreground group-hover:border-border/60"
-              }`}
-            >
-              <Skull className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[8px] uppercase tracking-[0.2em] font-display text-muted-foreground/40 mb-0.5">
-                MODE D — SPECIMEN ARCHIVE
-              </div>
-              <div
-                className={`text-sm font-display font-semibold tracking-wide transition-colors ${
-                  mode === "specimens" ? "text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                Specimen Archive
-              </div>
-            </div>
-            {mode === "specimens" && (
-              <div className="ml-auto flex-shrink-0">
-                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-              </div>
-            )}
-          </button>
+      {/* ── Four archive doors ─────────────────────────────────────────────── */}
+      <nav
+        aria-label="Species archive modes"
+        className="archive-selector relative overflow-hidden rounded-xl border border-border/60 bg-card/70 shadow-lg shadow-black/10 backdrop-blur-sm"
+      >
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { value: "life" as SpeciesMode, code: "A", archive: "Natural History", title: "Life Appearance & Behavior", Icon: Leaf },
+            { value: "scientific" as SpeciesMode, code: "B", archive: "Scientific Archive", title: "Anatomy & Scientific Evidence", Icon: FlaskConical },
+            { value: "evidence" as SpeciesMode, code: "C", archive: "Research Archive", title: "Evidence & Research", Icon: FileSearch },
+            { value: "specimens" as SpeciesMode, code: "D", archive: "Specimen Archive", title: "Specimen Archive", Icon: Skull },
+          ].map(({ value, code, archive, title, Icon }, index) => {
+            const isActive = mode === value;
+            return (
+              <Fragment key={value}>
+                <button
+                  type="button"
+                  onClick={() => handleModeChange(value)}
+                  aria-current={isActive ? "page" : undefined}
+                  data-testid={`button-mode-${value}`}
+                  className={`archive-selector__item group relative flex min-h-[116px] min-w-0 items-start gap-3 px-4 py-5 text-left transition-all duration-200 sm:min-h-[132px] sm:px-5 ${
+                    isActive
+                      ? "bg-amber-500/[0.09]"
+                      : "bg-secondary/20 hover:bg-secondary/45"
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-md border transition-colors ${
+                      isActive
+                        ? "border-amber-400/45 bg-amber-400/15 text-amber-200"
+                        : "border-border/60 bg-secondary/55 text-muted-foreground/80 group-hover:border-amber-300/25 group-hover:text-muted-foreground"
+                    }`}
+                  >
+                    <Icon className="size-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[10px] uppercase tracking-[0.2em] text-amber-300/65 font-display">
+                      Mode {code}
+                    </span>
+                    <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-muted-foreground/75 font-display">
+                      {archive}
+                    </span>
+                    <span className={`mt-2 block text-sm font-display font-semibold leading-snug tracking-wide ${isActive ? "text-foreground" : "text-foreground/80"}`}>
+                      {title}
+                    </span>
+                  </span>
+                  {isActive && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-amber-400/80" aria-hidden="true" />}
+                </button>
+                {index < 3 && <div className="hidden xl:block w-px bg-border/45" aria-hidden="true" />}
+                {index < 3 && <div className="block h-px bg-border/45 xl:hidden" aria-hidden="true" />}
+              </Fragment>
+            );
+          })}
         </div>
-        {/* Bottom ambient strip */}
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-      </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border/70 to-transparent" />
+      </nav>
 
       {mode === "evidence" ? (
         <ScientificEvidenceMode dino={dino} profile={evidenceProfile} />

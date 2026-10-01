@@ -142,6 +142,11 @@
   .ambience-control:hover, .ambience-control:focus-visible { border-color: rgba(220, 180, 100, 0.45); color: hsl(var(--foreground)); background: rgba(220, 180, 100, 0.08); outline: none; }
   .ambience-control svg { width: 13px; height: 13px; }
 
+  .archive-selector__item:focus-visible {
+    outline: 2px solid rgba(245, 158, 11, 0.75);
+    outline-offset: -3px;
+  }
+
   @media (max-width: 640px) {
     .species-atmosphere { top: 5rem; opacity: 0.55; }
     .species-atmosphere__label { right: 1rem; top: 1rem; font-size: 8px; }
