@@ -700,7 +700,7 @@ function ExhibitHeader({
   );
 }
 
-// ── Floating annotation card ───────────────────────────────────────────────
+// ��─ Floating annotation card ───────────────────────────────────────────────
 
 function getAnnotationData(
   sectionId: string,
@@ -1348,7 +1348,7 @@ export function SpeciesContent({ dino }: Props) {
         className="archive-selector relative overflow-hidden rounded-xl border border-border/60 bg-card/70 shadow-lg shadow-black/10 backdrop-blur-sm"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-4">
           {[
             { value: "life" as SpeciesMode, code: "A", archive: "Natural History", title: "Life Appearance & Behavior", Icon: Leaf },
             { value: "scientific" as SpeciesMode, code: "B", archive: "Scientific Archive", title: "Anatomy & Scientific Evidence", Icon: FlaskConical },
@@ -1363,7 +1363,7 @@ export function SpeciesContent({ dino }: Props) {
                   onClick={() => handleModeChange(value)}
                   aria-current={isActive ? "page" : undefined}
                   data-testid={`button-mode-${value}`}
-                  className={`archive-selector__item group relative flex min-h-[116px] min-w-0 items-start gap-3 px-4 py-5 text-left transition-all duration-200 sm:min-h-[132px] sm:px-5 ${
+                  className={`archive-selector__item group relative flex min-h-[150px] min-w-0 items-start gap-2 px-3 py-4 text-left transition-all duration-200 md:min-h-[138px] md:gap-3 md:px-4 md:py-5 ${
                     isActive
                       ? "bg-amber-500/[0.09]"
                       : "bg-secondary/20 hover:bg-secondary/45"
@@ -1382,10 +1382,10 @@ export function SpeciesContent({ dino }: Props) {
                     <span className="block text-[10px] uppercase tracking-[0.2em] text-amber-300/65 font-display">
                       Mode {code}
                     </span>
-                    <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-muted-foreground/75 font-display">
+                    <span className="mt-1 block text-[8px] uppercase tracking-[0.06em] text-muted-foreground/75 font-display break-words md:text-[10px] md:tracking-[0.1em]">
                       {archive}
                     </span>
-                    <span className={`mt-2 block text-sm font-display font-semibold leading-snug tracking-wide ${isActive ? "text-foreground" : "text-foreground/80"}`}>
+                    <span className={`mt-2 block text-[11px] font-display font-semibold leading-tight tracking-normal break-words text-balance md:text-sm md:leading-snug md:tracking-wide ${isActive ? "text-foreground" : "text-foreground/80"}`}>
                       {title}
                     </span>
                   </span>

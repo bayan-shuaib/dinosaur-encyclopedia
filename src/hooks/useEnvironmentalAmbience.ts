@@ -62,4 +62,3 @@ export function getEnvironmentLabel(category: EnvironmentCategory) {
   return { terrestrial: 'Terrestrial ambience', aerial: 'Open-air ambience', aquatic: 'Aquatic ambience', 'semi-aquatic': 'River ambience', coastal: 'Coastal ambience', generic: 'Atmospheric ambience' }[category];
 }
 
-export const AMBIENCE_VOLUME_OPTIONS = [15, 35, 55, 75] as const;

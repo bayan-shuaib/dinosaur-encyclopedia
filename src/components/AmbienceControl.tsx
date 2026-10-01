@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Volume2, VolumeX, ChevronDown } from 'lucide-react';
+import { Volume2, VolumeX } from 'lucide-react';
 import { Dinosaur } from '@/data/types';
-import { useEnvironmentalAmbience, getEnvironmentLabel, AMBIENCE_VOLUME_OPTIONS } from '@/hooks/useEnvironmentalAmbience';
+import { useEnvironmentalAmbience, getEnvironmentLabel } from '@/hooks/useEnvironmentalAmbience';
 
 export function AmbienceControl({ dino }: { dino: Dinosaur }) {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(true);
   const [volume, setVolume] = useState(35);
   const { category } = useEnvironmentalAmbience(dino, enabled, volume);
 
   useEffect(() => {
     const stored = sessionStorage.getItem('dinopedia-ambience');
-    if (stored === 'on') setEnabled(true);
+    if (stored === 'off') setEnabled(false);
     const storedVolume = Number(sessionStorage.getItem('dinopedia-ambience-volume'));
     if (storedVolume > 0) setVolume(storedVolume);
   }, []);
@@ -32,12 +32,18 @@ export function AmbienceControl({ dino }: { dino: Dinosaur }) {
         {enabled ? <Volume2 data-icon="inline-start" /> : <VolumeX data-icon="inline-start" />}
         <span>{enabled ? 'Ambience on' : 'Ambience off'}</span>
       </button>
-      <label className="ambience-volume" title="Ambience volume">
-        <span className="sr-only">Ambience volume</span>
-        <ChevronDown aria-hidden="true" />
-        <select value={volume} onChange={(event) => changeVolume(Number(event.target.value))} aria-label="Ambience volume">
-          {AMBIENCE_VOLUME_OPTIONS.map((option) => <option key={option} value={option}>{option}%</option>)}
-        </select>
+      <label className="ambience-volume" title={`Ambience volume: ${volume}%`}>
+        <span className="sr-only">Ambience volume: {volume}%</span>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          value={volume}
+          onChange={(event) => changeVolume(Number(event.target.value))}
+          aria-label={`Ambience volume: ${volume}%`}
+        />
+        <output aria-hidden="true">{volume}%</output>
       </label>
     </div>
   );
