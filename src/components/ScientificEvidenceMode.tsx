@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { Dinosaur } from "@/data/types";
+import { ScientificSourcesPanel } from "@/components/ScientificSourcesPanel";
 import type {
   ConfidenceLevel,
   DirectEvidence,
@@ -777,35 +778,7 @@ export function ScientificEvidenceMode({ dino, profile }: Props) {
         title="Scientific Sources"
         description="Sources are stored once with stable IDs and reused by evidence entries. No unverified citation is presented as established research."
       >
-        {profile.sources.length > 0 ? (
-          <div className="grid gap-3 md:grid-cols-2">
-            {profile.sources.map((source) => (
-              <button
-                key={source.id}
-                type="button"
-                onClick={() => setSelectedSource(source)}
-                className="rounded-xl border border-border/45 bg-card/55 p-4 text-left transition-colors hover:border-amber-500/30"
-              >
-                <p className="text-[9px] uppercase tracking-[0.16em] text-amber-400/60 font-display">{source.kind}</p>
-                <p className="mt-2 text-base font-display font-semibold text-foreground">{source.title}</p>
-                <p className="mt-2 text-sm text-muted-foreground/75 font-body">{[source.authors, source.year, source.journal ?? source.publisher].filter(Boolean).join(" · ")}</p>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-xl border border-border/45 bg-card/45 p-5">
-            <div className="flex items-start gap-3">
-              <MapPinned className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/60" />
-              <div>
-                <h3 className="text-base font-display font-semibold text-foreground">Source review pending</h3>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground/75 font-body">
-                  This species has a complete evidence-profile structure, but no verified paper, database, museum, or university source has been entered yet. The archive keeps claims limited rather than inventing citations.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-        <SourceDrawer source={selectedSource} onClose={() => setSelectedSource(null)} />
+        <ScientificSourcesPanel sources={profile.sources} />
       </ArchiveSection>
     </div>
   );

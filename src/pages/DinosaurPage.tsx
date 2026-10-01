@@ -8,6 +8,9 @@ import InteractiveTimeline from "@/components/InteractiveTimeline";
 import { SpeciesContent } from "@/components/SpeciesContent";
 import { SpeciesScientificRail } from "@/components/species/SpeciesScientificRail";
 import { SpeciesEvidenceRail } from "@/components/species/SpeciesEvidenceRail";
+import { SpeciesAtmosphere, getSpeciesAtmosphereClass } from "@/components/SpeciesAtmosphere";
+import { AmbienceControl } from "@/components/AmbienceControl";
+import { useInteractionSounds } from "@/hooks/useInteractionSounds";
 import {
   ArrowLeft,
   Calendar,
@@ -38,6 +41,11 @@ const STAT_ICON: Record<StatIconKey, typeof Ruler> = {
 };
 
 /* ── Exhibit band — full-width section with a scan-label header ─────────────── */
+function InteractionSoundLayer({ enabled }: { enabled: boolean }) {
+  useInteractionSounds(enabled);
+  return null;
+}
+
 function ExhibitBand({
   id,
   index,
@@ -85,26 +93,27 @@ function ExhibitBand({
 export default function DinosaurPage() {
   const { id } = useParams<{ id: string }>();
   const dino = getDinosaurById(id || "");
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [id]);
 
-  if (!dino) {
-    return (
-      <div className="min-h-screen pt-[90px] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-display text-foreground mb-2">
-            Species not found
-          </h1>
-          <Link to="/" className="text-primary hover:underline font-body">
-            ← Back to encyclopedia
-          </Link>
-        </div>
+  return dino ? (
+    <DinosaurPageContent dino={dino} />
+  ) : (
+    <div className="min-h-screen pt-[90px] flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-display text-foreground mb-2">
+          Species not found
+        </h1>
+        <Link to="/" className="text-primary hover:underline font-body">
+          ← Back to encyclopedia
+        </Link>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
+function DinosaurPageContent({ dino }: { dino: NonNullable<ReturnType<typeof getDinosaurById>> }) {
   const taxon = getTaxonomyType(dino);
   const stats = getDisplayStats(dino);
   const specimenCode = `SPC-${dino.id
@@ -114,7 +123,8 @@ export default function DinosaurPage() {
     .padEnd(4, "X")}`;
 
   return (
-    <div className="min-h-screen pt-[90px]">
+    <div className={`min-h-screen pt-[90px] species-page ${getSpeciesAtmosphereClass(dino)}`}>
+      <SpeciesAtmosphere dino={dino} />
       {/* ── Command bar ──────────────────────────────────────────────────── */}
       <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-4 flex items-center justify-between">
         <Link
@@ -155,10 +165,13 @@ export default function DinosaurPage() {
             </span>
             <span className="hidden md:inline text-border">/</span>
             <span className="hidden md:inline">{dino.continent}</span>
-            <span className="ml-auto flex items-center gap-2 text-amber-400/60">
+            <div className="ml-auto flex items-center gap-3">
+              <AmbienceControl dino={dino} />
+              <span className="flex items-center gap-2 text-amber-400/60">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
               Exhibit Active
-            </span>
+              </span>
+            </div>
           </div>
 
           {/* Viewer + identity panel — wider canvas */}
