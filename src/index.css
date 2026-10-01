@@ -103,6 +103,56 @@
   .section-label {
     @apply text-xs font-display uppercase tracking-[0.15em] text-muted-foreground mb-2;
   }
+
+  .species-page {
+    position: relative;
+    isolation: isolate;
+    background:
+      radial-gradient(circle at 72% 11%, rgba(182, 132, 55, 0.07), transparent 28rem),
+      linear-gradient(180deg, rgba(17, 16, 14, 0.2), transparent 30rem);
+  }
+
+  .species-page > :not(.species-atmosphere) { position: relative; z-index: 1; }
+
+  .species-atmosphere {
+    position: fixed;
+    inset: 5.5rem 0 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0.8;
+  }
+
+  .species-atmosphere__grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(220, 180, 100, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(220, 180, 100, 0.025) 1px, transparent 1px);
+    background-size: 52px 52px;
+    mask-image: linear-gradient(180deg, black, transparent 70%);
+  }
+
+  .species-atmosphere__glow { position: absolute; inset: -15% 15% auto; height: 26rem; border-radius: 50%; filter: blur(80px); opacity: 0.28; background: #a87435; }
+  .species-atmosphere--water .species-atmosphere__glow { background: #286d78; }
+  .species-atmosphere--sky .species-atmosphere__glow { background: #536b82; }
+  .species-atmosphere--rock .species-atmosphere__glow { background: #8b633e; }
+  .species-atmosphere__label { position: absolute; right: 1.5rem; top: 1.5rem; display: flex; align-items: center; gap: 0.45rem; color: rgba(224, 190, 123, 0.35); font: 9px 'Space Grotesk', sans-serif; letter-spacing: 0.18em; text-transform: uppercase; }
+  .species-atmosphere__label svg { width: 12px; height: 12px; }
+
+  .ambience-control { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid rgba(220, 180, 100, 0.18); border-radius: 0.45rem; padding: 0.35rem 0.55rem; color: rgba(225, 214, 194, 0.62); background: rgba(255,255,255,0.025); font: 9px 'Space Grotesk', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; transition: border-color 180ms ease, color 180ms ease, background 180ms ease; }
+  .ambience-control:hover, .ambience-control:focus-visible { border-color: rgba(220, 180, 100, 0.45); color: hsl(var(--foreground)); background: rgba(220, 180, 100, 0.08); outline: none; }
+  .ambience-control svg { width: 13px; height: 13px; }
+
+  @media (max-width: 640px) {
+    .species-atmosphere { top: 5rem; opacity: 0.55; }
+    .species-atmosphere__label { right: 1rem; top: 1rem; font-size: 8px; }
+    .ambience-control span { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dino-card, .ambience-control { transition: none; }
+    .dino-card:hover { transform: none; }
+    .animate-pulse { animation: none; }
+  }
 }
 
 /* Scrollbar */

@@ -8,6 +8,8 @@ import InteractiveTimeline from "@/components/InteractiveTimeline";
 import { SpeciesContent } from "@/components/SpeciesContent";
 import { SpeciesScientificRail } from "@/components/species/SpeciesScientificRail";
 import { SpeciesEvidenceRail } from "@/components/species/SpeciesEvidenceRail";
+import { SpeciesAtmosphere, getSpeciesAtmosphereClass } from "@/components/SpeciesAtmosphere";
+import { AmbienceControl } from "@/components/AmbienceControl";
 import {
   ArrowLeft,
   Calendar,
@@ -114,7 +116,8 @@ export default function DinosaurPage() {
     .padEnd(4, "X")}`;
 
   return (
-    <div className="min-h-screen pt-[90px]">
+    <div className={`min-h-screen pt-[90px] species-page ${getSpeciesAtmosphereClass(dino)}`}>
+      <SpeciesAtmosphere dino={dino} />
       {/* ── Command bar ──────────────────────────────────────────────────── */}
       <div className="max-w-[2160px] mx-auto px-4 md:px-8 2xl:px-12 py-4 flex items-center justify-between">
         <Link
@@ -155,10 +158,13 @@ export default function DinosaurPage() {
             </span>
             <span className="hidden md:inline text-border">/</span>
             <span className="hidden md:inline">{dino.continent}</span>
-            <span className="ml-auto flex items-center gap-2 text-amber-400/60">
+            <div className="ml-auto flex items-center gap-3">
+              <AmbienceControl />
+              <span className="flex items-center gap-2 text-amber-400/60">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
               Exhibit Active
-            </span>
+              </span>
+            </div>
           </div>
 
           {/* Viewer + identity panel — wider canvas */}
