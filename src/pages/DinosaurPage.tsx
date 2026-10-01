@@ -41,6 +41,11 @@ const STAT_ICON: Record<StatIconKey, typeof Ruler> = {
 };
 
 /* ── Exhibit band — full-width section with a scan-label header ─────────────── */
+function InteractionSoundLayer({ enabled }: { enabled: boolean }) {
+  useInteractionSounds(enabled);
+  return null;
+}
+
 function ExhibitBand({
   id,
   index,
@@ -88,27 +93,27 @@ function ExhibitBand({
 export default function DinosaurPage() {
   const { id } = useParams<{ id: string }>();
   const dino = getDinosaurById(id || "");
-  useInteractionSounds(Boolean(dino));
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [id]);
 
-  if (!dino) {
-    return (
-      <div className="min-h-screen pt-[90px] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-display text-foreground mb-2">
-            Species not found
-          </h1>
-          <Link to="/" className="text-primary hover:underline font-body">
-            ← Back to encyclopedia
-          </Link>
-        </div>
+  return dino ? (
+    <DinosaurPageContent dino={dino} />
+  ) : (
+    <div className="min-h-screen pt-[90px] flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-display text-foreground mb-2">
+          Species not found
+        </h1>
+        <Link to="/" className="text-primary hover:underline font-body">
+          ← Back to encyclopedia
+        </Link>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
+function DinosaurPageContent({ dino }: { dino: NonNullable<ReturnType<typeof getDinosaurById>> }) {
   const taxon = getTaxonomyType(dino);
   const stats = getDisplayStats(dino);
   const specimenCode = `SPC-${dino.id
