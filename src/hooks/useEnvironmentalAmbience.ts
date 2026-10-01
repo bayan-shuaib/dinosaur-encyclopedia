@@ -14,65 +14,46 @@ const getCategory = (dino: Dinosaur): EnvironmentCategory => {
   return 'terrestrial';
 };
 
-const TONES: Record<EnvironmentCategory, number> = {
-  terrestrial: 110, aerial: 88, aquatic: 64, 'semi-aquatic': 78, coastal: 96, generic: 105,
+const VIDEO_IDS: Record<EnvironmentCategory, string> = {
+  terrestrial: 'xNN7iTA57jM', aerial: 'oy0jX_I1CIU', aquatic: 'la_AEFO8m7U',
+  'semi-aquatic': 'la_AEFO8m7U', coastal: 'la_AEFO8m7U', generic: 'xNN7iTA57jM',
 };
 
-export function useEnvironmentalAmbience(dino: Dinosaur | null, enabled: boolean) {
+export function useEnvironmentalAmbience(dino: Dinosaur | null, enabled: boolean, volume = 35) {
   const category = useMemo(() => dino ? getCategory(dino) : 'generic', [dino]);
-  const contextRef = useRef<AudioContext | null>(null);
-  const nodesRef = useRef<{ gain: GainNode; source: AudioBufferSourceNode; filter: BiquadFilterNode } | null>(null);
-  const fadeRef = useRef<number | null>(null);
-  const previousCategory = useRef<EnvironmentCategory | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const currentVideo = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!enabled || !dino || typeof window === 'undefined') return;
-    const Context = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!Context) return;
-    const ctx = contextRef.current ?? new Context();
-    contextRef.current = ctx;
-    void ctx.resume();
-
-    if (previousCategory.current === category && nodesRef.current) return;
-    previousCategory.current = category;
-    const buffer = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    let state = 0;
-    for (let i = 0; i < data.length; i += 1) {
-      state = state * 0.995 + (Math.random() * 2 - 1) * 0.005;
-      data[i] = state * 0.7 + Math.sin(i / (ctx.sampleRate / TONES[category])) * 0.02;
+    if (typeof window === 'undefined') return;
+    const videoId = VIDEO_IDS[category];
+    const autoplay = enabled ? 1 : 0;
+    if (!iframeRef.current) {
+      const iframe = document.createElement('iframe');
+      iframe.setAttribute('title', 'Environmental ambience');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media');
+      iframe.setAttribute('aria-hidden', 'true');
+      iframe.tabIndex = -1;
+      iframe.className = 'environmental-ambience-player';
+      document.body.appendChild(iframe);
+      iframeRef.current = iframe;
     }
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.loop = true;
-    const filter = ctx.createBiquadFilter();
-    filter.type = category === 'aquatic' ? 'lowpass' : 'bandpass';
-    filter.frequency.value = category === 'aquatic' ? 500 : 900;
-    const gain = ctx.createGain();
-    gain.gain.value = 0;
-    source.connect(filter).connect(gain).connect(ctx.destination);
-    source.start();
-    const old = nodesRef.current;
-    nodesRef.current = { gain, source, filter };
-    if (old) { old.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.35); window.setTimeout(() => old.source.stop(), 1400); }
-    gain.gain.setTargetAtTime(0.12, ctx.currentTime, 0.55);
-
-    return () => { source.stop(); };
-  }, [category, dino, enabled]);
+    if (currentVideo.current !== videoId) {
+      iframeRef.current.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=${autoplay}&controls=0&loop=1&playlist=${videoId}&playsinline=1&rel=0`;
+      currentVideo.current = videoId;
+    }
+  }, [category]);
 
   useEffect(() => {
-    if (!enabled && nodesRef.current && contextRef.current) {
-      nodesRef.current.gain.gain.setTargetAtTime(0, contextRef.current.currentTime, 0.35);
-      fadeRef.current = window.setTimeout(() => nodesRef.current?.source.stop(), 1400);
-      previousCategory.current = null;
-    }
-  }, [enabled]);
+    const iframe = iframeRef.current;
+    if (!iframe?.contentWindow) return;
+    const command = (func: string, args: unknown[] = []) => iframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+    command('setVolume', [volume]);
+    if (enabled) command('playVideo');
+    else command('pauseVideo');
+  }, [enabled, volume, category]);
 
-  useEffect(() => () => {
-    if (fadeRef.current) window.clearTimeout(fadeRef.current);
-    nodesRef.current?.source.stop();
-    void contextRef.current?.close();
-  }, []);
+  useEffect(() => () => { iframeRef.current?.remove(); iframeRef.current = null; }, []);
 
   return { category };
 }
@@ -80,3 +61,5 @@ export function useEnvironmentalAmbience(dino: Dinosaur | null, enabled: boolean
 export function getEnvironmentLabel(category: EnvironmentCategory) {
   return { terrestrial: 'Terrestrial ambience', aerial: 'Open-air ambience', aquatic: 'Aquatic ambience', 'semi-aquatic': 'River ambience', coastal: 'Coastal ambience', generic: 'Atmospheric ambience' }[category];
 }
+
+export const AMBIENCE_VOLUME_OPTIONS = [15, 35, 55, 75] as const;

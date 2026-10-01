@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, ChevronDown } from 'lucide-react';
 import { Dinosaur } from '@/data/types';
-import { useEnvironmentalAmbience, getEnvironmentLabel } from '@/hooks/useEnvironmentalAmbience';
+import { useEnvironmentalAmbience, getEnvironmentLabel, AMBIENCE_VOLUME_OPTIONS } from '@/hooks/useEnvironmentalAmbience';
 
 export function AmbienceControl({ dino }: { dino: Dinosaur }) {
   const [enabled, setEnabled] = useState(false);
-  const { category } = useEnvironmentalAmbience(dino, enabled);
+  const [volume, setVolume] = useState(35);
+  const { category } = useEnvironmentalAmbience(dino, enabled, volume);
 
   useEffect(() => {
     const stored = sessionStorage.getItem('dinopedia-ambience');
     if (stored === 'on') setEnabled(true);
+    const storedVolume = Number(sessionStorage.getItem('dinopedia-ambience-volume'));
+    if (storedVolume > 0) setVolume(storedVolume);
   }, []);
 
   const toggle = () => {
@@ -18,10 +21,24 @@ export function AmbienceControl({ dino }: { dino: Dinosaur }) {
     sessionStorage.setItem('dinopedia-ambience', next ? 'on' : 'off');
   };
 
+  const changeVolume = (next: number) => {
+    setVolume(next);
+    sessionStorage.setItem('dinopedia-ambience-volume', String(next));
+  };
+
   return (
-    <button type="button" onClick={toggle} aria-pressed={enabled} aria-label={enabled ? 'Disable environmental ambience' : 'Enable environmental ambience'} title={getEnvironmentLabel(category)} className="ambience-control">
-      {enabled ? <Volume2 data-icon="inline-start" /> : <VolumeX data-icon="inline-start" />}
-      <span>{enabled ? 'Ambience on' : 'Ambience off'}</span>
-    </button>
+    <div className="ambience-control-wrap">
+      <button type="button" onClick={toggle} aria-pressed={enabled} aria-label={enabled ? 'Disable environmental ambience' : 'Enable environmental ambience'} title={getEnvironmentLabel(category)} className="ambience-control">
+        {enabled ? <Volume2 data-icon="inline-start" /> : <VolumeX data-icon="inline-start" />}
+        <span>{enabled ? 'Ambience on' : 'Ambience off'}</span>
+      </button>
+      <label className="ambience-volume" title="Ambience volume">
+        <span className="sr-only">Ambience volume</span>
+        <ChevronDown aria-hidden="true" />
+        <select value={volume} onChange={(event) => changeVolume(Number(event.target.value))} aria-label="Ambience volume">
+          {AMBIENCE_VOLUME_OPTIONS.map((option) => <option key={option} value={option}>{option}%</option>)}
+        </select>
+      </label>
+    </div>
   );
 }

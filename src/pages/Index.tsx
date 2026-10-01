@@ -347,7 +347,7 @@ const Index = () => {
 
   let globalOffset = 0;
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // ── Render ─────────────────────────────────────────────────────────��──────
   return (
     <div className="min-h-screen pt-[99px]">
       {/* Ambient scientific gridlines */}
@@ -415,7 +415,7 @@ const Index = () => {
                   <div className="text-[7px] uppercase tracking-[0.26em] text-muted-foreground/30 font-display mb-1.5 text-right">
                     Display Mode
                   </div>
-                  <div className="flex items-center gap-1 bg-card/60 rounded-lg p-1 border border-border/25">
+                  <div className="grid grid-cols-3 items-stretch gap-1 bg-card/60 rounded-lg p-1 border border-border/25 w-full sm:w-auto">
                     {([
                       { key: 'archive' as const, icon: <Layers className="h-3.5 w-3.5" />,    label: 'Vitrine' },
                       { key: 'grid'    as const, icon: <LayoutGrid className="h-3.5 w-3.5" />, label: 'Grid' },
@@ -426,13 +426,13 @@ const Index = () => {
                         onClick={() => setViewMode(opt.key)}
                         title={opt.label}
                         className={cn(
-                          'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-display transition-all',
+                          'flex min-w-0 items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-display transition-all',
                           viewMode === opt.key ? 'bg-secondary text-foreground' : 'text-muted-foreground/40 hover:text-foreground',
                         )}
                         data-testid={`view-${opt.key}`}
                       >
                         {opt.icon}
-                        <span className="hidden sm:inline text-[10px] tracking-wide">{opt.label}</span>
+                        <span className="text-[9px] sm:text-[10px] tracking-wide whitespace-nowrap">{opt.label}</span>
                       </button>
                     ))}
                   </div>
