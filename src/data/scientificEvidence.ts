@@ -56,6 +56,10 @@ export interface ScientificSource {
   repositoryUrl?: string;
   accessStatus?: SourceAccessStatus;
   verificationStatus?: SourceVerificationStatus;
+  /** Original Dinopedia wording; never copy a paper abstract verbatim. */
+  summary?: string;
+  /** Describes the relationship without overstating what the source proves. */
+  supports?: string;
   kind:
     | "paper"
     | "book"
@@ -413,6 +417,28 @@ export function validateScientificEvidenceCoverage(): ScientificEvidenceCoverage
       .filter(([, count]) => count > 1)
       .map(([id]) => id),
     invalidSourceReferences,
+  };
+}
+
+export interface ScientificSourceValidation {
+  duplicateSourceIds: string[];
+  invalidUrls: string[];
+  missingVerificationStatus: string[];
+  missingIdentifiers: string[];
+}
+
+export function validateScientificSources(sources: ScientificSource[]): ScientificSourceValidation {
+  const counts = new Map<string, number>();
+  sources.forEach((source) => counts.set(source.id, (counts.get(source.id) ?? 0) + 1));
+  const validUrl = (value?: string) => {
+    if (!value) return true;
+    try { return ["http:", "https:"].includes(new URL(value).protocol); } catch { return false; }
+  };
+  return {
+    duplicateSourceIds: [...counts.entries()].filter(([, count]) => count > 1).map(([id]) => id),
+    invalidUrls: sources.flatMap((source) => [source.url, source.repositoryUrl].filter((value): value is string => Boolean(value) && !validUrl(value)).map(() => source.id)),
+    missingVerificationStatus: sources.filter((source) => !source.verificationStatus).map((source) => source.id),
+    missingIdentifiers: sources.filter((source) => !source.id || !source.title).map((source) => source.id || "<missing-id>"),
   };
 }
 
