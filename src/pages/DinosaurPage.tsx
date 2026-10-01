@@ -10,6 +10,7 @@ import { SpeciesScientificRail } from "@/components/species/SpeciesScientificRai
 import { SpeciesEvidenceRail } from "@/components/species/SpeciesEvidenceRail";
 import { SpeciesAtmosphere, getSpeciesAtmosphereClass } from "@/components/SpeciesAtmosphere";
 import { AmbienceControl } from "@/components/AmbienceControl";
+import { useInteractionSounds } from "@/hooks/useInteractionSounds";
 import {
   ArrowLeft,
   Calendar,
@@ -87,6 +88,7 @@ function ExhibitBand({
 export default function DinosaurPage() {
   const { id } = useParams<{ id: string }>();
   const dino = getDinosaurById(id || "");
+  useInteractionSounds(Boolean(dino));
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -159,7 +161,7 @@ export default function DinosaurPage() {
             <span className="hidden md:inline text-border">/</span>
             <span className="hidden md:inline">{dino.continent}</span>
             <div className="ml-auto flex items-center gap-3">
-              <AmbienceControl />
+              <AmbienceControl dino={dino} />
               <span className="flex items-center gap-2 text-amber-400/60">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
               Exhibit Active
